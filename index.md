@@ -17,6 +17,6 @@ intro:
 
 ## Title
 
-Body
+Name : LEE HEECHARN / Intelligence Artificial
 
 ![collegeofcomputing](/assets/images/collegeofcomputing.jpg)
