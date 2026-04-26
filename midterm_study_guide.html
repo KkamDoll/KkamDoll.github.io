@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자료구조 중간고사 암기 노트</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #f5f4f1;
+  --surface: #ffffff;
+  --surface2: #f0efeb;
+  --border: #e2dfd9;
+  --border2: #c8c4be;
+  --text: #1c1a18;
+  --text-mid: #4a4845;
+  --text-dim: #9a9690;
+  --accent-a: #2d5a3d;
+  --accent-b: #1e3f6e;
+  --accent-warn: #7a4400;
+  --accent-quiz: #4a2c6e;
+  --code-bg: #f0ede8;
+  --code-border: #d8d4ce;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.07);
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --tag-a-bg: #e6f2eb; --tag-a-text: #1a4f30;
+  --tag-b-bg: #e5eef8; --tag-b-text: #163560;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  line-height: 1.75;
+  font-size: 15px;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--text);
+  padding: 28px 40px 20px;
+  position: sticky; top: 0; z-index: 200;
+}
+header h1 { font-size: 1.45rem; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 3px; }
+header p { color: var(--text-dim); font-size: 0.83rem; }
+nav { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+nav a {
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 700;
+  text-decoration: none; border: 1.5px solid; transition: all 0.15s;
+}
+nav a:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.tag-a { border-color: var(--accent-a); color: var(--accent-a); }
+.tag-b { border-color: var(--accent-b); color: var(--accent-b); }
+.tag-c { border-color: var(--text-dim); color: var(--text-mid); }
+
+/* ─── LAYOUT ─── */
+.wrapper { display: flex; max-width: 1120px; margin: 0 auto; padding: 36px 24px; gap: 32px; }
+
+/* ─── SIDEBAR ─── */
+.sidebar { width: 210px; flex-shrink: 0; }
+.toc-sticky {
+  position: sticky; top: 120px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 18px; box-shadow: var(--shadow-sm);
+}
+.toc-sticky .toc-title {
+  font-size: 0.65rem; font-weight: 900; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.toc-sticky ul { list-style: none; }
+.toc-sticky ul li.toc-group { margin-top: 10px; }
+.toc-sticky ul li.toc-group > span {
+  display: block; font-size: 0.65rem; font-weight: 900;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--text-dim); padding: 4px 8px 2px;
+}
+.toc-sticky ul li a {
+  display: block; padding: 4px 10px; border-radius: 7px;
+  font-size: 0.8rem; color: var(--text-mid);
+  text-decoration: none; transition: all 0.12s; font-weight: 500;
+}
+.toc-sticky ul li.toc-sub a { padding-left: 18px; font-size: 0.78rem; }
+.toc-sticky ul li a:hover { background: var(--surface2); color: var(--text); }
+
+/* ─── MAIN ─── */
+main { flex: 1; min-width: 0; }
+section { margin-bottom: 60px; }
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 26px; padding-bottom: 14px; border-bottom: 2px solid var(--text);
+  flex-wrap: wrap;
+}
+.section-header h2 { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.3px; }
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 5px;
+  font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px;
+}
+.badge-a { background: var(--tag-a-bg); color: var(--tag-a-text); }
+.badge-b { background: var(--tag-b-bg); color: var(--tag-b-text); }
+
+/* ─── CARD ─── */
+.card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; margin-bottom: 20px; box-shadow: var(--shadow); overflow: hidden;
+}
+.card-header {
+  padding: 16px 22px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.card-header h3 { font-size: 1.02rem; font-weight: 800; }
+.fn-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.87rem;
+  background: var(--code-bg); border: 1px solid var(--code-border);
+  padding: 2px 10px; border-radius: 6px; color: var(--text); margin-top: 4px; display: inline-block;
+}
+.card-sub { font-size: 0.83rem; color: var(--text-dim); margin-top: 3px; }
+.diff {
+  font-size: 0.7rem; font-weight: 800; padding: 3px 10px;
+  border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+}
+.easy   { background: #ebf7ec; color: #1b5e20; border: 1px solid #a5d6a7; }
+.medium { background: #fff8e1; color: #6d4c00; border: 1px solid #ffe082; }
+.hard   { background: #fce4ec; color: #880e4f; border: 1px solid #f48fb1; }
+
+.card-body { padding: 20px 22px; }
+.card-body > * + * { margin-top: 18px; }
+
+/* ─── SECTION LABELS ─── */
+.label {
+  font-size: 0.65rem; font-weight: 900; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 7px;
+}
+.label::before { content:''; display:inline-block; width:3px; height:14px; border-radius:2px; flex-shrink:0; }
+.label-algo  { color: var(--accent-b); } .label-algo::before  { background: var(--accent-b); }
+.label-code  { color: #555; }            .label-code::before  { background: #999; }
+.label-mem   { color: var(--accent-a); } .label-mem::before   { background: var(--accent-a); }
+.label-quiz  { color: var(--accent-quiz); } .label-quiz::before { background: var(--accent-quiz); }
+.label-trap  { color: var(--accent-warn); } .label-trap::before { background: var(--accent-warn); }
+
+/* ─── STEPS ─── */
+.steps { list-style: none; padding: 0; counter-reset: step; }
+.steps li {
+  counter-increment: step; padding: 8px 0 8px 40px;
+  position: relative; border-bottom: 1px solid var(--border);
+  font-size: 0.9rem; color: var(--text-mid);
+}
+.steps li:last-child { border-bottom: none; }
+.steps li strong { color: var(--text); }
+.steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 8px;
+  width: 26px; height: 26px; background: var(--text); color: white;
+  border-radius: 50%; font-size: 0.7rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── CODE TOGGLE ─── */
+.code-wrapper { position: relative; }
+.code-toggle-btn {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--text); color: white; border: none;
+  border-radius: 7px; padding: 5px 13px;
+  font-size: 0.72rem; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer; transition: all 0.15s; z-index: 10;
+}
+.code-toggle-btn:hover { background: #444; }
+.code-toggle-btn.shown { background: var(--accent-a); }
+
+pre {
+  background: var(--code-bg); border: 1.5px solid var(--code-border);
+  border-radius: 10px; padding: 42px 18px 16px;
+  overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; line-height: 1.72; transition: filter 0.25s, opacity 0.25s;
+}
+pre.blurred { filter: blur(7px); opacity: 0.3; user-select: none; pointer-events: none; }
+
+.hidden-overlay {
+  display: none; position: absolute; inset: 0; border-radius: 10px;
+  background: var(--surface2); border: 2px dashed var(--border2);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; color: var(--text-dim); font-weight: 700; font-size: 0.9rem;
+}
+.hidden-overlay.on { display: flex; }
+.hidden-overlay small { font-size: 0.75rem; font-weight: 500; }
+
+/* ─── SYNTAX HIGHLIGHT ─── */
+.kw { color: #6e3db5; font-weight: 700; }
+.fn { color: #1a5aab; }
+.cm { color: #9a9a8a; font-style: italic; }
+.st { color: #2a7a32; }
+.nu { color: #b83c14; }
+.hl { background: #fef9c3; border-radius: 3px; padding: 0 3px; }
+
+/* ─── MEMO / TRAP / QUIZ ─── */
+.memo-box {
+  background: var(--surface2); border-left: 3px solid var(--accent-a);
+  border-radius: 0 10px 10px 0; padding: 13px 18px;
+}
+.memo-box ul { list-style: none; padding: 0; }
+.memo-box ul li { padding: 3px 0; font-size: 0.88rem; color: var(--text-mid); display: flex; gap: 8px; }
+.memo-box ul li::before { content: "▸"; color: var(--accent-a); font-weight: 700; flex-shrink: 0; }
+.memo-box ul li strong { color: var(--text); }
+
+.trap-box {
+  background: #fffaf2; border-left: 3px solid var(--accent-warn);
+  border-radius: 0 10px 10px 0; padding: 12px 18px;
+}
+.trap-box ul { list-style: none; padding: 0; }
+.trap-box ul li { font-size: 0.86rem; color: var(--accent-warn); padding: 3px 0; display: flex; gap: 8px; }
+.trap-box ul li::before { content: "⚠"; flex-shrink: 0; }
+.trap-box ul li strong { color: #5a3000; }
+
+.quiz-box {
+  background: #f9f6fe; border: 1.5px solid #ddd0f0; border-radius: 10px; padding: 15px 20px;
+}
+.quiz-box ol { padding-left: 20px; font-size: 0.88rem; color: var(--text-mid); }
+.quiz-box ol li { padding: 4px 0; }
+details summary {
+  cursor: pointer; color: var(--accent-quiz); font-weight: 700;
+  font-size: 0.8rem; margin-top: 12px; user-select: none;
+  list-style: none; display: flex; align-items: center; gap: 6px;
+}
+details summary::before { content: "▶"; font-size: 0.68rem; }
+details[open] summary::before { content: "▼"; }
+.ans {
+  margin-top: 10px; padding: 12px 16px;
+  background: white; border-radius: 8px; border: 1px solid #ddd0f0;
+  font-size: 0.86rem; color: var(--text-mid); line-height: 1.85;
+}
+
+/* ─── FLOW DIAGRAM ─── */
+.flow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+  background: var(--code-bg); border: 1.5px solid var(--code-border);
+  border-radius: 10px; padding: 13px 18px;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+}
+.flow-step {
+  background: var(--surface); border: 1.5px solid var(--border2);
+  border-radius: 8px; padding: 5px 13px; font-weight: 600; white-space: nowrap;
+}
+.flow-arrow { color: var(--text-dim); margin: 0 10px; font-weight: 700; font-size: 0.95rem; }
+
+/* ─── TREE VISUAL ─── */
+.tree-box {
+  background: var(--code-bg); border: 1.5px solid var(--code-border);
+  border-radius: 10px; padding: 14px 20px; text-align: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-mid);
+}
+.tree-box pre { background:none; border:none; padding:0; text-align:left; display:inline-block; }
+
+/* ─── GRID ─── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:680px) { .grid2 { grid-template-columns: 1fr; } }
+
+/* ─── CHEAT SHEET ─── */
+.cheat-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm);
+}
+.cheat-card h4 {
+  font-size: 0.72rem; font-weight: 900; letter-spacing: 1.2px;
+  text-transform: uppercase; margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--border);
+}
+.cheat-card ul { list-style: none; padding: 0; }
+.cheat-card ul li {
+  font-size: 0.84rem; padding: 5px 0; color: var(--text-mid);
+  display: flex; gap: 8px; align-items: flex-start;
+  border-bottom: 1px dashed var(--border);
+}
+.cheat-card ul li:last-child { border-bottom: none; }
+.cheat-card ul li::before { content: "✓"; color: var(--accent-a); font-weight: 900; flex-shrink: 0; }
+.cheat-card ul li strong { color: var(--text); }
+
+/* ─── MISC ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+code {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+  background: var(--code-bg); border: 1px solid var(--code-border);
+  padding: 1px 6px; border-radius: 4px;
+}
+@media(max-width:900px) { .sidebar { display: none; } .wrapper { padding: 24px 16px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📖 자료구조 중간고사 — 함수 암기 노트</h1>
+  <p>2025 현재 시험 기준 · A문제(힙 21점) + B문제(이진 트리 34점) · 👁 버튼으로 코드 가리고 암기 테스트 가능</p>
+  <nav>
+    <a href="#sec-a" class="tag-a">🌿 A — Heap</a>
+    <a href="#sec-b" class="tag-b">🌳 B — Binary Tree</a>
+    <a href="#cheat" class="tag-c">📌 최종 요약</a>
+  </nav>
+</header>
+
+<div class="wrapper">
+
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="toc-sticky">
+    <div class="toc-title">목차</div>
+    <ul>
+      <li class="toc-group"><span>🌿 A — Heap</span></li>
+      <li class="toc-sub"><a href="#a-concept">힙 개념 정리</a></li>
+      <li class="toc-sub"><a href="#a1-up">a1. _upheap</a></li>
+      <li class="toc-sub"><a href="#a1-down">a1. _downheap</a></li>
+      <li class="toc-sub"><a href="#a2-add">a2. add</a></li>
+      <li class="toc-sub"><a href="#a2-rm">a2. remove_min</a></li>
+      <li class="toc-sub"><a href="#a3">a3. heap_sort</a></li>
+
+      <li class="toc-group"><span>🌳 B — Tree</span></li>
+      <li class="toc-sub"><a href="#b-concept">트리 공통 패턴</a></li>
+      <li class="toc-sub"><a href="#b1">b1. preorder</a></li>
+      <li class="toc-sub"><a href="#b2">b2. postorder</a></li>
+      <li class="toc-sub"><a href="#b3">b3. depth</a></li>
+      <li class="toc-sub"><a href="#b4">b4. uncle</a></li>
+      <li class="toc-sub"><a href="#b5">b5. max_path_sum</a></li>
+
+      <li class="toc-group"><span>📌 요약</span></li>
+      <li class="toc-sub"><a href="#cheat">최종 체크리스트</a></li>
+    </ul>
+  </div>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<main>
+
+<!-- ══════════════════════════════
+     SECTION A : HEAP
+══════════════════════════════ -->
+<section id="sec-a">
+  <div class="section-header">
+    <h2>A 문제 — Heap (힙)</h2>
+    <span class="badge badge-a">총 21점</span>
+  </div>
+
+  <!-- 개념 요약 -->
+  <div class="card" id="a-concept">
+    <div class="card-header"><h3>힙(Heap) 핵심 개념 — 코드 짜기 전에 반드시 이해</h3></div>
+    <div class="card-body">
+      <p class="label label-algo">📐 Min-Heap 두 가지 성질</p>
+      <ul class="steps">
+        <li><strong>힙 순서(Heap-Order)</strong>: 루트를 제외한 모든 노드 v에 대해 <code>key(v) ≥ key(parent(v))</code>. 즉, 부모가 항상 자식보다 작거나 같아야 한다. 결과적으로 <strong>루트 = 최솟값</strong>.</li>
+        <li><strong>완전 이진 트리(Complete Binary Tree)</strong>: 마지막 레벨을 제외한 모든 레벨이 꽉 차 있고, 마지막 레벨은 반드시 왼쪽부터 채워진다. 이 덕분에 배열로 표현 가능.</li>
+        <li><strong>배열 인덱스 공식</strong>: 인덱스 j → 부모: <code>(j-1)//2</code>, 왼쪽 자식: <code>2j+1</code>, 오른쪽 자식: <code>2j+2</code></li>
+        <li><strong>upheap vs downheap</strong>: 원소를 <strong>삽입(add)</strong>하면 끝에 추가 후 upheap으로 올려 복구. 최솟값을 <strong>삭제(remove_min)</strong>하면 루트↔마지막 교환 후 downheap으로 내려 복구.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- _upheap -->
+  <div class="card" id="a1-up">
+    <div class="card-header">
+      <div>
+        <h3>a1 · <span class="fn-tag">_upheap(self, j)</span></h3>
+        <div class="card-sub">인덱스 j의 원소를 위로 올려 힙 순서 복구 · 재귀</div>
+      </div>
+      <span class="diff medium">중간 · 8점 일부</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리 — 단계별</p>
+      <ul class="steps">
+        <li><strong>종료 조건 ①</strong>: <code>j == 0</code>이면 이미 루트. 더 올라갈 곳이 없으므로 아무것도 하지 않고 종료. (if 조건에 <code>j &gt; 0</code>이 포함되어 있어 자동 처리)</li>
+        <li><strong>종료 조건 ②</strong>: <code>data[j] ≥ data[parent]</code>이면 이미 힙 순서가 만족되므로 종료. 더 올릴 필요 없음.</li>
+        <li><strong>swap</strong>: 두 조건이 모두 위반(j &gt; 0 이고 나 &lt; 부모)이면, j번째와 parent번째 원소를 교환.</li>
+        <li><strong>재귀 호출</strong>: swap한 후, 이제 원소가 <em>parent 위치</em>로 이동했으므로 <code>_upheap(parent)</code>를 호출해 계속 위로 올라감.</li>
+      </ul>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">_upheap</span>(self, j):
+    parent = self._parent(j)                        <span class="cm"># 부모 인덱스 계산</span>
+    <span class="kw">if</span> j &gt; <span class="nu">0</span> <span class="kw">and</span> self._data[j] &lt; self._data[parent]:
+        self._swap(j, parent)                       <span class="cm"># j ↔ 부모 교환</span>
+        self._upheap(<span class="hl">parent</span>)                     <span class="cm"># 부모 위치에서 재귀 ← 핵심!</span></pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li>조건 두 개: <strong>j &gt; 0</strong> (루트가 아님) AND <strong>나 &lt; 부모</strong> (힙 위반)</li>
+        <li>swap 후 재귀 인자는 반드시 <strong>parent</strong>. j를 넣으면 무한루프!</li>
+        <li>add()를 호출하면 → append 후 → upheap(<strong>len-1</strong>) 순서로 이어짐</li>
+      </ul></div>
+
+      <p class="label label-trap">⚠️ 자주 틀리는 부분</p>
+      <div class="trap-box"><ul>
+        <li>재귀 호출: <code>self._upheap(<strong>j</strong>)</code> ← <strong>틀림</strong>. 반드시 <code>self._upheap(<strong>parent</strong>)</code></li>
+        <li>비교 방향: <code>data[j] &gt; data[parent]</code> ← <strong>반대로 틀림</strong>. <code>&lt;</code>이어야 올라감</li>
+      </ul></div>
+
+    </div>
+  </div>
+
+  <!-- _downheap -->
+  <div class="card" id="a1-down">
+    <div class="card-header">
+      <div>
+        <h3>a1 · <span class="fn-tag">_downheap(self, j)</span></h3>
+        <div class="card-sub">인덱스 j의 원소를 아래로 내려 힙 순서 복구 · 재귀</div>
+      </div>
+      <span class="diff medium">중간 · 8점 일부</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리 — 단계별</p>
+      <ul class="steps">
+        <li><strong>종료 조건</strong>: 왼쪽 자식이 없으면(<code>_has_left(j)</code>가 False) 리프 노드 → 더 내려갈 곳 없음. 종료. 참고: 완전 이진 트리에서 오른쪽 자식은 왼쪽 자식이 있어야만 존재 가능.</li>
+        <li><strong>작은 자식 선택 ①</strong>: 일단 <code>small_child = left</code>로 가정. 왼쪽이 후보.</li>
+        <li><strong>작은 자식 선택 ②</strong>: 오른쪽 자식도 있고(<code>_has_right</code>) <code>data[right] &lt; data[left]</code>이면 오른쪽이 더 작은 것 → <code>small_child = right</code>로 교체.</li>
+        <li><strong>swap 조건</strong>: <code>data[small_child] &lt; data[j]</code>이면 자식이 부모보다 작으므로 힙 위반 → swap.</li>
+        <li><strong>재귀 호출</strong>: swap 후 원소가 <em>small_child 위치</em>로 내려갔으므로 <code>_downheap(small_child)</code> 호출해 계속 내려감.</li>
+      </ul>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">_downheap</span>(self, j):
+    <span class="kw">if</span> self._has_left(j):                           <span class="cm"># 왼쪽 자식이 없으면 리프 → 종료</span>
+        left = self._left(j)
+        <span class="hl">small_child = left</span>                          <span class="cm"># ① 왼쪽을 일단 최소 후보로 가정</span>
+
+        <span class="kw">if</span> self._has_right(j):
+            right = self._right(j)
+            <span class="kw">if</span> <span class="hl">self._data[right] &lt; self._data[left]</span>:
+                small_child = right                 <span class="cm"># ② 오른쪽이 더 작으면 교체</span>
+
+        <span class="kw">if</span> <span class="hl">self._data[small_child] &lt; self._data[j]</span>:  <span class="cm"># ③ 자식이 부모보다 작으면</span>
+            self._swap(j, small_child)
+            self._downheap(<span class="hl">small_child</span>)             <span class="cm"># ④ 내려간 위치에서 재귀 ← 핵심!</span></pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li>흐름: <strong>왼 가정 → 오 비교 → 작은쪽 swap → small_child로 재귀</strong></li>
+        <li>왼쪽 자식이 없으면 if 전체를 안 타므로 <strong>자동 종료</strong></li>
+        <li>재귀 인자는 반드시 <strong>small_child</strong>. j를 넣으면 무한루프!</li>
+      </ul></div>
+
+      <p class="label label-trap">⚠️ 원본 a1.py 버그 주의!</p>
+      <div class="trap-box"><ul>
+        <li><code>self._data.left(j)</code> ← <strong>틀린 코드</strong>. 올바른 건 <code>self._left(j)</code></li>
+        <li>비교 방향 <code>self._data[j] &lt; self._data[min]</code> ← <strong>반대로 틀림</strong>. <code>self._data[small_child] &lt; self._data[j]</code>가 맞음</li>
+      </ul></div>
+
+      <p class="label label-quiz">❓ 이해 확인</p>
+      <div class="quiz-box">
+        <ol>
+          <li>downheap에서 왜 오른/왼쪽 자식끼리 먼저 비교하고, 그 결과를 부모와 비교하는가?</li>
+          <li>오른쪽 자식은 있고 왼쪽 자식은 없는 경우가 완전 이진 트리에서 가능한가?</li>
+        </ol>
+        <details><summary>정답 확인</summary>
+          <div class="ans">
+            1. Min-Heap에서 부모보다 작은 자식 중 <strong>더 작은 쪽</strong>과 swap해야 힙 순서가 계속 유지됨. 만약 더 큰 자식과 swap하면, 그 더 큰 자식이 더 작은 형제보다 커져 버려 또다시 힙 위반이 생김.<br><br>
+            2. <strong>불가능.</strong> 완전 이진 트리에서 오른쪽 자식은 항상 왼쪽 자식이 먼저 채워진 뒤에 생긴다. 따라서 <code>has_left</code>를 먼저 확인하는 구조가 항상 옳다.
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- add -->
+  <div class="card" id="a2-add">
+    <div class="card-header">
+      <div>
+        <h3>a2 · <span class="fn-tag">add(self, value)</span></h3>
+        <div class="card-sub">힙에 원소 삽입 후 upheap으로 힙 순서 복구</div>
+      </div>
+      <span class="diff medium">중간 · 8점 일부</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리</p>
+      <div class="flow">
+        <span class="flow-step">append(value)</span><span class="flow-arrow">→</span>
+        <span class="flow-step">끝 인덱스 = len-1</span><span class="flow-arrow">→</span>
+        <span class="flow-step">_upheap(len-1)</span><span class="flow-arrow">→</span>
+        <span class="flow-step">힙 복구 완료</span>
+      </div>
+
+      <p class="label label-algo" style="margin-top:14px">📐 왜 이렇게 하는가?</p>
+      <ul class="steps">
+        <li><strong>append</strong>: 완전 이진 트리의 다음 빈 자리 = 배열의 맨 끝. append하면 트리 구조 유지.</li>
+        <li><strong>끝 인덱스</strong>: append <em>후에</em> <code>len(self._data) - 1</code>이 새 원소의 인덱스.</li>
+        <li><strong>upheap</strong>: 끝에 추가된 원소가 힙 순서를 위반할 수 있으므로 위로 올려 복구.</li>
+      </ul>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">add</span>(self, value):
+    self._data.<span class="hl">append</span>(value)               <span class="cm"># 배열 맨 끝에 추가</span>
+    self._upheap(<span class="hl">len(self._data) - 1</span>)      <span class="cm"># 새 원소 인덱스에서 upheap</span></pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li><strong>append → upheap(len-1)</strong>, 딱 두 줄이 전부</li>
+        <li>인덱스 계산: append <strong>후</strong>에 len-1 계산해야 함 (순서 바꾸면 틀림)</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- remove_min -->
+  <div class="card" id="a2-rm">
+    <div class="card-header">
+      <div>
+        <h3>a2 · <span class="fn-tag">remove_min(self) → int</span></h3>
+        <div class="card-sub">최솟값(루트) 제거 후 downheap으로 힙 순서 복구</div>
+      </div>
+      <span class="diff medium">중간 · 8점 일부</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리 — 왜 이렇게 복잡하게 하는가?</p>
+      <ul class="steps">
+        <li><strong>예외 처리</strong>: 비어있으면 Exception. 이후 로직이 비어있는 상태를 가정하지 않음.</li>
+        <li><strong>swap(0, 끝)</strong>: 루트를 바로 제거하면 완전 이진 트리 구조가 깨짐. 대신 가장 마지막 원소(제거해도 구조 유지)와 먼저 교환.</li>
+        <li><strong>pop()</strong>: 이제 배열 맨 끝에 있는 것이 원래 루트(최솟값). 안전하게 제거.</li>
+        <li><strong>is_empty 체크</strong>: 원소가 딱 1개였다면 pop() 후 배열이 완전히 빔. 이 경우 downheap(0)을 호출하면 인덱스 오류 발생. 반드시 체크!</li>
+        <li><strong>downheap(0)</strong>: 루트 자리에 올라온 (원래 마지막이던) 원소가 힙 순서를 위반할 수 있으므로 아래로 내려 복구.</li>
+      </ul>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">remove_min</span>(self):
+    <span class="kw">if</span> self.is_empty():
+        <span class="kw">raise</span> Exception(<span class="st">"Heap is empty"</span>)           <span class="cm"># 예외 처리</span>
+
+    self._swap(<span class="hl">0</span>, len(self._data) - <span class="nu">1</span>)          <span class="cm"># 루트 ↔ 마지막 교환</span>
+    item = self._data.<span class="hl">pop</span>()                    <span class="cm"># 마지막(=원래 루트=최솟값) 제거</span>
+
+    <span class="kw">if not</span> <span class="hl">self.is_empty()</span>:                   <span class="cm"># ← 이 체크가 없으면 1개 남았을때 터짐!</span>
+        self._downheap(<span class="hl">0</span>)                       <span class="cm"># 새 루트를 아래로 내리기</span>
+    <span class="kw">return</span> item</pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li>5단계 순서: <strong>예외처리 → swap(0,끝) → pop → is_empty체크 → downheap(0) → return</strong></li>
+        <li><code>not self.is_empty()</code> 체크를 빠뜨리면 원소 1개짜리 힙에서 오류!</li>
+        <li>반환값 = <code>pop()</code>한 결과 = 원래 루트 = 최솟값</li>
+      </ul></div>
+
+      <p class="label label-quiz">❓ 이해 확인</p>
+      <div class="quiz-box">
+        <ol>
+          <li>루트를 바로 제거하지 않고 마지막 원소와 swap하는 이유는?</li>
+          <li>downheap 전에 is_empty를 체크하는 이유는?</li>
+          <li>힙 [1, 3, 2, 5, 4]에서 remove_min() 후 힙 상태는 어떻게 되는가?</li>
+        </ol>
+        <details><summary>정답 확인</summary>
+          <div class="ans">
+            1. 힙은 <strong>완전 이진 트리</strong> 구조를 유지해야 함. 루트를 바로 제거하면 트리 중간에 구멍이 생김. 마지막 원소와 swap하면 완전 이진 트리에서 마지막 리프만 제거하는 것이므로 구조가 유지됨.<br><br>
+            2. 원소가 정확히 1개일 때 remove_min을 호출하면 pop() 후 배열이 완전히 비어버림. 빈 배열로 downheap(0)을 호출하면 <code>self._data[0]</code> 접근 자체가 IndexError.<br><br>
+            3. swap(0, 4) → [4,3,2,5,1] → pop() → [4,3,2,5] → downheap(0): 4와 자식들 중 최솟값(2)과 swap → [2,3,4,5]. 결과: [2,3,4,5]
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- heap_sort -->
+  <div class="card" id="a3">
+    <div class="card-header">
+      <div>
+        <h3>a3 · <span class="fn-tag">heap_sort(arr) → list</span></h3>
+        <div class="card-sub">Heap 클래스를 이용한 오름차순 정렬</div>
+      </div>
+      <span class="diff easy">쉬움 · 5점</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리</p>
+      <ul class="steps">
+        <li><strong>Heap 생성</strong>: 빈 Heap 객체를 만든다.</li>
+        <li><strong>전부 삽입</strong>: arr의 모든 원소를 <code>heap.add()</code>로 삽입. add()가 힙 순서를 자동 유지하므로 루트 = 항상 최솟값.</li>
+        <li><strong>전부 꺼내기</strong>: <code>heap.remove_min()</code>을 반복 호출. Min-Heap이므로 항상 현재 최솟값이 나옴 → 호출 순서대로 오름차순 정렬.</li>
+        <li><strong>반환</strong>: 새로 만든 sorted_arr를 반환. 원본 arr은 변경하지 않음.</li>
+      </ul>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">heap_sort</span>(arr):
+    heap = Heap()
+    <span class="kw">for</span> i <span class="kw">in</span> arr:
+        heap.<span class="hl">add</span>(i)                             <span class="cm"># 전부 삽입</span>
+    sorted_arr = []
+    <span class="kw">while not</span> heap.is_empty():
+        sorted_arr.append(heap.<span class="hl">remove_min</span>())  <span class="cm"># 전부 꺼내기 → 오름차순</span>
+    <span class="kw">return</span> sorted_arr</pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li><strong>"전부 add → 전부 remove_min"</strong>, 이게 heap sort의 전부</li>
+        <li>원본 arr은 건드리지 않음. <strong>새 리스트</strong>를 만들어 반환</li>
+        <li>시간복잡도: O(n log n) — add 하나에 O(log n), 총 n번</li>
+      </ul></div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════
+     SECTION B : BINARY TREE
+══════════════════════════════ -->
+<section id="sec-b">
+  <div class="section-header">
+    <h2>B 문제 — Binary Tree (이진 트리)</h2>
+    <span class="badge badge-b">총 34점</span>
+  </div>
+
+  <!-- 공통 개념 -->
+  <div class="card" id="b-concept">
+    <div class="card-header"><h3>공통 사항 — 예제 트리 & find_node 패턴</h3></div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 예제 트리 (b문제 전체에서 사용)</p>
+      <div class="tree-box">
+<pre>        1            ← 깊이 0 (루트)
+      /   \
+     9     8         ← 깊이 1
+    / \   /
+   6   2 3           ← 깊이 2 (리프들)</pre>
+      </div>
+
+      <p class="label label-algo" style="margin-top:18px">📐 find_node 헬퍼 — b3, b4에서 반복 사용</p>
+      <p style="font-size:0.88rem; color:var(--text-mid); margin-bottom:10px">key를 가진 노드를 재귀로 탐색. 없으면 None 반환. b3, b4 코드에서 내부 함수로 그대로 쓰인다.</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">find_node</span>(node, key):
+    <span class="kw">if</span> node <span class="kw">is</span> None: <span class="kw">return</span> None          <span class="cm"># base case: 없음</span>
+    <span class="kw">if</span> node.key == key: <span class="kw">return</span> node       <span class="cm"># 찾음!</span>
+
+    left_result = find_node(node.left, key)
+    <span class="kw">if</span> left_result <span class="kw">is not</span> None:
+        <span class="kw">return</span> left_result                  <span class="cm"># 왼쪽에서 찾았으면 바로 반환</span>
+
+    <span class="kw">return</span> find_node(node.right, key)     <span class="cm"># 아니면 오른쪽 탐색</span></pre>
+      </div>
+      <div class="memo-box" style="margin-top:12px"><ul>
+        <li>왼쪽에서 찾았으면 <code>not None</code> 체크 후 즉시 반환 → 오른쪽 탐색 생략 (효율)</li>
+        <li>맨 마지막 줄 <code>return find_node(node.right, key)</code>에서 <strong>return 빠뜨리면 None 반환</strong>됨!</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- b1: preorder -->
+  <div class="card" id="b1">
+    <div class="card-header">
+      <div>
+        <h3>b1 · <span class="fn-tag">preorder(tree) → list</span></h3>
+        <div class="card-sub">전위 순회: 부모 → 왼쪽 자식 → 오른쪽 자식</div>
+      </div>
+      <span class="diff easy">쉬움 · 5점</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리</p>
+      <ul class="steps">
+        <li><strong>현재 노드 처리</strong>: 현재 노드의 key를 <strong>먼저</strong> result에 추가 (Pre = 먼저).</li>
+        <li><strong>왼쪽 재귀</strong>: 왼쪽 서브트리를 동일한 방식으로 전위 순회.</li>
+        <li><strong>오른쪽 재귀</strong>: 오른쪽 서브트리를 동일한 방식으로 전위 순회.</li>
+      </ul>
+      <p style="font-size:0.88rem; color:var(--text-mid)">예제 결과: <strong>[1, 9, 6, 2, 8, 3]</strong> — 루트(1)부터 시작, 왼쪽 서브트리 전체(9,6,2) 후 오른쪽(8,3)</p>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">preorder</span>(tree):
+    result = []
+
+    <span class="kw">def</span> _recur(node):
+        <span class="kw">if</span> node <span class="kw">is not</span> None:
+            result.<span class="hl">append</span>(node.key)   <span class="cm"># ① 나 먼저 (Pre = 먼저)</span>
+            _recur(node.left)          <span class="cm"># ② 왼쪽</span>
+            _recur(node.right)         <span class="cm"># ③ 오른쪽</span>
+
+    _recur(tree.root())
+    <span class="kw">return</span> result</pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li><strong>Pre(전위) = 먼저(前)</strong>: <code>append</code>가 두 재귀 호출 <strong>앞</strong>에 있다</li>
+        <li>순서: <strong>나 → 왼 → 오</strong></li>
+        <li>node가 None이면 if 안을 실행하지 않으므로 자동 base case 처리</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- b2: postorder -->
+  <div class="card" id="b2">
+    <div class="card-header">
+      <div>
+        <h3>b2 · <span class="fn-tag">postorder(tree) → list</span></h3>
+        <div class="card-sub">후위 순회: 왼쪽 자식 → 오른쪽 자식 → 부모</div>
+      </div>
+      <span class="diff easy">쉬움 · 5점</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리</p>
+      <ul class="steps">
+        <li><strong>왼쪽 재귀</strong>: 왼쪽 서브트리를 완전히 다 처리.</li>
+        <li><strong>오른쪽 재귀</strong>: 오른쪽 서브트리를 완전히 다 처리.</li>
+        <li><strong>현재 노드 처리</strong>: 자식들이 모두 끝난 뒤에야 현재 노드의 key를 추가 (Post = 나중).</li>
+      </ul>
+      <p style="font-size:0.88rem; color:var(--text-mid)">예제 결과: <strong>[6, 2, 9, 3, 8, 1]</strong> — 리프(6,2)부터, 루트(1)가 맨 마지막</p>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">postorder</span>(tree):
+    result = []
+
+    <span class="kw">def</span> _recur(node):
+        <span class="kw">if</span> node <span class="kw">is not</span> None:
+            _recur(node.left)          <span class="cm"># ① 왼쪽</span>
+            _recur(node.right)         <span class="cm"># ② 오른쪽</span>
+            result.<span class="hl">append</span>(node.key)   <span class="cm"># ③ 나 나중에 (Post = 나중)</span>
+
+    _recur(tree.root())
+    <span class="kw">return</span> result</pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li><strong>Post(후위) = 나중(後)</strong>: <code>append</code>가 두 재귀 호출 <strong>뒤</strong>에 있다</li>
+        <li>preorder와 비교: <strong>append의 위치만 다름</strong>. 나머지 코드는 완전히 동일!</li>
+      </ul></div>
+
+      <p class="label label-quiz">❓ 이해 확인</p>
+      <div class="quiz-box">
+        <ol>
+          <li>preorder vs postorder — 코드에서 다른 부분은 딱 하나, 뭔가?</li>
+          <li>inorder(중위 순회, 왼→나→오)는 코드를 어떻게 바꾸면 되는가?</li>
+        </ol>
+        <details><summary>정답 확인</summary>
+          <div class="ans">
+            1. <code>result.append(node.key)</code>의 <strong>위치</strong>. preorder는 재귀 전, postorder는 재귀 후.<br><br>
+            2. 왼쪽 재귀 후, 오른쪽 재귀 전에 append를 넣으면 됨:<br>
+            <code>_recur(node.left)  →  append(node.key)  →  _recur(node.right)</code>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- b3: depth -->
+  <div class="card" id="b3">
+    <div class="card-header">
+      <div>
+        <h3>b3 · <span class="fn-tag">depth(tree, key) → int</span></h3>
+        <div class="card-sub">노드를 찾고, parent 포인터를 따라 루트까지 올라가며 깊이 카운트</div>
+      </div>
+      <span class="diff medium">중간 · 8점</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리 — 2단계 구조</p>
+      <ul class="steps">
+        <li><strong>[1단계] find_node</strong>: 재귀로 key에 해당하는 노드 탐색. 없으면 즉시 <code>return -1</code>.</li>
+        <li><strong>[2단계] parent 타고 올라가기</strong>: 찾은 노드에서 <code>.parent</code>를 계속 따라 올라감. 루트의 parent는 None이므로 while 조건: <code>curr.parent is not None</code>이면 계속 올라감.</li>
+        <li><strong>카운트</strong>: 올라갈 때마다 d += 1. 루트에 도달하면 d = 해당 노드의 깊이.</li>
+      </ul>
+      <p style="font-size:0.88rem; color:var(--text-mid)">예시: 노드 3의 깊이 = 2 (3→8→1, parent 2번 타고 올라감)</p>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">depth</span>(tree, key):
+    <span class="kw">def</span> find_node(node, key):           <span class="cm"># 1단계: 노드 탐색</span>
+        <span class="kw">if</span> node <span class="kw">is</span> None: <span class="kw">return</span> None
+        <span class="kw">if</span> node.key == key: <span class="kw">return</span> node
+        left_result = find_node(node.left, key)
+        <span class="kw">if</span> left_result <span class="kw">is not</span> None: <span class="kw">return</span> left_result
+        <span class="kw">return</span> find_node(node.right, key)
+
+    target = find_node(tree.root(), key)
+    <span class="kw">if</span> target <span class="kw">is</span> None: <span class="kw">return</span> <span class="hl">-1</span>         <span class="cm"># 못 찾으면 -1</span>
+
+    d = <span class="nu">0</span>                               <span class="cm"># 2단계: parent 타고 올라가기</span>
+    curr = target
+    <span class="kw">while</span> <span class="hl">curr.parent <span class="kw">is not</span> None</span>:
+        curr = curr.parent
+        d += <span class="nu">1</span>
+    <span class="kw">return</span> d</pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li><strong>"찾고 → parent 타고 카운트"</strong> 두 단계</li>
+        <li>while 조건: <code>curr.parent <strong>is not None</strong></code>. 루트(parent=None)에 도달하면 종료.</li>
+        <li>이동 순서: <code>curr = curr.parent</code> 먼저, <code>d += 1</code> 나중 (순서 바뀌면 안 됨)</li>
+      </ul></div>
+
+      <p class="label label-trap">⚠️ 자주 틀리는 부분</p>
+      <div class="trap-box"><ul>
+        <li><code>target is None</code> 체크 후 <code>return -1</code>을 <strong>find_node 바로 다음에</strong> 써야 함. 안 쓰면 <code>None.parent</code> 접근 → AttributeError!</li>
+        <li>루트 노드 자신의 깊이 = 0. while이 한 번도 실행되지 않아 d=0 그대로 반환 — 정확한 동작.</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- b4: uncle -->
+  <div class="card" id="b4">
+    <div class="card-header">
+      <div>
+        <h3>b4 · <span class="fn-tag">uncle(tree, key) → int</span></h3>
+        <div class="card-sub">삼촌 = 부모의 형제 노드 key 반환. 없으면 -1</div>
+      </div>
+      <span class="diff medium">중간 · 8점</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리 — 3단계 구조</p>
+      <ul class="steps">
+        <li><strong>[1단계] 노드 찾기</strong>: find_node로 key에 해당하는 target 탐색.</li>
+        <li><strong>[2단계] p(부모)와 g(조부모) 확인</strong>: <code>p = target.parent</code>, <code>g = p.parent</code>. p가 None이면 target이 루트(삼촌 불가능), g가 None이면 p가 루트(삼촌 불가능) → 둘 다 <code>return -1</code>.</li>
+        <li><strong>[3단계] 삼촌 찾기</strong>: p가 g의 왼쪽 자식(<code>g.left == p</code>)이면 삼촌 = g.right, 아니면 삼촌 = g.left. 해당 노드가 None이면 <code>return -1</code>.</li>
+      </ul>
+
+      <div class="tree-box">
+<pre>   g(1)               ← 조부모
+  /    \
+p(9)  uncle(8)        ← p가 왼쪽이면 uncle = g.right
+ |
+target(6)</pre>
+      </div>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">uncle</span>(tree, key):
+    <span class="kw">def</span> find_node(node, key):
+        <span class="kw">if</span> node <span class="kw">is</span> None: <span class="kw">return</span> None
+        <span class="kw">if</span> node.key == key: <span class="kw">return</span> node
+        left_result = find_node(node.left, key)
+        <span class="kw">if</span> left_result <span class="kw">is not</span> None: <span class="kw">return</span> left_result
+        <span class="kw">return</span> find_node(node.right, key)
+
+    target = find_node(tree.root(), key)
+    p = target.parent
+    <span class="kw">if</span> p <span class="kw">is</span> None: <span class="kw">return</span> <span class="hl">-1</span>             <span class="cm"># target이 루트 → 부모 없음</span>
+
+    g = p.parent
+    <span class="kw">if</span> g <span class="kw">is</span> None: <span class="kw">return</span> <span class="hl">-1</span>             <span class="cm"># p가 루트 → 조부모 없음</span>
+
+    <span class="kw">if</span> <span class="hl">g.left == p</span>:                    <span class="cm"># p가 g의 왼쪽 자식이면</span>
+        <span class="kw">return</span> g.right.key <span class="kw">if</span> g.right <span class="kw">is not</span> None <span class="kw">else</span> <span class="hl">-1</span>
+    <span class="kw">else</span>:                              <span class="cm"># p가 g의 오른쪽 자식이면</span>
+        <span class="kw">return</span> g.left.key <span class="kw">if</span> g.left <span class="kw">is not</span> None <span class="kw">else</span> <span class="hl">-1</span></pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li>삼촌 = <strong>조부모(g)의 반대쪽 자식</strong></li>
+        <li><strong>-1 반환 케이스 3가지</strong>: ① p is None (target=루트) ② g is None (p=루트) ③ 반대쪽 자식이 None</li>
+        <li><code>g.left == p</code>로 p가 왼쪽인지 확인 → 삼촌은 g.right</li>
+      </ul></div>
+
+      <p class="label label-quiz">❓ 이해 확인</p>
+      <div class="quiz-box">
+        <ol>
+          <li>예제 트리에서 노드 9의 uncle은? 이유도 함께.</li>
+          <li>예제 트리에서 노드 3의 uncle은?</li>
+          <li>-1을 반환해야 하는 3가지 케이스를 정확히 말하라.</li>
+        </ol>
+        <details><summary>정답 확인</summary>
+          <div class="ans">
+            1. <strong>-1</strong>. 노드 9의 부모 = 1(루트), 1의 부모(g) = None → 조부모가 없으므로 삼촌 불가능.<br><br>
+            2. <strong>9</strong>. 3의 부모 = 8, 8의 부모(g) = 1. g(1)에서 8은 오른쪽 자식이므로 삼촌 = g.left = 9.<br><br>
+            3. ① target.parent is None (target이 루트) &nbsp; ② p.parent is None (p가 루트) &nbsp; ③ g의 반대쪽 자식이 None (형제가 없음)
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- b5: max_path_sum -->
+  <div class="card" id="b5">
+    <div class="card-header">
+      <div>
+        <h3>b5 · <span class="fn-tag">max_path_sum(tree) → int</span></h3>
+        <div class="card-sub">루트 → 리프까지의 경로 중 key 합이 최대인 값 반환</div>
+      </div>
+      <span class="diff medium">중간 · 8점</span>
+    </div>
+    <div class="card-body">
+
+      <p class="label label-algo">📐 동작 원리</p>
+      <ul class="steps">
+        <li><strong>Base case</strong>: node가 None이면 <code>return 0</code>. 존재하지 않는 경로의 기여는 0.</li>
+        <li><strong>왼/오른쪽 재귀</strong>: 각 서브트리의 "루트→리프 최대 합"을 재귀로 계산.</li>
+        <li><strong>현재 노드 기여</strong>: <code>node.key + max(left_sum, right_sum)</code>. 더 큰 합의 경로를 선택하고 현재 key를 더함.</li>
+        <li><strong>빈 트리 처리</strong>: 함수 맨 위에서 <code>tree.root is None</code>이면 0 반환.</li>
+      </ul>
+
+      <div class="tree-box">
+<pre>recur(6)=6,  recur(2)=2
+recur(9) = 9 + max(6, 2) = 15
+recur(3)=3,  recur(None)=0
+recur(8) = 8 + max(3, 0) = 11
+recur(1) = 1 + max(15, 11) = <strong>16</strong>  ✓</pre>
+      </div>
+
+      <p class="label label-code">💻 코드</p>
+      <div class="code-wrapper">
+        <button class="code-toggle-btn" onclick="tog(this)">👁 가리기</button>
+        <div class="hidden-overlay"><span>🙈 코드를 가렸습니다</span><small>버튼을 눌러 다시 보세요</small></div>
+<pre><span class="kw">def</span> <span class="fn">max_path_sum</span>(tree):
+    <span class="kw">def</span> _recur(node):
+        <span class="kw">if</span> node <span class="kw">is</span> None: <span class="kw">return</span> <span class="hl">0</span>          <span class="cm"># base case: 없으면 0 (−1 아님!)</span>
+
+        left_sum  = _recur(node.left)
+        right_sum = _recur(node.right)
+
+        <span class="kw">return</span> node.key + <span class="hl">max</span>(left_sum, right_sum)  <span class="cm"># 더 큰 쪽 경로 선택</span>
+
+    <span class="kw">if</span> tree.root <span class="kw">is</span> None: <span class="kw">return</span> <span class="hl">0</span>        <span class="cm"># 빈 트리이면 0</span>
+    <span class="kw">return</span> _recur(tree.root())</pre>
+      </div>
+
+      <p class="label label-mem">🧠 암기 포인트</p>
+      <div class="memo-box"><ul>
+        <li>핵심 공식: <code>내 key + <strong>max(왼쪽합, 오른쪽합)</strong></code></li>
+        <li>base case는 반드시 <strong>return 0</strong>. -1이면 max()가 잘못된 값을 선택함!</li>
+        <li>빈 트리 체크: <code>tree.root <strong>is None</strong></code> (속성 접근, 메서드 호출 아님)</li>
+      </ul></div>
+
+      <p class="label label-trap">⚠️ 자주 틀리는 부분</p>
+      <div class="trap-box"><ul>
+        <li>base case <code>return -1</code> ← <strong>절대 안 됨!</strong> 리프의 자식들이 모두 -1이면 max(-1,-1)=-1이 더해져서 오답.</li>
+        <li>빈 트리 체크: <code>tree.root()</code> ← 메서드 호출이면 오류 가능. <code>tree.root</code> 속성으로 확인.</li>
+      </ul></div>
+
+      <p class="label label-quiz">❓ 이해 확인</p>
+      <div class="quiz-box">
+        <ol>
+          <li>base case를 return -1로 쓰면 왜 틀린 결과가 나오는가? 구체적 예시로 설명하라.</li>
+          <li>루트 하나만 있는 트리(key=7)의 max_path_sum은?</li>
+        </ol>
+        <details><summary>정답 확인</summary>
+          <div class="ans">
+            1. 리프 노드(예: key=6)의 경우 left, right가 모두 None → recur(None) = -1. 그러면 <code>6 + max(-1, -1) = 6 + (-1) = 5</code>가 됨. 실제 경로 합(6)보다 작아져서 오답. return 0이어야 <code>6 + max(0, 0) = 6</code>으로 정확함.<br><br>
+            2. <strong>7</strong>. <code>_recur(root) = 7 + max(recur(None), recur(None)) = 7 + max(0, 0) = 7</code>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════
+     CHEAT SHEET
+══════════════════════════════ -->
+<section id="cheat">
+  <div class="section-header">
+    <h2>📌 최종 암기 체크리스트</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>🌳 예제 트리 종합 연습 — 답 외울 때까지 반복!</h3></div>
+    <div class="card-body">
+      <div class="tree-box">
+<pre>        1
+      /   \
+     9     8
+    / \   /
+   6   2 3</pre>
+      </div>
+      <div class="quiz-box" style="margin-top:14px">
+        <ol>
+          <li>preorder 결과는?</li>
+          <li>postorder 결과는?</li>
+          <li>노드 6의 depth는?</li>
+          <li>노드 6의 uncle은?</li>
+          <li>노드 9의 uncle은? 왜?</li>
+          <li>노드 3의 uncle은?</li>
+          <li>max_path_sum은?</li>
+          <li>힙 [1,3,2,5,4]에서 remove_min() 후 힙은?</li>
+        </ol>
+        <details><summary>정답 확인</summary>
+          <div class="ans">
+            1. <strong>[1, 9, 6, 2, 8, 3]</strong><br>
+            2. <strong>[6, 2, 9, 3, 8, 1]</strong><br>
+            3. <strong>2</strong> (6→9→1, 2번 올라감)<br>
+            4. <strong>8</strong> (p=9, g=1, g.left==p이므로 uncle=g.right=8)<br>
+            5. <strong>-1</strong> (p=1이 루트, g=None)<br>
+            6. <strong>9</strong> (p=8, g=1, g.right==p이므로 uncle=g.left=9)<br>
+            7. <strong>16</strong> (경로 1→9→6)<br>
+            8. swap(0,4)→[4,3,2,5] → downheap(0): 4&lt;{2,3}중 min=2 → <strong>[2,3,4,5]</strong>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="cheat-card">
+      <h4 style="color:var(--accent-a)">🌿 힙 함수 패턴</h4>
+      <ul>
+        <li><strong>_upheap</strong>: j&gt;0 AND 나&lt;부모 → swap → upheap(<strong>parent</strong>)</li>
+        <li><strong>_downheap</strong>: 왼 가정 → 오 비교 → swap → downheap(<strong>small_child</strong>)</li>
+        <li><strong>add</strong>: append → upheap(<strong>len-1</strong>)</li>
+        <li><strong>remove_min</strong>: swap(0,끝) → pop → is_empty체크 → downheap(<strong>0</strong>) → return</li>
+        <li><strong>heap_sort</strong>: 전부 add → 전부 remove_min</li>
+      </ul>
+    </div>
+    <div class="cheat-card">
+      <h4 style="color:var(--accent-b)">🌳 트리 함수 패턴</h4>
+      <ul>
+        <li><strong>preorder</strong>: append → 왼재귀 → 오재귀 (나 먼저)</li>
+        <li><strong>postorder</strong>: 왼재귀 → 오재귀 → append (나 나중)</li>
+        <li><strong>depth</strong>: find_node → parent 타고 올라가며 카운트</li>
+        <li><strong>uncle</strong>: p=target.parent, g=p.parent → g의 반대쪽. -1 케이스 3가지!</li>
+        <li><strong>max_path_sum</strong>: 나 + max(왼,오). None이면 <strong>0</strong></li>
+      </ul>
+    </div>
+    <div class="cheat-card">
+      <h4 style="color:#880e4f">⚠️ 절대 틀리면 안 되는 것</h4>
+      <ul>
+        <li>upheap 재귀: <strong>parent</strong> (j 아님)</li>
+        <li>downheap 재귀: <strong>small_child</strong> (j 아님)</li>
+        <li>remove_min: downheap 전 <strong>is_empty 체크</strong></li>
+        <li>max_path_sum base: <strong>return 0</strong> (-1 아님)</li>
+        <li>uncle -1 케이스: <strong>3가지</strong> 모두</li>
+        <li>find_node 마지막 줄: 반드시 <strong>return</strong> 붙이기</li>
+      </ul>
+    </div>
+    <div class="cheat-card">
+      <h4>🔁 공통 find_node 패턴</h4>
+      <ul>
+        <li>node is None → return None</li>
+        <li>node.key == key → return node</li>
+        <li>왼쪽 재귀 결과 not None → 즉시 return</li>
+        <li>마지막: <strong>return</strong> find_node(right)</li>
+        <li>b3, b4에서 동일하게 사용됨</li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+</main>
+</div>
+
+<script>
+function tog(btn) {
+  const wrapper = btn.closest('.code-wrapper');
+  const pre     = wrapper.querySelector('pre');
+  const overlay = wrapper.querySelector('.hidden-overlay');
+  const hiding  = !pre.classList.contains('blurred');
+
+  if (hiding) {
+    pre.classList.add('blurred');
+    overlay.classList.add('on');
+    btn.textContent = '✅ 코드 보기';
+    btn.classList.add('shown');
+  } else {
+    pre.classList.remove('blurred');
+    overlay.classList.remove('on');
+    btn.textContent = '👁 가리기';
+    btn.classList.remove('shown');
+  }
+}
+</script>
+</body>
+</html>
