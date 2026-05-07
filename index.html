@@ -207,11 +207,13 @@
 
 <div class="lecture-tabs" id="lectureTabs">
   <button class="lecture-tab active" onclick="switchLecture('lec08',this)">Lec 08 · Data &amp; Models</button>
+  <button class="lecture-tab" onclick="switchLecture('lec-quiz4',this)">📋 Quiz #4 족보</button>
   <button class="tab-add" onclick="showAddTab()">+</button>
 </div>
 
 <div class="main-layout">
 <nav class="sidebar" id="sidebar">
+  <div id="sidebar-lec08">
   <div class="sidebar-section-label">강의 개요</div>
   <a class="sidebar-item active" href="#lec08-intro" onclick="setSideActive(this)">개요 · Overview</a>
   <div class="sidebar-section-label">핵심 개념</div>
@@ -228,6 +230,18 @@
   <a class="sidebar-item" href="#sec-model-sel"   onclick="setSideActive(this)">11 · 모델 선택</a>
   <div class="sidebar-section-label">연습 문제</div>
   <a class="sidebar-item" href="#quiz-section" onclick="setSideActive(this)">연습 문제 풀기</a>
+  </div>
+  <div id="sidebar-quiz4" style="display:none">
+  <div class="sidebar-section-label">Quiz #4 족보</div>
+  <a class="sidebar-item" href="#quiz4-intro"      onclick="setSideActive(this)">개요</a>
+  <div class="sidebar-section-label">기출 문제</div>
+  <a class="sidebar-item" href="#q4-dsep-theory"  onclick="setSideActive(this)">개념 · d-분리 규칙</a>
+  <a class="sidebar-item" href="#q4-dsep"         onclick="setSideActive(this)">Q1 · 조건부 독립 T/F</a>
+  <a class="sidebar-item" href="#q4-bayes"        onclick="setSideActive(this)">Q2 · 베이즈 요인</a>
+  <a class="sidebar-item" href="#q4-mle"          onclick="setSideActive(this)">Q3 · 선형 회귀 MLE</a>
+  <div class="sidebar-section-label">추가 연습</div>
+  <a class="sidebar-item" href="#q4-extra"        onclick="setSideActive(this)">E1–E6 · 연습 문제</a>
+  </div>
 </nav>
 
 <main class="content">
@@ -845,7 +859,392 @@
 
 </div><!-- /lec08 -->
 
-<div class="lecture-content" id="lec-placeholder">
+<div class="lecture-content" id="lec-quiz4">
+
+<!-- INTRO -->
+<section class="lecture-intro" id="quiz4-intro">
+  <div class="lecture-no">Quiz #4 족보</div>
+  <h1 class="lecture-title">DAI2002 인공지능수학<br>Quiz #4 Solution</h1>
+  <p class="lecture-desc">확률 그래프 모델의 조건부 독립(d-분리), 베이즈 요인을 이용한 모델 선택, 선형 회귀의 최대 우도 추정(MLE)을 다룬다. 기출 3문제 + 추가 연습 문제 6문제로 구성.</p>
+  <div class="lecture-meta">
+    <div class="meta-item">과목 <span>DAI2002 인공지능수학</span></div>
+    <div class="meta-item">기출 문제 <span>3문항 (31점)</span></div>
+    <div class="meta-item">추가 연습 <span>6문항</span></div>
+  </div>
+  <div class="overview-grid" style="margin-top:28px;">
+    <a class="overview-card" href="#q4-dsep"><div class="ov-num">Q1</div><div class="ov-title">조건부 독립 T/F</div><div class="ov-en">d-Separation · 8점</div></a>
+    <a class="overview-card" href="#q4-bayes"><div class="ov-num">Q2</div><div class="ov-title">베이즈 요인</div><div class="ov-en">Bayes' Factor · 8점</div></a>
+    <a class="overview-card" href="#q4-mle"><div class="ov-num">Q3</div><div class="ov-title">선형 회귀 MLE</div><div class="ov-en">MLE · 15점</div></a>
+    <a class="overview-card" href="#q4-extra"><div class="ov-num">+6</div><div class="ov-title">추가 연습</div><div class="ov-en">Extra Practice</div></a>
+  </div>
+</section>
+
+<!-- d-분리 핵심 개념 -->
+<section class="concept-section" id="q4-dsep-theory">
+  <div class="concept-header">
+    <span class="concept-num">개념</span>
+    <div><div class="concept-title">d-분리 (d-Separation) 핵심 규칙</div><div class="concept-en">Blocked Paths in Bayesian Networks</div></div>
+  </div>
+  <div class="concept-body">
+    <p>방향 그래프에서 두 노드 집합이 조건부 독립인지 판별하려면 <strong>모든 경로가 차단(blocked)</strong>되는지 확인한다.</p>
+    <div class="compare-grid">
+      <div class="compare-cell header">패턴</div><div class="compare-cell header">구조</div><div class="compare-cell header">중간 노드 관측 시</div>
+      <div class="compare-cell hl">Chain</div><div class="compare-cell">\(A \to C \to B\)</div><div class="compare-cell">경로 <strong>차단</strong> → A⊥B|C ✓</div>
+      <div class="compare-cell hl">Fork</div><div class="compare-cell">\(A \leftarrow C \rightarrow B\)</div><div class="compare-cell">경로 <strong>차단</strong> → A⊥B|C ✓</div>
+      <div class="compare-cell hl">Collider ⚡</div><div class="compare-cell">\(A \to C \leftarrow B\)</div><div class="compare-cell">경로 <strong>활성화!</strong> → 독립 깨짐</div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">⚡ Collider 주의</div>
+      <div class="key-box-content">일반 패턴(Chain, Fork)과 <strong>반대로 동작</strong>. 관측하지 않으면 자동 차단(독립), 관측하면 오히려 경로가 열려 독립성이 깨진다. 후손(descendant)을 관측해도 마찬가지.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Q1 -->
+<section class="concept-section" id="q4-dsep">
+  <div class="concept-header">
+    <span class="concept-num">Q1</span>
+    <div><div class="concept-title">조건부 독립 판별 — T/F</div><div class="concept-en">d-Separation · 8점 (정답 +2, 오답 −1)</div></div>
+  </div>
+  <div class="concept-body">
+    <p>아래 확률분포의 방향그래프 모델을 보고, 변수들 간의 조건부 독립에 대한 서술의 참/거짓(T/F) 여부를 답하시오.</p>
+
+    <div style="display:flex;justify-content:center;padding:24px 0;">
+      <svg width="380" height="210" viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="qarr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#444"/>
+          </marker>
+        </defs>
+        <line x1="88" y1="68" x2="164" y2="68" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <line x1="68" y1="86" x2="148" y2="145" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <line x1="200" y1="78" x2="222" y2="132" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <line x1="300" y1="78" x2="258" y2="132" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <line x1="180" y1="152" x2="216" y2="152" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <line x1="256" y1="152" x2="318" y2="152" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <line x1="160" y1="170" x2="176" y2="192" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
+        <circle cx="68" cy="68" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="68" y="74" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">x</text>
+        <circle cx="185" cy="68" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="185" y="74" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">a</text>
+        <circle cx="310" cy="68" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="310" y="74" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">b</text>
+        <circle cx="158" cy="152" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="158" y="158" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">y</text>
+        <circle cx="237" cy="152" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="237" y="158" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">d</text>
+        <circle cx="336" cy="152" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="336" y="158" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">c</text>
+        <circle cx="188" cy="200" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
+        <text x="188" y="206" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">z</text>
+      </svg>
+    </div>
+
+    <div class="quiz-section" id="q4-quiz">
+      <div class="quiz-header">
+        <span class="quiz-title">Q1 세부 문항</span>
+      </div>
+
+      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+        <div class="quiz-q">
+          <span class="quiz-num">Q1-1</span>
+          <span class="quiz-text">\(x \perp\!\!\!\perp y \mid a, d\) — 참(T)인가, 거짓(F)인가?</span>
+          <span class="quiz-tag">기출</span>
+          <span class="quiz-toggle">+</span>
+        </div>
+        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+          <strong>답: F (독립 아님)</strong><br><br>
+          경로 \(x \to y\)가 직접 존재하며, <em>a</em>를 관측해도 이 직접 경로는 차단되지 않는다.<br>
+          또한 <em>d</em>는 \(a \to d\) 와 \(y \to d\)의 <strong>collider</strong>인데, 이를 관측하면 오히려 \(a\)–\(y\) 경로가 활성화된다. 따라서 \(x \to a \to d \leftarrow y\) 경로도 열려 독립이 깨진다.
+        </div></div>
+      </div>
+
+      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+        <div class="quiz-q">
+          <span class="quiz-num">Q1-2</span>
+          <span class="quiz-text">\(d \perp\!\!\!\perp z \mid x\) — 참(T)인가, 거짓(F)인가?</span>
+          <span class="quiz-tag">기출</span>
+          <span class="quiz-toggle">+</span>
+        </div>
+        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+          <strong>답: F (독립 아님)</strong><br><br>
+          경로 \(d \leftarrow y \to z\): 여기서 <em>y</em>는 <strong>fork(tail-to-tail)</strong>이다.<br>
+          <em>x</em>를 관측해도 <em>y</em>는 관측되지 않으므로, \(y\) 를 통한 경로는 열린 상태 (active).<br>
+          → <em>d</em>와 <em>z</em>는 <em>x</em>가 주어졌을 때도 독립이 아니다.
+        </div></div>
+      </div>
+
+      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+        <div class="quiz-q">
+          <span class="quiz-num">Q1-3</span>
+          <span class="quiz-text">\(a \perp\!\!\!\perp b \mid c, d\) — 참(T)인가, 거짓(F)인가?</span>
+          <span class="quiz-tag">기출</span>
+          <span class="quiz-toggle">+</span>
+        </div>
+        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+          <strong>답: T (독립 ✓)</strong><br><br>
+          <em>a</em>와 <em>b</em> 사이 경로: \(a \to d \leftarrow b\). 여기서 <em>d</em>는 collider.<br>
+          <em>d</em>를 관측하면 경로가 열리지만, 이어지는 경로 \(d \to c\)에서 <em>c</em>도 관측되므로 chain이 차단된다.<br>
+          다른 경로는 존재하지 않으므로 → \(a \perp\!\!\!\perp b \mid c, d\) 성립.
+        </div></div>
+      </div>
+
+      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+        <div class="quiz-q">
+          <span class="quiz-num">Q1-4</span>
+          <span class="quiz-text">\(y \perp\!\!\!\perp c \mid x, b\) — 참(T)인가, 거짓(F)인가?</span>
+          <span class="quiz-tag">기출</span>
+          <span class="quiz-toggle">+</span>
+        </div>
+        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+          <strong>답: F (독립 아님)</strong><br><br>
+          경로 \(y \to d \to c\): <em>d</em>는 chain(tail-to-head)이며 관측되지 않았다.<br>
+          <em>x</em>와 <em>b</em>를 관측해도 <em>d</em>가 관측되지 않으므로 이 경로는 열려 있다.<br>
+          → <em>y</em>와 <em>c</em>는 <em>x, b</em>가 주어졌을 때도 독립이 아니다.
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Q2 -->
+<section class="concept-section" id="q4-bayes">
+  <div class="concept-header">
+    <span class="concept-num">Q2</span>
+    <div><div class="concept-title">베이즈 요인 계산 및 해석</div><div class="concept-en">Bayes' Factor · 8점</div></div>
+  </div>
+  <div class="concept-body">
+    <div class="key-box" style="margin-bottom:20px;">
+      <div class="key-box-label">문제</div>
+      <div class="key-box-content">
+        데이터 셋 \(\mathcal{D}\)에 대해 \(p(M_1)=0.25\), \(p(M_2)=0.75\)이고, 후위 이상치(Posteriori Odd)를 계산한 결과 \(\dfrac{p(\mathcal{D}|M_1)}{p(\mathcal{D}|M_2)} = 0.4\)를 얻었다.<br><br>
+        <strong>(1)</strong> 베이즈 요인 \(B\)를 구하시오. (4점)<br>
+        <strong>(2)</strong> 어느 모델이 데이터를 더 잘 설명하는가? (3점, 오답 −1점)
+      </div>
+    </div>
+
+    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">Q2-1</span>
+        <span class="quiz-text">베이즈 요인(Bayes' Factor) \(B\)를 구하시오.</span>
+        <span class="quiz-tag">기출</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        핵심 공식:
+        <div class="amath">\[\underbrace{\frac{p(\mathcal{D}|M_1)}{p(\mathcal{D}|M_2)}}_{\text{Posterior Odds}} = \underbrace{\frac{p(M_1)}{p(M_2)}}_{\text{Prior Odds}} \times \underbrace{B}_{\text{Bayes' Factor}}\]</div>
+        대입:
+        <div class="amath">\[0.4 = \frac{0.25}{0.75} \times B = \frac{1}{3} \times B \quad \therefore B = 1.2\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">Q2-2</span>
+        <span class="quiz-text">베이즈 요인 \(B=1.2\)에 근거하여, 어느 모델이 데이터를 더 잘 설명하는가?</span>
+        <span class="quiz-tag">기출</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        \(B = 1.2 > 1\)이므로 <strong>\(M_1\)이 데이터를 더 잘 설명한다.</strong><br><br>
+        베이즈 요인 해석 기준 (Jeffreys scale):
+        <ul style="margin-top:10px;padding-left:20px;font-size:13.5px;line-height:2;">
+          <li>\(B < 1\): \(M_2\) 지지</li>
+          <li>\(1 \le B < 3\): \(M_1\) 약하게 지지 (근거 불충분)</li>
+          <li>\(3 \le B < 10\): \(M_1\) 어느 정도 지지</li>
+          <li>\(B \ge 10\): \(M_1\) 강하게 지지</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Q3 -->
+<section class="concept-section" id="q4-mle">
+  <div class="concept-header">
+    <span class="concept-num">Q3</span>
+    <div><div class="concept-title">선형 회귀 MLE — 최대 우도 추정</div><div class="concept-en">Linear Regression · MLE · 15점</div></div>
+  </div>
+  <div class="concept-body">
+    <div class="key-box" style="margin-bottom:20px;">
+      <div class="key-box-label">문제</div>
+      <div class="key-box-content">
+        로봇 청소기 동작 시간 \(x\)(분)와 청소 면적 \(y\)(m²) 데이터. 관계를 \(y=ax\)로 회귀분석하고자 한다.
+        <table style="border-collapse:collapse;margin:12px 0;font-family:var(--mono);font-size:13px;">
+          <tr>
+            <th style="border:1px solid var(--border2);padding:6px 18px;background:var(--bg3);">x</th>
+            <td style="border:1px solid var(--border);padding:6px 18px;">3</td>
+            <td style="border:1px solid var(--border);padding:6px 18px;">7</td>
+            <td style="border:1px solid var(--border);padding:6px 18px;">15</td>
+          </tr>
+          <tr>
+            <th style="border:1px solid var(--border2);padding:6px 18px;background:var(--bg3);">y</th>
+            <td style="border:1px solid var(--border);padding:6px 18px;">5</td>
+            <td style="border:1px solid var(--border);padding:6px 18px;">14</td>
+            <td style="border:1px solid var(--border);padding:6px 18px;">31</td>
+          </tr>
+        </table>
+        <strong>(1)</strong> \(\mathcal{X}, \mathcal{Y}, \mathcal{D}\)를 집합 꼴로 작성하시오. (각 1점)<br>
+        <strong>(2)</strong> 우도 함수 \(p(\mathcal{Y}|\mathcal{X},\boldsymbol{\theta})\) 유도 과정의 빈 칸을 채우시오. (각 1점)<br>
+        <strong>(3)</strong> Design matrix \(\mathbf{X}\)를 구하고 \(\boldsymbol{\theta}_{ML} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\)로 \(a\)를 구하시오. (7점)
+      </div>
+    </div>
+
+    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">Q3-1</span>
+        <span class="quiz-text">입력 값 벡터 \(\mathcal{X}\), 결과 값 벡터 \(\mathcal{Y}\), Training set \(\mathcal{D}\)를 집합 꼴로 쓰시오.</span>
+        <span class="quiz-tag">기출</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[\mathcal{X} = \{3,\,7,\,15\}, \quad \mathcal{Y} = \{5,\,14,\,31\}\]</div>
+        <div class="amath">\[\mathcal{D} = \bigl\{\{3,5\},\;\{7,14\},\;\{15,31\}\bigr\}\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">Q3-2</span>
+        <span class="quiz-text">Noise를 분산 \(\sigma^2\)인 정규 분포로 가정할 때, 우도 함수 \(p(\mathcal{Y}|\mathcal{X},\boldsymbol{\theta})\)를 유도하시오.</span>
+        <span class="quiz-tag">기출</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        i.i.d. 가정으로 분해:
+        <div class="amath">\[p(\mathcal{Y}|\mathcal{X},\boldsymbol{\theta}) = p(y_1,y_2,y_3|x_1,x_2,x_3,\boldsymbol{\theta}) = \prod_{n=1}^{3} p(y_n\mid[\,x_n\,],[\,a\,])\]</div>
+        모델 \(y = ax + \epsilon\), \(\epsilon \sim \mathcal{N}(0,\sigma^2)\) → \(y_n \sim \mathcal{N}(ax_n, \sigma^2)\):
+        <div class="amath">\[= \prod_{n=1}^{3} \mathcal{N}\!\left(y_n\mid[\,ax_n\,],\,\sigma^2\right)\]</div>
+        빈칸 정답: ① \(x_n\) (또는 \(\boldsymbol{\theta}\)) &nbsp;② \(ax_n\)
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">Q3-3</span>
+        <span class="quiz-text">Design matrix \(\mathbf{X}\)를 구하고, \(\boldsymbol{\theta}_{ML} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\)로 \(a\)를 계산하시오.</span>
+        <span class="quiz-tag">기출</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        \(y = ax\) 모델 (절편 없음) → Design matrix는 \(x\) 열벡터 하나:
+        <div class="amath">\[\mathbf{X} = \begin{bmatrix}3\\7\\15\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}5\\14\\31\end{bmatrix}\]</div>
+        <div class="amath">\[\boldsymbol{\theta}_{ML} = a = \left(\mathbf{X}^T\mathbf{X}\right)^{-1}\mathbf{X}^T\mathbf{y} = \left([3\ 7\ 15]\begin{bmatrix}3\\7\\15\end{bmatrix}\right)^{-1}[3\ 7\ 15]\begin{bmatrix}5\\14\\31\end{bmatrix}\]</div>
+        <div class="amath">\[= \frac{1}{9+49+225}\times(15+98+465) = \frac{578}{283} \approx \boxed{2.042}\]</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 추가 연습 -->
+<section class="concept-section" id="q4-extra">
+  <div class="concept-header">
+    <span class="concept-num">+</span>
+    <div><div class="concept-title">추가 연습 문제</div><div class="concept-en">Extra Practice · 관련 주제 심화</div></div>
+  </div>
+  <div class="concept-body">
+
+    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">E1</span>
+        <span class="quiz-text">Chain / Fork / Collider 패턴 판별: \(A \to C \to B\) (C 관측), \(A \leftarrow C \rightarrow B\) (C 미관측), \(A \to C \leftarrow B\) (C 미관측), \(A \to C \leftarrow B\) (C 관측) 각각 \(A \perp\!\!\!\perp B\) 성립 여부를 답하시오.</span>
+        <span class="quiz-tag">연습</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <ul style="padding-left:20px;line-height:2.2;font-size:13.5px;">
+          <li><strong>(1) Chain, C 관측</strong>: 경로 차단 → \(A \perp\!\!\!\perp B \mid C\) <strong>✓ (T)</strong></li>
+          <li><strong>(2) Fork, C 미관측</strong>: 경로 열림 → \(A \not\perp\!\!\!\perp B\) <strong>✗ (F)</strong></li>
+          <li><strong>(3) Collider, C 미관측</strong>: 자동 차단 → \(A \perp\!\!\!\perp B\) <strong>✓ (T)</strong> ← collider의 핵심!</li>
+          <li><strong>(4) Collider, C 관측</strong>: 경로 활성화 → \(A \not\perp\!\!\!\perp B \mid C\) <strong>✗ (F)</strong></li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">E2</span>
+        <span class="quiz-text">어떤 DAG에서 \(p(A,B,C,D) = p(A)\,p(B)\,p(C|A,B)\,p(D|C)\)가 주어질 때, (1) \(A \perp\!\!\!\perp D \mid C\), (2) \(A \perp\!\!\!\perp B\), (3) \(A \perp\!\!\!\perp B \mid C\) 각각 성립 여부를 판별하시오.</span>
+        <span class="quiz-tag">연습</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        그래프: \(A \to C \leftarrow B\), \(C \to D\)
+        <div class="amath">\[\text{(1) } A \perp\!\!\!\perp D \mid C \;\text{: T} \quad \text{(chain } A \to C \to D \text{에서 } C \text{ 관측 → 차단)}\]</div>
+        <div class="amath">\[\text{(2) } A \perp\!\!\!\perp B \;\text{: T} \quad (p(A,B)=p(A)\,p(B) \text{ 이므로 주변 독립})\]</div>
+        <div class="amath">\[\text{(3) } A \perp\!\!\!\perp B \mid C \;\text{: F} \quad \text{(}C\text{는 collider, 관측 시 경로 활성화!)}\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">E3</span>
+        <span class="quiz-text">\(p(M_1)=0.6\), \(p(M_2)=0.4\), \(p(M_1|\mathcal{D})=0.7\), \(p(M_2|\mathcal{D})=0.3\)일 때, Posterior Odds, Prior Odds, Bayes' Factor를 각각 구하시오.</span>
+        <span class="quiz-tag">연습</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[\text{Posterior Odds} = \frac{0.7}{0.3} = \frac{7}{3}\]</div>
+        <div class="amath">\[\text{Prior Odds} = \frac{0.6}{0.4} = \frac{3}{2}\]</div>
+        <div class="amath">\[B = \frac{\text{Posterior Odds}}{\text{Prior Odds}} = \frac{7/3}{3/2} = \frac{14}{9} \approx 1.56\]</div>
+        \(B > 1\)이므로 \(M_1\)이 데이터를 더 잘 설명한다.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">E4</span>
+        <span class="quiz-text">\(y = ax + b\) 모델로 데이터 \(\{(1,2),(2,4),(3,5)\}\)를 MLE로 추정하시오. Design matrix \(\mathbf{X}\)를 작성하고 Normal equation으로 \(a, b\)를 구하시오.</span>
+        <span class="quiz-tag">연습</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        절편 포함 모델 → Design matrix에 1 열 추가:
+        <div class="amath">\[\mathbf{X} = \begin{bmatrix}1&1\\2&1\\3&1\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}2\\4\\5\end{bmatrix}, \quad \boldsymbol{\theta}=\begin{bmatrix}a\\b\end{bmatrix}\]</div>
+        <div class="amath">\[\mathbf{X}^T\mathbf{X} = \begin{bmatrix}14&6\\6&3\end{bmatrix}, \quad \mathbf{X}^T\mathbf{y} = \begin{bmatrix}25\\11\end{bmatrix}\]</div>
+        <div class="amath">\[(\mathbf{X}^T\mathbf{X})^{-1} = \frac{1}{6}\begin{bmatrix}3&-6\\-6&14\end{bmatrix}\]</div>
+        <div class="amath">\[\boldsymbol{\theta}_{ML} = \frac{1}{6}\begin{bmatrix}3&-6\\-6&14\end{bmatrix}\begin{bmatrix}25\\11\end{bmatrix} = \frac{1}{6}\begin{bmatrix}9\\4\end{bmatrix} \;\Rightarrow\; a=1.5,\; b=\tfrac{2}{3}\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">E5</span>
+        <span class="quiz-text">가우시안 노이즈 가정 하 선형 회귀의 Log-likelihood를 구하고, 이를 최대화하는 것이 최소제곱법(Least Squares)과 동치임을 보이시오.</span>
+        <span class="quiz-tag">연습</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        단일 관측의 우도: \(p(y_n|x_n,\mathbf{w}) = \mathcal{N}(y_n \mid \mathbf{w}^T\boldsymbol{\phi}(x_n), \sigma^2)\)
+        <div class="amath">\[\ln p(\mathbf{y}|\mathbf{X},\mathbf{w}) = -\frac{N}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{n=1}^{N}\!\left(y_n - \mathbf{w}^T\boldsymbol{\phi}(x_n)\right)^2\]</div>
+        Log-likelihood 최대화 ≡ \(\displaystyle\sum_{n=1}^N (y_n - \mathbf{w}^T\boldsymbol{\phi}(x_n))^2\) <strong>최소화</strong> = 최소제곱법(OLS).<br>
+        즉, 가우시안 노이즈 가정 하에서 MLE = OLS는 수학적으로 완전히 동일하다.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
+      <div class="quiz-q">
+        <span class="quiz-num">E6</span>
+        <span class="quiz-text">MLE의 단점과 이를 극복하기 위한 MAP, 베이지안 추론의 차이점을 비교하여 설명하시오.</span>
+        <span class="quiz-tag">연습</span>
+        <span class="quiz-toggle">+</span>
+      </div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>MLE의 단점</strong>: 파라미터를 하나의 점 추정값으로 고정 → 파라미터 불확실성 무시, 소량 데이터에서 overfitting 위험.
+        <div class="amath">\[\boldsymbol{\theta}_{ML} = \underset{\boldsymbol{\theta}}{\arg\max}\; p(\mathcal{D}|\boldsymbol{\theta})\]</div>
+        <strong>MAP</strong>: prior \(p(\boldsymbol{\theta})\) 추가 → 정규화 효과, 여전히 점 추정.
+        <div class="amath">\[\boldsymbol{\theta}_{MAP} = \underset{\boldsymbol{\theta}}{\arg\max}\; p(\boldsymbol{\theta}|\mathcal{D}) = \underset{\boldsymbol{\theta}}{\arg\max}\; p(\mathcal{D}|\boldsymbol{\theta})\,p(\boldsymbol{\theta})\]</div>
+        <strong>Bayesian</strong>: posterior 전체를 유지 → 파라미터 불확실성 정량화, 계산 비용 큼.
+        <div class="amath">\[p(\mathbf{x}_{\text{new}}|\mathcal{D}) = \int p(\mathbf{x}_{\text{new}}|\boldsymbol{\theta})\,p(\boldsymbol{\theta}|\mathcal{D})\,d\boldsymbol{\theta}\]</div>
+      </div></div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /lec-quiz4 -->
+
+
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;text-align:center;">
     <div style="font-size:48px;color:var(--border2);">+</div>
     <div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text3);">강의자료를 추가하세요</div>
@@ -896,6 +1295,13 @@
     document.querySelectorAll('.lecture-tab').forEach(e=>e.classList.remove('active'));
     const t=document.getElementById(id);if(t)t.classList.add('active');
     btn.classList.add('active');
+    // sidebar 전환
+    const lec08Side=document.getElementById('sidebar-lec08');
+    const quiz4Side=document.getElementById('sidebar-quiz4');
+    if(lec08Side&&quiz4Side){
+      lec08Side.style.display=(id==='lec08')?'':'none';
+      quiz4Side.style.display=(id==='lec-quiz4')?'':'none';
+    }
   }
   function setSideActive(el){
     document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
