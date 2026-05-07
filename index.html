@@ -4,700 +4,197 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>기계학습 강의 정리</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <style>
   :root {
-    --bg: #ffffff;
-    --bg2: #f9f9f9;
-    --bg3: #f2f2f2;
-    --text: #0a0a0a;
-    --text2: #444444;
-    --text3: #888888;
-    --border: #e0e0e0;
-    --border2: #cccccc;
-    --accent: #0a0a0a;
-    --hover: #f5f5f5;
-    --serif: 'Noto Serif KR', 'Georgia', serif;
-    --sans: 'Noto Sans KR', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    --bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;
+    --text:#0a0a0a;--text2:#444444;--text3:#888888;
+    --border:#e0e0e0;--border2:#cccccc;--hover:#f5f5f5;
+    --serif:'Noto Serif KR','Georgia',serif;
+    --sans:'Noto Sans KR',sans-serif;
+    --mono:'JetBrains Mono',monospace;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 15px;
-    line-height: 1.75;
-    -webkit-font-smoothing: antialiased;
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased;}
+
+  .site-header{border-bottom:1.5px solid var(--text);padding:28px 48px 20px;display:flex;align-items:flex-end;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:100;}
+  .site-title{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:-0.5px;}
+  .site-subtitle{font-size:12px;color:var(--text3);font-weight:300;letter-spacing:0.5px;}
+
+  .lecture-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 48px;overflow-x:auto;background:var(--bg);position:sticky;top:73px;z-index:99;}
+  .lecture-tab{padding:14px 24px;font-size:13px;font-weight:400;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;border-top:none;border-left:none;border-right:none;background:none;font-family:var(--sans);}
+  .lecture-tab:hover{color:var(--text);background:var(--hover);}
+  .lecture-tab.active{color:var(--text);font-weight:500;border-bottom:2px solid var(--text);}
+  .tab-add{padding:14px 20px;color:var(--text3);cursor:pointer;font-size:18px;line-height:1;background:none;border:none;font-family:var(--sans);transition:color .15s;}
+  .tab-add:hover{color:var(--text);}
+
+  .main-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 120px);}
+
+  .sidebar{border-right:1px solid var(--border);padding:32px 0;position:sticky;top:120px;height:calc(100vh - 120px);overflow-y:auto;}
+  .sidebar::-webkit-scrollbar{width:4px;}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+  .sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:0 24px 8px;margin-top:20px;}
+  .sidebar-item{display:block;padding:8px 24px;font-size:13px;color:var(--text2);text-decoration:none;cursor:pointer;transition:all .12s;border-left:2px solid transparent;line-height:1.4;}
+  .sidebar-item:hover{color:var(--text);background:var(--hover);}
+  .sidebar-item.active{color:var(--text);font-weight:500;border-left:2px solid var(--text);background:var(--bg2);}
+
+  .content{padding:48px 64px 80px;max-width:860px;}
+  .lecture-content{display:none;}
+  .lecture-content.active{display:block;}
+
+  .lecture-intro{margin-bottom:56px;padding-bottom:40px;border-bottom:1px solid var(--border);}
+  .lecture-no{font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+  .lecture-title{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-1px;margin-bottom:16px;}
+  .lecture-desc{font-size:15px;color:var(--text2);line-height:1.8;max-width:640px;}
+  .lecture-meta{display:flex;gap:24px;margin-top:20px;}
+  .meta-item{font-size:12px;color:var(--text3);}
+  .meta-item span{color:var(--text);font-weight:500;}
+
+  .concept-section{margin-bottom:56px;scroll-margin-top:140px;}
+  .concept-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+  .concept-num{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;min-width:28px;}
+  .concept-title{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-0.5px;}
+  .concept-en{font-size:13px;color:var(--text3);font-weight:300;}
+  .concept-body{font-size:14.5px;line-height:1.85;color:var(--text2);}
+  .concept-body p{margin-bottom:14px;}
+  .concept-body strong{color:var(--text);font-weight:500;}
+
+  .key-box{border:1px solid var(--border2);border-left:3px solid var(--text);padding:18px 20px;margin:20px 0;background:var(--bg2);border-radius:0 4px 4px 0;}
+  .key-box-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+  .key-box-content{font-size:14px;color:var(--text);line-height:1.8;}
+
+  /* ── KaTeX 수식 블록 ── */
+  .fblock{
+    background:var(--bg);
+    border:1px solid var(--border2);
+    border-left:3px solid var(--text);
+    border-radius:0 6px 6px 0;
+    margin:28px 0;
+    overflow:hidden;
+  }
+  .fblock-label{
+    font-family:var(--sans);font-size:10px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--text3);padding:10px 24px;
+    border-bottom:1px solid var(--border);
+    background:var(--bg2);
+  }
+  .fblock-body{padding:24px 32px;}
+
+  /* display 수식: 가운데 정렬, 충분한 여백 */
+  .feq-d{
+    text-align:center;
+    padding:14px 0;
+    overflow-x:auto;
+    overflow-y:visible;
+  }
+  .feq-d .katex-display{margin:0!important;}
+
+  /* 수식 행: 수식 위 / 설명 아래 (세로 배치로 가독성 향상) */
+  .feq-row{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:14px 0;
+    align-items:center;
+  }
+  .feq-row .katex-display{margin:0!important;}
+  .feq-note{
+    font-family:var(--sans);font-size:12px;
+    color:var(--text3);font-style:italic;
+    line-height:1.6;text-align:center;
+    max-width:520px;
   }
 
-  /* ── HEADER ── */
-  .site-header {
-    border-bottom: 1.5px solid var(--text);
-    padding: 28px 48px 20px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 100;
-  }
-  .site-title {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-  .site-subtitle {
-    font-size: 12px;
-    color: var(--text3);
-    font-weight: 300;
-    letter-spacing: 0.5px;
+  /* 구분선 */
+  .feq-d+.feq-d,.feq-row+.feq-d,.feq-d+.feq-row,.feq-row+.feq-row{
+    border-top:1px dashed var(--border);
   }
 
-  /* ── LECTURE TABS ── */
-  .lecture-tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 0 48px;
-    overflow-x: auto;
-    background: var(--bg);
-    position: sticky;
-    top: 73px;
-    z-index: 99;
-  }
-  .lecture-tab {
-    padding: 14px 24px;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--text3);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: all 0.15s;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    background: none;
-    font-family: var(--sans);
-  }
-  .lecture-tab:hover { color: var(--text); background: var(--hover); }
-  .lecture-tab.active {
-    color: var(--text);
-    font-weight: 500;
-    border-bottom: 2px solid var(--text);
-  }
-  .tab-add {
-    padding: 14px 20px;
-    color: var(--text3);
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    background: none;
-    border: none;
-    font-family: var(--sans);
-    margin-left: 4px;
-    transition: color 0.15s;
-  }
-  .tab-add:hover { color: var(--text); }
+  /* 수식 크기 — display 수식을 본문보다 15% 크게 */
+  .katex{font-size:1.05em;}
+  .feq-d .katex,.feq-row .katex{font-size:1.15em;}
+  .amath .katex{font-size:1.12em;}
 
-  /* ── LAYOUT ── */
-  .main-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    min-height: calc(100vh - 120px);
-  }
+  .concept-list{list-style:none;margin:16px 0;}
+  .concept-list li{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;align-items:baseline;}
+  .concept-list li:last-child{border-bottom:none;}
+  .cl-key{font-weight:500;color:var(--text);min-width:180px;font-size:13px;flex-shrink:0;}
+  .cl-val{color:var(--text2);flex:1;}
 
-  /* ── SIDEBAR ── */
-  .sidebar {
-    border-right: 1px solid var(--border);
-    padding: 32px 0;
-    position: sticky;
-    top: 120px;
-    height: calc(100vh - 120px);
-    overflow-y: auto;
-  }
-  .sidebar::-webkit-scrollbar { width: 4px; }
-  .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-  .sidebar-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text3);
-    padding: 0 24px 8px;
-    margin-top: 20px;
-  }
-  .sidebar-item {
-    display: block;
-    padding: 8px 24px;
-    font-size: 13px;
-    color: var(--text2);
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.12s;
-    border-left: 2px solid transparent;
-    line-height: 1.4;
-  }
-  .sidebar-item:hover { color: var(--text); background: var(--hover); }
-  .sidebar-item.active {
-    color: var(--text);
-    font-weight: 500;
-    border-left: 2px solid var(--text);
-    background: var(--bg2);
-  }
-  .sidebar-sub {
-    padding: 6px 24px 6px 36px;
-    font-size: 12px;
-    color: var(--text3);
-    cursor: pointer;
-    transition: all 0.12s;
-    display: block;
-    text-decoration: none;
-  }
-  .sidebar-sub:hover { color: var(--text2); }
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:20px 0;}
+  .compare-cell{background:var(--bg);padding:12px 14px;font-size:13px;}
+  .compare-cell.header{background:var(--bg3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);}
+  .compare-cell.hl{background:var(--bg2);}
 
-  /* ── CONTENT ── */
-  .content {
-    padding: 48px 64px 80px;
-    max-width: 860px;
-  }
-  .lecture-content { display: none; }
-  .lecture-content.active { display: block; }
+  .mml-ref{display:inline-flex;align-items:center;font-size:11px;color:var(--text3);border:1px solid var(--border);padding:3px 10px;border-radius:20px;}
 
-  .lecture-intro {
-    margin-bottom: 56px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid var(--border);
-  }
-  .lecture-no {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 12px;
-  }
-  .lecture-title {
-    font-family: var(--serif);
-    font-size: 36px;
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -1px;
-    margin-bottom: 16px;
-  }
-  .lecture-desc {
-    font-size: 15px;
-    color: var(--text2);
-    line-height: 1.8;
-    max-width: 640px;
-  }
-  .lecture-meta {
-    display: flex;
-    gap: 24px;
-    margin-top: 20px;
-  }
-  .meta-item {
-    font-size: 12px;
-    color: var(--text3);
-  }
-  .meta-item span {
-    color: var(--text);
-    font-weight: 500;
-  }
+  .overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:24px 0;}
+  .overview-card{border:1px solid var(--border);border-radius:6px;padding:16px;cursor:pointer;transition:all .15s;text-decoration:none;display:block;}
+  .overview-card:hover{border-color:var(--text);background:var(--hover);}
+  .ov-num{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);margin-bottom:6px;}
+  .ov-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:4px;}
+  .ov-en{font-size:11px;color:var(--text3);}
 
-  /* ── CONCEPT SECTION ── */
-  .concept-section {
-    margin-bottom: 56px;
-    scroll-margin-top: 140px;
-  }
-  .concept-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .concept-num {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text3);
-    letter-spacing: 1px;
-    min-width: 28px;
-  }
-  .concept-title {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-  }
-  .concept-en {
-    font-size: 13px;
-    color: var(--text3);
-    font-weight: 300;
-  }
-  .concept-body {
-    font-size: 14.5px;
-    line-height: 1.85;
-    color: var(--text2);
-  }
-  .concept-body p { margin-bottom: 14px; }
-  .concept-body strong { color: var(--text); font-weight: 500; }
+  /* ── QUIZ ── */
+  .quiz-section{margin-top:56px;padding-top:40px;border-top:1.5px solid var(--text);}
+  .quiz-header{display:flex;align-items:baseline;gap:16px;margin-bottom:32px;}
+  .quiz-title{font-family:var(--serif);font-size:26px;font-weight:700;letter-spacing:-0.5px;}
+  .quiz-count{font-size:13px;color:var(--text3);}
+  .quiz-card{border:1px solid var(--border);border-radius:6px;margin-bottom:16px;overflow:hidden;transition:border-color .15s;}
+  .quiz-card:hover{border-color:var(--border2);}
+  .quiz-q{display:flex;gap:16px;align-items:flex-start;padding:20px 24px;cursor:pointer;user-select:none;}
+  .quiz-num{font-size:12px;font-weight:700;color:var(--text3);min-width:24px;padding-top:2px;}
+  .quiz-text{font-size:14.5px;line-height:1.7;flex:1;}
+  .quiz-tag{font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .quiz-toggle{color:var(--text3);font-size:18px;line-height:1;transition:transform .2s;min-width:20px;text-align:center;}
+  .quiz-card.open .quiz-toggle{transform:rotate(45deg);}
+  .quiz-answer{display:none;padding:0 24px 24px 64px;border-top:1px solid var(--border);background:var(--bg2);}
+  .quiz-card.open .quiz-answer{display:block;}
+  .answer-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding-top:18px;margin-bottom:12px;}
+  .answer-body{font-size:14px;color:var(--text2);line-height:1.85;}
+  .answer-body strong{color:var(--text);font-weight:500;}
+  /* 퀴즈 안 display 수식 */
+  .amath{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:16px 20px;margin:12px 0;text-align:center;overflow-x:auto;}
+  .amath .katex-display{margin:0!important;}
 
-  /* ── KEY POINT BOX ── */
-  .key-box {
-    border: 1px solid var(--border2);
-    border-left: 3px solid var(--text);
-    padding: 18px 20px;
-    margin: 20px 0;
-    background: var(--bg2);
-    border-radius: 0 4px 4px 0;
-  }
-  .key-box-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 8px;
-  }
-  .key-box-content {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.8;
-  }
+  .quiz-progress{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+  .progress-track{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--text);border-radius:2px;transition:width .3s;width:0%;}
+  .progress-label{font-size:12px;color:var(--text3);white-space:nowrap;}
 
-  /* ── FORMULA BOX ── */
-  .formula-box {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 24px;
-    margin: 20px 0;
-    font-family: var(--mono);
-    font-size: 14px;
-    color: var(--text);
-    line-height: 2;
-    overflow-x: auto;
-  }
-  .formula-label {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: 10px;
-  }
-  .formula-row {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .formula-eq {
-    font-family: var(--mono);
-    font-size: 14px;
-  }
-  .formula-desc {
-    font-family: var(--sans);
-    font-size: 12px;
-    color: var(--text3);
-    font-style: italic;
-  }
+  .tag-cloud{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+  .tag{font-size:12px;border:1px solid var(--border2);padding:4px 12px;border-radius:20px;color:var(--text2);cursor:pointer;transition:all .12s;}
+  .tag:hover,.tag.active{background:var(--text);color:var(--bg);border-color:var(--text);}
 
-  /* ── CONCEPT LIST ── */
-  .concept-list {
-    list-style: none;
-    margin: 16px 0;
-  }
-  .concept-list li {
-    display: flex;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-  .concept-list li:last-child { border-bottom: none; }
-  .cl-key {
-    font-weight: 500;
-    color: var(--text);
-    min-width: 160px;
-    font-size: 13px;
-  }
-  .cl-val { color: var(--text2); flex: 1; }
+  .scroll-top{position:fixed;bottom:32px;right:32px;width:40px;height:40px;background:var(--text);color:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;z-index:200;}
+  .scroll-top.visible{opacity:1;}
 
-  /* ── TABLE ── */
-  .concept-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 13.5px;
-  }
-  .concept-table th {
-    text-align: left;
-    padding: 10px 14px;
-    border-bottom: 1.5px solid var(--text);
-    font-weight: 500;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-  }
-  .concept-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text2);
-    vertical-align: top;
-    line-height: 1.6;
-  }
-  .concept-table tr:last-child td { border-bottom: none; }
-  .concept-table tr:hover td { background: var(--hover); }
+  .search-bar{display:flex;align-items:center;gap:10px;margin:0 48px 0 auto;}
+  .search-input{border:1px solid var(--border);background:var(--bg2);padding:6px 14px;border-radius:20px;font-size:13px;font-family:var(--sans);color:var(--text);width:200px;outline:none;transition:all .15s;}
+  .search-input:focus{border-color:var(--border2);background:var(--bg);width:260px;}
+  .search-input::placeholder{color:var(--text3);}
 
-  /* ── MML REFERENCE ── */
-  .mml-ref {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: var(--text3);
-    border: 1px solid var(--border);
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin: 4px 0;
-    font-weight: 400;
-    vertical-align: middle;
-  }
+  #addTabModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
 
-  /* ── DIVIDER ── */
-  .section-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 48px 0;
-  }
+  .site-footer{border-top:1px solid var(--border);padding:24px 48px;display:flex;justify-content:space-between;align-items:center;}
+  .footer-text{font-size:12px;color:var(--text3);}
 
-  /* ── QUIZ SECTION ── */
-  .quiz-section {
-    margin-top: 56px;
-    padding-top: 40px;
-    border-top: 1.5px solid var(--text);
+  @media(max-width:900px){
+    .main-layout{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .content{padding:32px 24px 60px;}
+    .site-header{padding:20px 24px 16px;}
+    .lecture-tabs{padding:0 24px;}
+    .compare-grid{grid-template-columns:1fr;}
+    .search-bar{display:none;}
   }
-  .quiz-header {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-  .quiz-title {
-    font-family: var(--serif);
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-  }
-  .quiz-count {
-    font-size: 13px;
-    color: var(--text3);
-  }
-
-  .quiz-card {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-bottom: 16px;
-    overflow: hidden;
-    transition: border-color 0.15s;
-  }
-  .quiz-card:hover { border-color: var(--border2); }
-  .quiz-q {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    padding: 20px 24px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .quiz-num {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text3);
-    min-width: 24px;
-    padding-top: 2px;
-  }
-  .quiz-text { font-size: 14.5px; line-height: 1.7; flex: 1; }
-  .quiz-tag {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: var(--text3);
-    border: 1px solid var(--border);
-    padding: 3px 8px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-  .quiz-toggle {
-    color: var(--text3);
-    font-size: 18px;
-    line-height: 1;
-    transition: transform 0.2s;
-    min-width: 20px;
-    text-align: center;
-  }
-  .quiz-card.open .quiz-toggle { transform: rotate(45deg); }
-  .quiz-answer {
-    display: none;
-    padding: 0 24px 20px 64px;
-    border-top: 1px solid var(--border);
-    background: var(--bg2);
-  }
-  .quiz-card.open .quiz-answer { display: block; }
-  .answer-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text3);
-    padding-top: 16px;
-    margin-bottom: 10px;
-  }
-  .answer-body {
-    font-size: 14px;
-    color: var(--text2);
-    line-height: 1.85;
-  }
-  .answer-body strong { color: var(--text); font-weight: 500; }
-  .answer-formula {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 12px 16px;
-    margin: 10px 0;
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-  }
-
-  /* ── PROGRESS BAR ── */
-  .quiz-progress {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  .progress-track {
-    flex: 1;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--text);
-    border-radius: 2px;
-    transition: width 0.3s;
-    width: 0%;
-  }
-  .progress-label { font-size: 12px; color: var(--text3); white-space: nowrap; }
-
-  /* ── TAG CLOUD ── */
-  .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 16px 0;
-  }
-  .tag {
-    font-size: 12px;
-    border: 1px solid var(--border2);
-    padding: 4px 12px;
-    border-radius: 20px;
-    color: var(--text2);
-    cursor: pointer;
-    transition: all 0.12s;
-  }
-  .tag:hover, .tag.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-  /* ── OVERVIEW CARDS ── */
-  .overview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin: 24px 0;
-  }
-  .overview-card {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-decoration: none;
-  }
-  .overview-card:hover { border-color: var(--text); background: var(--hover); }
-  .ov-num {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text3);
-    margin-bottom: 6px;
-  }
-  .ov-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.4;
-    margin-bottom: 4px;
-  }
-  .ov-en { font-size: 11px; color: var(--text3); }
-
-  /* ── COMPARE TABLE ── */
-  .compare-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 20px 0;
-  }
-  .compare-cell {
-    background: var(--bg);
-    padding: 16px;
-  }
-  .compare-cell.header {
-    background: var(--bg3);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text3);
-  }
-  .compare-cell.highlight { background: var(--bg2); }
-
-  /* ── FOOTER ── */
-  .site-footer {
-    border-top: 1px solid var(--border);
-    padding: 24px 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-text { font-size: 12px; color: var(--text3); }
-
-  /* ── TOOLTIP ── */
-  [data-tooltip] { position: relative; }
-  [data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text);
-    color: var(--bg);
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    margin-bottom: 6px;
-    z-index: 999;
-  }
-
-  /* ── SCROLL INDICATOR ── */
-  .scroll-top {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    width: 40px;
-    height: 40px;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 200;
-  }
-  .scroll-top.visible { opacity: 1; }
-
-  /* ── SEARCH BAR ── */
-  .search-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 48px 0 auto;
-  }
-  .search-input {
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-family: var(--sans);
-    color: var(--text);
-    width: 200px;
-    outline: none;
-    transition: all 0.15s;
-  }
-  .search-input:focus { border-color: var(--border2); background: var(--bg); width: 260px; }
-  .search-input::placeholder { color: var(--text3); }
-
-  @media (max-width: 900px) {
-    .main-layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .content { padding: 32px 24px 60px; }
-    .site-header { padding: 20px 24px 16px; }
-    .lecture-tabs { padding: 0 24px; }
-    .compare-grid { grid-template-columns: 1fr; }
-    .search-bar { display: none; }
-  }
-
-  /* ── INTUITION BOX ── */
-  .intuition-box {
-    border: 1px solid #c8d8f0;
-    border-left: 3px solid #3a7bd5;
-    padding: 16px 20px;
-    margin: 18px 0;
-    background: #f0f5fc;
-    border-radius: 0 4px 4px 0;
-  }
-  .intuition-box .key-box-label { color: #3a7bd5; }
-
-  /* ── WARN BOX ── */
-  .warn-box {
-    border: 1px solid #e0c8a0;
-    border-left: 3px solid #c87d20;
-    padding: 16px 20px;
-    margin: 18px 0;
-    background: #fdf6ec;
-    border-radius: 0 4px 4px 0;
-  }
-  .warn-box .key-box-label { color: #c87d20; }
-
-  /* ── STEP LIST ── */
-  .step-list { margin: 16px 0; }
-  .step-item { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .step-item:last-child { border-bottom: none; }
-  .step-num {
-    min-width: 26px; height: 26px; border-radius: 50%;
-    background: var(--text); color: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
-  }
-  .step-body { color: var(--text2); flex: 1; line-height: 1.7; }
-  .step-body strong { color: var(--text); }
-
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="site-header">
   <div>
     <div class="site-title">기계학습 강의 정리</div>
@@ -708,1124 +205,668 @@
   </div>
 </header>
 
-<!-- LECTURE TABS -->
 <div class="lecture-tabs" id="lectureTabs">
-  <button class="lecture-tab active" onclick="switchLecture('lec08', this)">Lec 08 · Data &amp; Models</button>
-  <button class="tab-add" onclick="showAddTab()" title="강의자료 추가">+</button>
+  <button class="lecture-tab active" onclick="switchLecture('lec08',this)">Lec 08 · Data &amp; Models</button>
+  <button class="tab-add" onclick="showAddTab()">+</button>
 </div>
 
-<!-- MAIN -->
 <div class="main-layout">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-section-label">강의 개요</div>
+  <a class="sidebar-item active" href="#lec08-intro" onclick="setSideActive(this)">개요 · Overview</a>
+  <div class="sidebar-section-label">핵심 개념</div>
+  <a class="sidebar-item" href="#sec-vectorize"  onclick="setSideActive(this)">1 · 데이터 벡터화</a>
+  <a class="sidebar-item" href="#sec-model-types" onclick="setSideActive(this)">2 · 모델의 종류</a>
+  <a class="sidebar-item" href="#sec-learning"    onclick="setSideActive(this)">3 · 학습의 구성</a>
+  <a class="sidebar-item" href="#sec-erm"         onclick="setSideActive(this)">4 · 경험적 위험 최소화</a>
+  <a class="sidebar-item" href="#sec-overfit"     onclick="setSideActive(this)">5 · 오버피팅 &amp; 정규화</a>
+  <a class="sidebar-item" href="#sec-cv"          onclick="setSideActive(this)">6 · 교차검증</a>
+  <a class="sidebar-item" href="#sec-mle"         onclick="setSideActive(this)">7 · 최대 우도 추정</a>
+  <a class="sidebar-item" href="#sec-map"         onclick="setSideActive(this)">8 · 최대 사후 추정</a>
+  <a class="sidebar-item" href="#sec-bayes"       onclick="setSideActive(this)">9 · 베이지안 추론</a>
+  <a class="sidebar-item" href="#sec-latent"      onclick="setSideActive(this)">10 · 잠재 변인 모델</a>
+  <a class="sidebar-item" href="#sec-model-sel"   onclick="setSideActive(this)">11 · 모델 선택</a>
+  <div class="sidebar-section-label">연습 문제</div>
+  <a class="sidebar-item" href="#quiz-section" onclick="setSideActive(this)">연습 문제 풀기</a>
+</nav>
 
-  <!-- SIDEBAR -->
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-section-label">강의 개요</div>
-    <a class="sidebar-item active" href="#lec08-intro" onclick="setSideActive(this)">개요 · Overview</a>
+<main class="content">
+<div class="lecture-content active" id="lec08">
 
-    <div class="sidebar-section-label">핵심 개념</div>
-    <a class="sidebar-item" href="#sec-vectorize" onclick="setSideActive(this)">1 · 데이터 벡터화</a>
-    <a class="sidebar-item" href="#sec-model-types" onclick="setSideActive(this)">2 · 모델의 종류</a>
-    <a class="sidebar-item" href="#sec-learning" onclick="setSideActive(this)">3 · 학습의 구성</a>
-    <a class="sidebar-item" href="#sec-erm" onclick="setSideActive(this)">4 · 경험적 위험 최소화</a>
-    <a class="sidebar-item" href="#sec-overfit" onclick="setSideActive(this)">5 · 오버피팅 &amp; 정규화</a>
-    <a class="sidebar-item" href="#sec-cv" onclick="setSideActive(this)">6 · 교차검증</a>
-    <a class="sidebar-item" href="#sec-mle" onclick="setSideActive(this)">7 · 최대 우도 추정</a>
-    <a class="sidebar-item" href="#sec-map" onclick="setSideActive(this)">8 · 최대 사후 추정</a>
-    <a class="sidebar-item" href="#sec-bayes" onclick="setSideActive(this)">9 · 베이지안 추론</a>
-    <a class="sidebar-item" href="#sec-latent" onclick="setSideActive(this)">10 · 잠재 변인 모델</a>
-    <a class="sidebar-item" href="#sec-model-sel" onclick="setSideActive(this)">11 · 모델 선택</a>
+<!-- INTRO -->
+<section class="lecture-intro" id="lec08-intro">
+  <div class="lecture-no">Lecture 08</div>
+  <h1 class="lecture-title">Data, and Learning Models</h1>
+  <p class="lecture-desc">기계학습 문제를 풀기 위해 데이터를 어떻게 표현하고, 어떤 모델을 세우며, 어떤 알고리즘으로 파라미터를 추정하는지를 배운다. 함수형 모델과 확률 분포 모델의 차이, 그리고 MLE·MAP·베이지안 추론의 계보를 정리한다.</p>
+  <div class="lecture-meta">
+    <div class="meta-item">강의자 <span>Sukmin Yun</span></div>
+    <div class="meta-item">MML 참고 <span>Ch. 8</span></div>
+    <div class="meta-item">핵심 개념 <span>11가지</span></div>
+  </div>
+  <div class="overview-grid" style="margin-top:28px;">
+    <a class="overview-card" href="#sec-vectorize"><div class="ov-num">01</div><div class="ov-title">데이터 벡터화</div><div class="ov-en">Feature Engineering</div></a>
+    <a class="overview-card" href="#sec-model-types"><div class="ov-num">02</div><div class="ov-title">모델의 종류</div><div class="ov-en">Function vs. Distribution</div></a>
+    <a class="overview-card" href="#sec-learning"><div class="ov-num">03</div><div class="ov-title">학습의 구성</div><div class="ov-en">ML Pipeline</div></a>
+    <a class="overview-card" href="#sec-erm"><div class="ov-num">04</div><div class="ov-title">경험적 위험 최소화</div><div class="ov-en">ERM</div></a>
+    <a class="overview-card" href="#sec-overfit"><div class="ov-num">05</div><div class="ov-title">오버피팅</div><div class="ov-en">Overfitting</div></a>
+    <a class="overview-card" href="#sec-cv"><div class="ov-num">06</div><div class="ov-title">교차검증</div><div class="ov-en">Cross-Validation</div></a>
+    <a class="overview-card" href="#sec-mle"><div class="ov-num">07</div><div class="ov-title">최대 우도 추정</div><div class="ov-en">MLE</div></a>
+    <a class="overview-card" href="#sec-map"><div class="ov-num">08</div><div class="ov-title">최대 사후 추정</div><div class="ov-en">MAP</div></a>
+    <a class="overview-card" href="#sec-bayes"><div class="ov-num">09</div><div class="ov-title">베이지안 추론</div><div class="ov-en">Bayesian Inference</div></a>
+    <a class="overview-card" href="#sec-latent"><div class="ov-num">10</div><div class="ov-title">잠재 변인 모델</div><div class="ov-en">Latent Variable</div></a>
+    <a class="overview-card" href="#sec-model-sel"><div class="ov-num">11</div><div class="ov-title">모델 선택</div><div class="ov-en">Model Selection</div></a>
+  </div>
+</section>
 
-    <div class="sidebar-section-label">연습 문제</div>
-    <a class="sidebar-item" href="#quiz-section" onclick="setSideActive(this)">연습 문제 풀기</a>
-  </nav>
+<!-- 01 데이터 벡터화 -->
+<section class="concept-section" id="sec-vectorize">
+  <div class="concept-header">
+    <span class="concept-num">01</span>
+    <div><div class="concept-title">데이터 벡터화</div><div class="concept-en">Data Vectorization / Feature Engineering</div></div>
+    <span class="mml-ref">MML §8.1</span>
+  </div>
+  <div class="concept-body">
+    <p>현실의 데이터는 그 자체로는 기계학습 알고리즘에 바로 쓸 수 없다. 반드시 <strong>실수 벡터</strong>로 가공해야 한다. 이 과정에서 얻어지는 각 차원의 값을 <strong>feature</strong>, attribute, covariate 등으로 부른다.</p>
+    <div class="key-box">
+      <div class="key-box-label">핵심 원칙</div>
+      <div class="key-box-content">원시 데이터 → 전처리 → 실수 벡터 \(\mathbf{x}_i \in \mathbb{R}^D\). 이후 기계학습 알고리즘에 투입.</div>
+    </div>
+    <ul class="concept-list">
+      <li><span class="cl-key">이름(Name)</span><span class="cl-val">의미 없음 → 삭제</span></li>
+      <li><span class="cl-key">성별(Gender)</span><span class="cl-val">범주형 → 수치 레이블 (예: M=−1, F=+1)</span></li>
+      <li><span class="cl-key">학위(Degree)</span><span class="cl-val">순서형 → Leveling (BSc=1, MSc=2, PhD=3 등)</span></li>
+      <li><span class="cl-key">우편번호(Postcode)</span><span class="cl-val">지역 코드 → 위도/경도로 변환</span></li>
+      <li><span class="cl-key">나이, 연봉</span><span class="cl-val">이미 실수 → 그대로 사용 (필요시 정규화)</span></li>
+    </ul>
+  </div>
+</section>
 
-  <!-- CONTENT AREA -->
-  <main class="content">
+<!-- 02 모델의 종류 -->
+<section class="concept-section" id="sec-model-types">
+  <div class="concept-header">
+    <span class="concept-num">02</span>
+    <div><div class="concept-title">모델의 종류</div><div class="concept-en">Function Model vs. Probabilistic Model</div></div>
+    <span class="mml-ref">MML §8.1</span>
+  </div>
+  <div class="concept-body">
+    <p>같은 입력 데이터에 대해 출력을 어떻게 정의하느냐에 따라 두 종류의 모델이 존재한다.</p>
+    <div class="compare-grid">
+      <div class="compare-cell header">구분</div><div class="compare-cell header">함수 모델</div><div class="compare-cell header">확률 분포 모델</div>
+      <div class="compare-cell hl">출력 형태</div><div class="compare-cell">단일 실수값 \(\hat{y}\in\mathbb{R}\)</div><div class="compare-cell">확률 분포 \(p(y\mid\mathbf{x})\)</div>
+      <div class="compare-cell hl">표현</div><div class="compare-cell">\(f:\mathbb{R}^D\to\mathbb{R}\)</div><div class="compare-cell">\(p(y\mid\mathbf{x},\boldsymbol{\theta})\)</div>
+      <div class="compare-cell hl">불확실성</div><div class="compare-cell">표현 불가</div><div class="compare-cell">명시적으로 표현 가능</div>
+      <div class="compare-cell hl">학습 방법</div><div class="compare-cell">ERM</div><div class="compare-cell">MLE / MAP / Bayesian</div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">변수 선정 예시</div>
+      <div class="key-box-content">"소득 수준은 연령과 관계 있다" → \(x\): 연령, \(y\): 소득, 모델: \(y=f(x)\)<br>같은 \(x=60\)세에 대해 함수 모델은 단일 값, 확률 모델은 분포(예: Gaussian)를 반환한다.</div>
+    </div>
+  </div>
+</section>
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- LECTURE 08 -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div class="lecture-content active" id="lec08">
+<!-- 03 학습의 구성 -->
+<section class="concept-section" id="sec-learning">
+  <div class="concept-header">
+    <span class="concept-num">03</span>
+    <div><div class="concept-title">학습의 구성</div><div class="concept-en">ML Pipeline: Learning = Parameter Finding</div></div>
+    <span class="mml-ref">MML §8.2</span>
+  </div>
+  <div class="concept-body">
+    <p>기계학습 알고리즘은 일반적으로 세 단계로 구성된다.</p>
+    <ul class="concept-list">
+      <li><span class="cl-key">① 예측/추론</span><span class="cl-val">학습된 모델에 새 \(\mathbf{x}\)를 넣어 \(\hat{y}\) 또는 \(p(y\mid\mathbf{x})\)를 계산한다.</span></li>
+      <li><span class="cl-key">② 파라미터 추정</span><span class="cl-val">주어진 데이터로 모델 파라미터 \(\boldsymbol{\theta}\)를 최적화한다. (Training)</span></li>
+      <li><span class="cl-key">③ 모델 선택</span><span class="cl-val">어떤 형태의 함수·모델이 적합한지 결정한다. (Hyperparameter Tuning)</span></li>
+    </ul>
+    <div class="key-box">
+      <div class="key-box-label">파라미터 vs. 하이퍼파라미터</div>
+      <div class="key-box-content"><strong>파라미터 \(\boldsymbol{\theta}\)</strong>: 데이터로부터 학습되는 값. 예: 선형회귀의 기울기 \(a\), 절편 \(b\).<br><strong>하이퍼파라미터</strong>: 사람이 미리 정하는 값. 예: 정규화 강도 \(\lambda\), 다항식 차수 \(d\). 교차검증으로 선택.</div>
+    </div>
+  </div>
+</section>
 
-      <!-- INTRO -->
-      <section class="lecture-intro" id="lec08-intro">
-        <div class="lecture-no">Lecture 08</div>
-        <h1 class="lecture-title">Data, and Learning Models</h1>
-        <p class="lecture-desc">
-          기계학습 문제를 풀기 위해 데이터를 어떻게 표현하고, 어떤 모델을 세우며, 어떤 알고리즘으로 파라미터를 추정하는지를 배운다.
-          함수형 모델과 확률 분포 모델의 차이, 그리고 MLE·MAP·베이지안 추론의 계보를 정리한다.
-        </p>
-        <div class="lecture-meta">
-          <div class="meta-item">강의자 <span>Sukmin Yun</span></div>
-          <div class="meta-item">MML 참고 <span>Ch. 8</span></div>
-          <div class="meta-item">핵심 개념 <span>11가지</span></div>
+<!-- 04 ERM -->
+<section class="concept-section" id="sec-erm">
+  <div class="concept-header">
+    <span class="concept-num">04</span>
+    <div><div class="concept-title">경험적 위험 최소화</div><div class="concept-en">Empirical Risk Minimization (ERM)</div></div>
+    <span class="mml-ref">MML §8.2</span>
+  </div>
+  <div class="concept-body">
+    <p>예측인자(predictor)가 함수형일 때, 데이터셋 전체의 평균 오차를 <strong>경험적 위험(Empirical Risk)</strong>으로 정의하고 이를 최소화하는 파라미터를 찾는다.</p>
+
+    <div class="fblock">
+      <div class="fblock-label">Loss Function</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\ell(y_n,\,\hat{y}_n)\]</div>
+          <div class="feq-note">실제값과 예측값의 차이를 non-negative 값으로 변환한 함수</div>
         </div>
-        <div style="margin-top:28px;">
-          <div class="overview-grid">
-            <a class="overview-card" href="#sec-vectorize"><div class="ov-num">01</div><div class="ov-title">데이터 벡터화</div><div class="ov-en">Feature Engineering</div></a>
-            <a class="overview-card" href="#sec-model-types"><div class="ov-num">02</div><div class="ov-title">모델의 종류</div><div class="ov-en">Function vs. Distribution</div></a>
-            <a class="overview-card" href="#sec-learning"><div class="ov-num">03</div><div class="ov-title">학습의 구성</div><div class="ov-en">ML Pipeline</div></a>
-            <a class="overview-card" href="#sec-erm"><div class="ov-num">04</div><div class="ov-title">경험적 위험 최소화</div><div class="ov-en">ERM</div></a>
-            <a class="overview-card" href="#sec-overfit"><div class="ov-num">05</div><div class="ov-title">오버피팅</div><div class="ov-en">Overfitting</div></a>
-            <a class="overview-card" href="#sec-cv"><div class="ov-num">06</div><div class="ov-title">교차검증</div><div class="ov-en">Cross-Validation</div></a>
-            <a class="overview-card" href="#sec-mle"><div class="ov-num">07</div><div class="ov-title">최대 우도 추정</div><div class="ov-en">MLE</div></a>
-            <a class="overview-card" href="#sec-map"><div class="ov-num">08</div><div class="ov-title">최대 사후 추정</div><div class="ov-en">MAP</div></a>
-            <a class="overview-card" href="#sec-bayes"><div class="ov-num">09</div><div class="ov-title">베이지안 추론</div><div class="ov-en">Bayesian Inference</div></a>
-            <a class="overview-card" href="#sec-latent"><div class="ov-num">10</div><div class="ov-title">잠재 변인 모델</div><div class="ov-en">Latent Variable</div></a>
-            <a class="overview-card" href="#sec-model-sel"><div class="ov-num">11</div><div class="ov-title">모델 선택</div><div class="ov-en">Model Selection</div></a>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- ─── 1. 데이터 벡터화 ─── -->
-      <section class="concept-section" id="sec-vectorize">
-        <div class="concept-header">
-          <span class="concept-num">01</span>
-          <div>
-            <div class="concept-title">데이터 벡터화</div>
-            <div class="concept-en">Data Vectorization / Feature Engineering</div>
-          </div>
-          <span class="mml-ref">MML §8.1</span>
-        </div>
-        <div class="concept-body">
-          <p>현실 데이터(텍스트, 이미지, 표 등)는 바로 수식에 넣을 수 없다. 기계학습 알고리즘은 수치 연산을 하기 때문에, 모든 입력을 반드시 <strong>실수 벡터 xᵢ ∈ ℝᴰ</strong>로 변환해야 한다. 이 변환 과정이 <strong>feature engineering</strong>이며, 결과로 얻어지는 각 차원의 값을 feature, attribute, covariate라고 부른다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 직관적 이해</div>
-            <div class="key-box-content">
-              사람의 정보를 "주민등록증 숫자들"로 정리하는 것과 같다. 이름, 성별 같은 텍스트 정보를 숫자 코드로 바꿔야 컴퓨터가 계산에 쓸 수 있다. 이 과정에서 어떤 숫자를 어떻게 부여하느냐가 모델 성능에 직접 영향을 미친다.
-            </div>
-          </div>
-
-          <p><strong>전처리 예시 (강의 예제 기준)</strong></p>
-          <ul class="concept-list">
-            <li><span class="cl-key">이름(Name)</span><span class="cl-val">예측에 무관한 정보 → 삭제 (dimensionality 감소)</span></li>
-            <li><span class="cl-key">성별(Gender)</span><span class="cl-val">이진 범주형 → 수치 레이블 (M = −1, F = +1) 또는 One-hot</span></li>
-            <li><span class="cl-key">학위(Degree)</span><span class="cl-val">순서형(ordinal) → 정수 레벨링 (BSc=1, MSc=2, PhD=3)</span></li>
-            <li><span class="cl-key">우편번호(Postcode)</span><span class="cl-val">지역 코드 → 위도/경도 실수로 변환 (지역 간 거리 반영)</span></li>
-            <li><span class="cl-key">나이, 연봉</span><span class="cl-val">이미 실수 → 정규화(standardization) 후 사용</span></li>
-          </ul>
-
-          <p style="margin-top:14px;"><strong>범주형 변수 인코딩 방법 비교</strong></p>
-          <table class="concept-table">
-            <tr><th>방법</th><th>방식</th><th>적합한 경우</th><th>단점</th></tr>
-            <tr><td>Label Encoding</td><td>각 범주에 정수 부여 (0, 1, 2 ...)</td><td>순서가 있는 범주 (학위 등)</td><td>순서 없는 범주에 적용 시 크기 관계가 생김</td></tr>
-            <tr><td>One-hot Encoding</td><td>K개 범주 → K차원 이진 벡터</td><td>순서 없는 명목형 범주</td><td>차원(D)이 크게 증가할 수 있음</td></tr>
-          </table>
-
-          <div class="key-box">
-            <div class="key-box-label">핵심 원칙</div>
-            <div class="key-box-content">
-              원시 데이터 → 전처리 → 실수 벡터 <strong>xᵢ ∈ ℝᴰ</strong> → ML 알고리즘 투입.<br>
-              <strong>정규화(Normalization)</strong>: 서로 다른 스케일의 feature들을 동등하게 다루기 위해 평균 0, 분산 1로 표준화하는 경우가 많다 (Standardization: x' = (x − μ)/σ).
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 2. 모델의 종류 ─── -->
-      <section class="concept-section" id="sec-model-types">
-        <div class="concept-header">
-          <span class="concept-num">02</span>
-          <div>
-            <div class="concept-title">모델의 종류</div>
-            <div class="concept-en">Function Model vs. Probabilistic Model</div>
-          </div>
-          <span class="mml-ref">MML §8.1</span>
-        </div>
-        <div class="concept-body">
-          <p>같은 입력 데이터에 대해 출력을 어떻게 정의하느냐에 따라 두 가지 모델이 존재한다. 선택한 모델 종류에 따라 사용할 수 있는 학습 방법론이 달라진다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 직관적 이해</div>
-            <div class="key-box-content">
-              <strong>함수 모델</strong>: "60세 직원의 연봉은 8,000만원이다" — 단 하나의 확정적 값 반환.<br>
-              <strong>확률 모델</strong>: "60세 직원의 연봉은 N(8000, 1500²)만원 분포를 따른다" — 불확실성까지 표현.<br>
-              현실은 항상 불확실하므로, 확률 모델이 더 풍부한 정보를 제공한다. 다만 계산 비용이 더 높다.
-            </div>
-          </div>
-
-          <div class="compare-grid">
-            <div class="compare-cell header">구분</div>
-            <div class="compare-cell header">함수 모델 (Function Model)</div>
-            <div class="compare-cell header">확률 분포 모델 (Probabilistic Model)</div>
-            <div class="compare-cell highlight">출력 형태</div>
-            <div class="compare-cell">하나의 결정론적 값 ŷ ∈ ℝ</div>
-            <div class="compare-cell">확률 분포 p(y | x)</div>
-            <div class="compare-cell highlight">표현 방식</div>
-            <div class="compare-cell">f : ℝᴰ → ℝ, ŷ = f(x, θ)</div>
-            <div class="compare-cell">p(y | x, θ) — 조건부 확률 분포</div>
-            <div class="compare-cell highlight">불확실성 표현</div>
-            <div class="compare-cell">불가능 (점 예측만 가능)</div>
-            <div class="compare-cell">가능 (예측 분포의 분산으로 표현)</div>
-            <div class="compare-cell highlight">학습 방법</div>
-            <div class="compare-cell">ERM (경험적 위험 최소화)</div>
-            <div class="compare-cell">MLE / MAP / Bayesian Inference</div>
-            <div class="compare-cell highlight">오버피팅 제어</div>
-            <div class="compare-cell">정규화(Regularization) 항 추가</div>
-            <div class="compare-cell">사전 분포(Prior) p(θ) 부여</div>
-          </div>
-
-          <div class="key-box">
-            <div class="key-box-label">핵심 연결</div>
-            <div class="key-box-content">
-              두 모델은 따로 동작하는 것이 아니다. 확률 모델에서 <strong>Gaussian 우도를 가정하고 MLE를 수행</strong>하면 수학적으로 함수 모델의 ERM(최소자승)과 같아진다. 또한 <strong>Gaussian prior를 가정하고 MAP를 수행</strong>하면 L2 정규화 ERM과 같아진다. (→ 개념 7, 8에서 상세히 다룸)
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 3. 학습의 구성 ─── -->
-      <section class="concept-section" id="sec-learning">
-        <div class="concept-header">
-          <span class="concept-num">03</span>
-          <div>
-            <div class="concept-title">학습의 구성</div>
-            <div class="concept-en">ML Pipeline: Learning = Parameter Finding</div>
-          </div>
-          <span class="mml-ref">MML §8.2</span>
-        </div>
-        <div class="concept-body">
-          <p>기계학습 알고리즘은 세 단계로 구성된다. 이 세 단계는 서로 다른 데이터 셋에서, 서로 다른 목적으로 수행된다.</p>
-
-          <div class="step-list">
-            <div class="step-item">
-              <div class="step-num">1</div>
-              <div class="step-body"><strong>예측/추론 (Prediction / Inference)</strong>: 이미 학습된 모델에 새로운 입력 x를 넣어 ŷ 또는 p(y|x)를 계산한다. 이 단계에서는 파라미터를 변경하지 않는다. → <em>Test set 사용</em></div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">2</div>
-              <div class="step-body"><strong>파라미터 추정 (Training / Parameter Estimation)</strong>: 주어진 훈련 데이터로 손실 함수를 최소화(ERM) 또는 우도를 최대화(MLE/MAP)하여 최적 θ*를 찾는다. → <em>Training set 사용</em></div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">3</div>
-              <div class="step-body"><strong>모델 선택 (Hyperparameter Tuning / Model Selection)</strong>: 함수의 형태, 모델 복잡도(다항식 차수 d), 정규화 강도 λ 등 하이퍼파라미터를 결정한다. → <em>Validation set 또는 Cross-Validation 사용</em></div>
-            </div>
-          </div>
-
-          <div class="key-box">
-            <div class="key-box-label">파라미터 vs. 하이퍼파라미터</div>
-            <div class="key-box-content">
-              <strong>파라미터(θ)</strong>: 데이터로부터 학습되는 값. 예: 선형회귀의 기울기 a, 절편 b, 신경망의 가중치 W.<br>
-              <strong>하이퍼파라미터</strong>: 사람이 미리 정하는 값. 예: 정규화 강도 λ, 다항식 차수 d, 신경망 레이어 수. 데이터로 학습되지 않으며, 교차검증(Cross-Validation)으로 최적값 탐색.
-            </div>
-          </div>
-
-          <div class="warn-box">
-            <div class="key-box-label">⚠️ 시험 포인트</div>
-            <div class="key-box-content">
-              하이퍼파라미터를 Test set으로 최적화하면 <strong>information leakage</strong>가 발생 — test set이 사실상 training에 사용된 셈이 되어 일반화 성능 추정이 불가능해진다. 반드시 별도의 Validation set 또는 CV를 사용해야 한다.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 4. ERM ─── -->
-      <section class="concept-section" id="sec-erm">
-        <div class="concept-header">
-          <span class="concept-num">04</span>
-          <div>
-            <div class="concept-title">경험적 위험 최소화</div>
-            <div class="concept-en">Empirical Risk Minimization (ERM)</div>
-          </div>
-          <span class="mml-ref">MML §8.2</span>
-        </div>
-        <div class="concept-body">
-          <p>예측인자(predictor)가 함수형일 때, 훈련 데이터에서의 평균 오차(경험적 위험)를 최소화하여 파라미터를 찾는 방법이다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 왜 "경험적"인가?</div>
-            <div class="key-box-content">
-              우리가 진짜 원하는 것은 <strong>미래의 모든 데이터</strong>에 대해 잘 동작하는 함수(Expected Risk 최소화)이다. 하지만 미래 데이터는 볼 수 없으므로, <strong>지금 가진 N개의 훈련 데이터</strong>(경험)로 이를 근사한다. 이것이 바로 경험적 위험(Empirical Risk)이다.
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">Loss Function — 예측 오차 측정</div>
-            <div class="formula-row"><span class="formula-eq">ℓ(yₙ, ŷₙ)</span><span class="formula-desc">실제값 yₙ과 예측값 ŷₙ의 차이를 non-negative 값으로 변환. 항상 ≥ 0</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">Empirical Risk (경험적 위험)</div>
-            <div class="formula-row"><span class="formula-eq">R_emp(f, X, y) = (1/N) Σₙ ℓ(yₙ, ŷₙ)</span><span class="formula-desc">N개 훈련 샘플의 평균 손실. ŷₙ = f(xₙ, θ)</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">Expected Risk (기대 위험) — 진짜 목표</div>
-            <div class="formula-row"><span class="formula-eq">R_true(f) = E_{x,y}[ℓ(y, f(x))]</span><span class="formula-desc">데이터 분포 전체에 대한 기대 손실 → 미래 데이터에서의 실제 성능</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">Least-Squares Loss 적용 (예제 8.2) — 선형 예측자 ŷₙ = θᵀxₙ</div>
-            <div class="formula-row"><span class="formula-eq">ℓ(yₙ, ŷₙ) = (yₙ − ŷₙ)²</span><span class="formula-desc">제곱 오차 손실 함수</span></div>
-            <div class="formula-row"><span class="formula-eq">min_θ (1/N) Σₙ (yₙ − θᵀxₙ)²</span><span class="formula-desc">= min_θ (1/N) ‖y − Xθ‖²</span></div>
-            <div class="formula-row"><span class="formula-eq">해: θ* = (XᵀX)⁻¹ Xᵀy</span><span class="formula-desc">정규 방정식(Normal Equation) — closed-form 해</span></div>
-          </div>
-
-          <p><strong>i.i.d. 가정 (Independent and Identically Distributed)</strong>: 훈련 데이터 (x₁,y₁), ..., (xₙ,yₙ)가 서로 독립이고 같은 분포에서 추출되었다고 가정한다. 이 가정 덕분에 결합 확률이 <strong>곱의 형태로 분해</strong>되어 계산이 가능해진다.</p>
-          <div class="formula-box">
-            <div class="formula-label">i.i.d. 가정이 주는 수학적 이점</div>
-            <div class="formula-row"><span class="formula-eq">p(y₁,...,yₙ | x₁,...,xₙ, θ) = ∏ₙ p(yₙ | xₙ, θ)</span><span class="formula-desc">독립 → 곱으로 분해 → log 취하면 합으로 변환</span></div>
-          </div>
-
-          <div class="warn-box">
-            <div class="key-box-label">⚠️ ERM의 핵심 한계</div>
-            <div class="key-box-content">
-              R_emp가 작다고 R_true도 작은 것은 아니다. 모델이 복잡할수록 R_emp ↓, R_true ↑ 의 <strong>오버피팅(overfitting)</strong>이 발생한다. 이것이 정규화와 교차검증이 필요한 근본 이유다.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 5. 오버피팅 ─── -->
-      <section class="concept-section" id="sec-overfit">
-        <div class="concept-header">
-          <span class="concept-num">05</span>
-          <div>
-            <div class="concept-title">오버피팅 &amp; 정규화</div>
-            <div class="concept-en">Overfitting &amp; Regularization</div>
-          </div>
-          <span class="mml-ref">MML §8.2.3</span>
-        </div>
-        <div class="concept-body">
-          <p><strong>오버피팅(Overfitting)</strong>: 모델이 훈련 데이터의 잡음(noise)까지 학습하여, 훈련 오차(R_emp)는 매우 낮지만 새로운 데이터에서의 기대 오차(R_true)는 크게 높은 현상. 훈련 데이터에만 "특화"된 복잡한 함수가 만들어진다.</p>
-
-          <div class="key-box">
-            <div class="key-box-label">세 가지 피팅 상태 비교</div>
-            <div class="key-box-content">
-              <strong>Underfitting</strong>: 모델이 너무 단순 → R_emp 높음, R_true 높음. (High Bias)<br>
-              <strong>Good Fitting</strong>: 적절한 복잡도 → R_emp 적당, R_true ≈ R_emp. 일반화 성공.<br>
-              <strong>Overfitting</strong>: 모델이 너무 복잡 → R_emp 매우 낮음, R_true ≫ R_emp. (High Variance)
-            </div>
-          </div>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 Bias-Variance Trade-off</div>
-            <div class="key-box-content">
-              오버피팅과 언더피팅의 관계는 Bias-Variance Trade-off로 설명된다:<br>
-              <strong>Bias(편향)</strong>: 모델이 진짜 함수에서 체계적으로 벗어나는 정도. 너무 단순한 모델 → High Bias.<br>
-              <strong>Variance(분산)</strong>: 다른 훈련 데이터에 따라 모델이 얼마나 달라지는지. 너무 복잡한 모델 → High Variance.<br>
-              λ(정규화 강도) 증가 → Bias↑, Variance↓ / λ 감소 → Bias↓, Variance↑
-            </div>
-          </div>
-
-          <p style="margin-top:16px;"><strong>해결책: 정규화(Regularization)</strong> — 손실 함수에 파라미터 크기에 대한 페널티 항을 추가하여 모델 복잡도를 제어한다.</p>
-          <div class="formula-box">
-            <div class="formula-label">Regularized Least-Squares (예제 8.3) — Ridge Regression</div>
-            <div class="formula-row"><span class="formula-eq">기본:   min_θ (1/N) ‖y − Xθ‖²</span></div>
-            <div class="formula-row"><span class="formula-eq">정규화: min_θ (1/N) ‖y − Xθ‖² + λ‖θ‖²</span><span class="formula-desc">λ: 정규화 파라미터 (하이퍼파라미터)</span></div>
-            <div class="formula-row"><span class="formula-eq">최적해: θ* = (XᵀX + NλI)⁻¹ Xᵀy</span><span class="formula-desc">λ>0이면 XᵀX가 singular여도 역행렬 존재 → 수치 안정성</span></div>
-          </div>
-
-          <ul class="concept-list">
-            <li><span class="cl-key">λ = 0</span><span class="cl-val">정규화 없음. 일반 최소자승 해와 동일. 오버피팅 위험 있음.</span></li>
-            <li><span class="cl-key">λ → ∞</span><span class="cl-val">페널티가 압도적 → θ* → 0. 극도로 단순한 모델 (underfitting).</span></li>
-            <li><span class="cl-key">최적 λ</span><span class="cl-val">Cross-Validation으로 결정. Bias↑ Variance↓ trade-off 균형점 탐색.</span></li>
-          </ul>
-
-          <div class="warn-box">
-            <div class="key-box-label">⚠️ 정규화 ≠ 사전 분포(Prior)</div>
-            <div class="key-box-content">
-              수식은 같지만 해석이 다르다: ERM 관점에서는 "페널티 항"이지만, MAP 관점에서는 "Gaussian prior의 음의 로그 확률"이다. λ‖θ‖² ↔ −log N(θ | 0, I/λ). (→ 개념 08에서 자세히)
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 6. 교차검증 ─── -->
-      <section class="concept-section" id="sec-cv">
-        <div class="concept-header">
-          <span class="concept-num">06</span>
-          <div>
-            <div class="concept-title">교차검증</div>
-            <div class="concept-en">K-fold Cross-Validation</div>
-          </div>
-          <span class="mml-ref">MML §8.2.4</span>
-        </div>
-        <div class="concept-body">
-          <p>미래 데이터에서의 성능(Expected Risk)을 추정하기 위해, 보유한 데이터를 <strong>K개의 fold(chunk)</strong>로 나눠 K−1개를 훈련에, 1개를 검증에 사용하는 방법. 이를 K번 반복하여 평균을 낸다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 왜 CV가 필요한가?</div>
-            <div class="key-box-content">
-              단순 train/test split은 결과가 어떻게 나누었느냐에 따라 크게 달라진다 (높은 분산). K-fold CV는 모든 데이터를 한 번씩 validation에 사용하므로, 추정치의 분산이 낮고 데이터를 효율적으로 활용할 수 있다.
-            </div>
-          </div>
-
-          <div class="step-list">
-            <div class="step-item">
-              <div class="step-num">1</div>
-              <div class="step-body">전체 훈련 데이터를 K개의 동등한 크기의 fold로 분할: D = D⁽¹⁾ ∪ D⁽²⁾ ∪ ... ∪ D⁽ᴷ⁾</div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">2</div>
-              <div class="step-body">k = 1, ..., K에 대해: k번째 fold를 <strong>validation set V⁽ᵏ⁾</strong>으로, 나머지 K−1개를 <strong>training set R⁽ᵏ⁾</strong>으로 사용하여 모델 f⁽ᵏ⁾ 학습</div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">3</div>
-              <div class="step-body">각 반복에서 validation risk R(f⁽ᵏ⁾, V⁽ᵏ⁾) 계산 → K번 평균</div>
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">K-fold Generalization Error 추정</div>
-            <div class="formula-row"><span class="formula-eq">E_V[R(f, V)] ≈ (1/K) Σₖ R(f⁽ᵏ⁾, V⁽ᵏ⁾)</span></div>
-            <div class="formula-row"><span class="formula-desc">조건: R⁽ᵏ⁾ ∪ V⁽ᵏ⁾ = D,  R⁽ᵏ⁾ ∩ V⁽ᵏ⁾ = ∅ (모든 데이터 활용, 겹침 없음)</span></div>
-          </div>
-
-          <table class="concept-table">
-            <tr><th>K 값</th><th>특성</th><th>장점</th><th>단점</th></tr>
-            <tr><td>K = 5 또는 10</td><td>일반적으로 사용</td><td>계산 비용과 추정 품질의 균형</td><td>—</td></tr>
-            <tr><td>K = N (LOOCV)</td><td>Leave-One-Out CV</td><td>편향이 가장 낮음, 데이터 최대 활용</td><td>계산 비용이 매우 큼 (N번 학습)</td></tr>
-            <tr><td>K = 2</td><td>50:50 split</td><td>빠른 계산</td><td>추정 분산 큼</td></tr>
-          </table>
-
-          <div class="key-box">
-            <div class="key-box-label">Nested CV (결합 교차검증) — 모델 선택용</div>
-            <div class="key-box-content">
-              <strong>Inner loop</strong>: 여러 후보 하이퍼파라미터(λ₁, λ₂, ...) 각각에 대해 K-fold CV 수행 → generalization error 추정 → 가장 낮은 error의 하이퍼파라미터 선택.<br>
-              <strong>Outer loop</strong>: 전체 training data로 선정된 최적 하이퍼파라미터로 재학습 → 별도로 떼어 둔 <strong>test set</strong>으로 최종 성능 평가 (한 번만 사용).<br><br>
-              <em>이중 구조인 이유</em>: inner loop에서 쓴 validation data로는 성능을 정직하게 평가할 수 없다. 이미 모델 선택에 사용되었기 때문이다.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 7. MLE ─── -->
-      <section class="concept-section" id="sec-mle">
-        <div class="concept-header">
-          <span class="concept-num">07</span>
-          <div>
-            <div class="concept-title">최대 우도 추정</div>
-            <div class="concept-en">Maximum Likelihood Estimation (MLE)</div>
-          </div>
-          <span class="mml-ref">MML §8.3</span>
-        </div>
-        <div class="concept-body">
-          <p>관측된 데이터를 가장 잘 설명하는 파라미터 θ를 찾는 방법. "<strong>어떤 θ 값이었어야 이 데이터가 나올 확률이 제일 높은가?</strong>"를 묻는다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 직관: 동전 던지기 비유</div>
-            <div class="key-box-content">
-              동전을 10번 던져 7번 앞면이 나왔다. 앞면 확률 θ에 대한 MLE는? → "이 결과(7번 앞면)가 나올 확률을 최대로 만드는 θ = 7/10 = 0.7"이다. 즉, <strong>데이터가 가장 그럴듯하게(likely) 보이는 파라미터를 선택</strong>한다.
-            </div>
-          </div>
-
-          <div class="step-list">
-            <div class="step-item">
-              <div class="step-num">1</div>
-              <div class="step-body"><strong>우도 함수 작성</strong>: i.i.d. 가정 → 결합 우도 = 각 샘플 우도의 곱<br>
-                p(Y | X, θ) = ∏ₙ₌₁ᴺ p(yₙ | xₙ, θ)</div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">2</div>
-              <div class="step-body"><strong>로그 변환</strong>: 곱 → 합으로 변환하여 계산 안정화 및 미분 편의<br>
-                log p(Y | X, θ) = Σₙ log p(yₙ | xₙ, θ)</div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">3</div>
-              <div class="step-body"><strong>부호 반전 후 최소화</strong>: 최대화 → 음수 취해 최소화 문제로 전환 (optimizer는 보통 최소화)<br>
-                L(θ) = −Σₙ log p(yₙ | xₙ, θ) → min</div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">4</div>
-              <div class="step-body"><strong>최적화</strong>: ∂L/∂θ = 0 풀기 또는 Gradient Descent</div>
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">Gaussian 우도 → 최소자승 문제 (예제 8.5) — 핵심 유도</div>
-            <div class="formula-row"><span class="formula-eq">p(yₙ | xₙ, θ) = N(yₙ | xₙᵀθ, σ²)  가정</span></div>
-            <div class="formula-row"><span class="formula-eq">L(θ) = −Σₙ log N(yₙ | xₙᵀθ, σ²)</span></div>
-            <div class="formula-row"><span class="formula-eq">= (1/2σ²) Σₙ(yₙ−xₙᵀθ)² + N·log√(2πσ²)</span></div>
-            <div class="formula-row"><span class="formula-desc">σ가 상수이면 두 번째 항은 θ와 무관 → argmin_θ L(θ) = argmin_θ Σₙ(yₙ−xₙᵀθ)² ← 최소자승!</span></div>
-          </div>
-
-          <div class="key-box">
-            <div class="key-box-label">MLE의 특성과 한계</div>
-            <div class="key-box-content">
-              <strong>Asymptotic Consistency</strong>: N → ∞이면 θ_MLE → θ_true (실제 파라미터로 수렴).<br>
-              <strong>Asymptotic Normality</strong>: N이 충분히 크면 θ_MLE는 Gaussian 분포를 따름.<br>
-              <strong>Small data overfitting</strong>: 데이터가 적으면 훈련 데이터에 과도하게 fitting → overfitting 발생.<br>
-              <strong>사전 지식 반영 불가</strong>: θ에 대한 사전 정보(prior)를 활용하지 않는다. → MAP로 해결.
-            </div>
-          </div>
-
-          <div class="warn-box">
-            <div class="key-box-label">⚠️ log를 취하는 두 가지 이유</div>
-            <div class="key-box-content">
-              ① <strong>수치 안정성</strong>: 확률값 p ∈ (0,1]을 N번 곱하면 float underflow 발생 (≈ 0으로 수렴). log를 취해 합으로 변환하면 안전하다.<br>
-              ② <strong>최적화 용이</strong>: log는 순증가 함수이므로 argmax가 보존된다. 또한 log의 미분이 1/p로 단순하여 gradient 계산이 편리하다.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 8. MAP ─── -->
-      <section class="concept-section" id="sec-map">
-        <div class="concept-header">
-          <span class="concept-num">08</span>
-          <div>
-            <div class="concept-title">최대 사후 추정</div>
-            <div class="concept-en">Maximum A Posteriori (MAP)</div>
-          </div>
-          <span class="mml-ref">MML §8.3</span>
-        </div>
-        <div class="concept-body">
-          <p>MLE에 <strong>사전 분포(prior) p(θ)</strong>를 추가하여 θ에 대한 사전 지식을 반영하는 방법. 데이터를 보기 전에 θ가 어떨 것이라는 믿음(prior)과, 데이터가 주는 정보(likelihood)를 결합하여 사후 확률(posterior)을 최대화한다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 직관: 의사 진단 비유</div>
-            <div class="key-box-content">
-              환자가 기침을 한다(데이터). 기침의 원인으로 감기(M₁)와 폐암(M₂) 중 어느 것이 더 그럴듯한가?<br>
-              MLE: "기침 증상을 설명하는 확률만 비교" → 폐암도 기침을 설명 가능하므로 M₂를 선택할 수도 있다.<br>
-              MAP: "기침 확률 × 사전에 해당 질병 가능성" → 폐암보다 감기의 <strong>사전 확률(prior)</strong>이 훨씬 높으므로 M₁(감기) 선택. 더 합리적!
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">Bayes' Theorem (베이즈 정리)</div>
-            <div class="formula-row"><span class="formula-eq">p(θ | X) = p(X | θ) p(θ) / p(X)</span></div>
-            <div class="formula-row"><span class="formula-eq">posterior ∝ likelihood × prior</span></div>
-            <div class="formula-row"><span class="formula-desc">p(X)는 θ에 무관한 정규화 상수 → 최적화에서 무시 가능</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">MAP Estimate (후위 확률 최대화)</div>
-            <div class="formula-row"><span class="formula-eq">θ_MAP = argmax_θ p(θ | X, Y)</span></div>
-            <div class="formula-row"><span class="formula-eq">= argmax_θ [log p(Y | X, θ) + log p(θ)]</span></div>
-            <div class="formula-row"><span class="formula-desc">= 음의 NLL + 음의 log prior 의 합을 최소화</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">Gaussian Prior → L2 정규화 동치 유도 (예제 8.6)</div>
-            <div class="formula-row"><span class="formula-eq">p(θ) = N(θ | 0, b²I)  가정</span></div>
-            <div class="formula-row"><span class="formula-eq">log p(θ) = −(1/2b²)‖θ‖² + const</span></div>
-            <div class="formula-row"><span class="formula-eq">MAP = argmin_θ [(1/N)‖y−Xθ‖² + (σ²/b²N)‖θ‖²]</span></div>
-            <div class="formula-row"><span class="formula-eq">λ = σ²/b²  로 놓으면: MAP ≡ Ridge Regression</span></div>
-            <div class="formula-row"><span class="formula-desc">∴ Gaussian prior MAP = L2 정규화 ERM. 정규화 파라미터 λ는 prior 분산 b²의 역수에 비례.</span></div>
-          </div>
-
-          <table class="concept-table">
-            <tr><th>구분</th><th>MLE</th><th>MAP</th></tr>
-            <tr><td>목표</td><td>p(Y|X,θ) 최대화</td><td>p(θ|X,Y) ∝ p(Y|X,θ)·p(θ) 최대화</td></tr>
-            <tr><td>사전 지식</td><td>없음 (uniform prior 가정과 동일)</td><td>있음 — prior p(θ) 명시</td></tr>
-            <tr><td>추정 결과</td><td>점 추정 θ*</td><td>점 추정 θ_MAP</td></tr>
-            <tr><td>정규화 동치</td><td>없음</td><td>Gaussian prior → L2 / Laplace prior → L1</td></tr>
-            <tr><td>N → ∞</td><td>데이터가 지배</td><td>prior 영향 감소, MLE로 수렴</td></tr>
-          </table>
-        </div>
-      </section>
-
-      <!-- ─── 9. 베이지안 추론 ─── -->
-      <section class="concept-section" id="sec-bayes">
-        <div class="concept-header">
-          <span class="concept-num">09</span>
-          <div>
-            <div class="concept-title">베이지안 추론</div>
-            <div class="concept-en">Bayesian Inference</div>
-          </div>
-          <span class="mml-ref">MML §8.4</span>
-        </div>
-        <div class="concept-body">
-          <p>MLE/MAP가 θ의 한 점(point estimate)을 추정하는 것과 달리, 베이지안 추론은 <strong>파라미터 분포 p(θ|X) 전체를 추정</strong>한다. θ를 확률 변수로 취급하여 불확실성을 분포로 표현한다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 세 방법의 핵심 철학 차이</div>
-            <div class="key-box-content">
-              <strong>MLE</strong>: "가장 그럴듯한 θ 하나만 찾아 쓴다" → 불확실성 무시<br>
-              <strong>MAP</strong>: "사전 지식도 반영한 가장 그럴듯한 θ 하나를 찾아 쓴다" → 불확실성 무시<br>
-              <strong>Bayesian</strong>: "θ에 대한 모든 가능성을 확률 분포로 유지하고, 예측할 때 전부 평균낸다" → <strong>파라미터 불확실성(model uncertainty) 정량화</strong>
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">Posterior Distribution (베이즈 추론의 핵심)</div>
-            <div class="formula-row"><span class="formula-eq">p(θ | X) = p(X | θ) p(θ) / p(X)</span></div>
-            <div class="formula-row"><span class="formula-eq">p(X) = ∫ p(X | θ) p(θ) dθ</span><span class="formula-desc">← marginal likelihood (evidence). 정규화 상수. 계산이 매우 어렵다.</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">Predictive Distribution (새로운 데이터 예측)</div>
-            <div class="formula-row"><span class="formula-eq">p(x_new | X) = ∫ p(x_new | θ) p(θ | X) dθ</span></div>
-            <div class="formula-row"><span class="formula-eq">= E_{θ|X}[p(x_new | θ)]</span><span class="formula-desc">posterior로 가중된 모든 θ에 대한 예측 분포의 평균</span></div>
-          </div>
-
-          <div class="key-box">
-            <div class="key-box-label">MLE/MAP 대비 Bayesian 예측의 차이</div>
-            <div class="key-box-content">
-              MLE/MAP: θ* 하나를 고정 → p(x_new | θ*)만 사용. 파라미터 추정 불확실성 무시.<br>
-              Bayesian: 가능한 모든 θ를 확률적으로 평균 → 파라미터 불확실성을 예측에 반영.<br>
-              결과: Bayesian 예측 분포는 MLE/MAP보다 <strong>더 넓은 분산</strong>을 가진다. 특히 훈련 데이터가 적은 영역에서 불확실성을 올바르게 표현한다.
-            </div>
-          </div>
-
-          <div class="warn-box">
-            <div class="key-box-label">⚠️ 베이지안 추론의 계산 문제</div>
-            <div class="key-box-content">
-              p(X) = ∫ p(X|θ) p(θ) dθ 적분이 대부분 closed-form 불가.<br>
-              <strong>해결책 1 — Conjugate Prior</strong>: likelihood와 prior가 "켤레(conjugate)" 관계이면 posterior도 같은 분포 족 → closed-form 계산 가능. 예: Gaussian likelihood + Gaussian prior → Gaussian posterior.<br>
-              <strong>해결책 2 — 수치 근사</strong>: Monte Carlo (MCMC), Variational Inference 등.
-            </div>
-          </div>
-
-          <table class="concept-table">
-            <tr><th>방법</th><th>추정 결과</th><th>사전 지식</th><th>계산 방법</th><th>계산 복잡도</th></tr>
-            <tr><td>MLE</td><td>점 추정 θ*</td><td>없음</td><td>최적화 (∇L=0)</td><td>낮음</td></tr>
-            <tr><td>MAP</td><td>점 추정 θ_MAP</td><td>prior p(θ)</td><td>최적화 (∇(L+logp)=0)</td><td>낮음~중간</td></tr>
-            <tr><td>Bayesian</td><td>분포 p(θ|X)</td><td>prior p(θ)</td><td>적분 (전체 posterior)</td><td>매우 높음</td></tr>
-          </table>
-        </div>
-      </section>
-
-      <!-- ─── 10. 잠재 변인 모델 ─── -->
-      <section class="concept-section" id="sec-latent">
-        <div class="concept-header">
-          <span class="concept-num">10</span>
-          <div>
-            <div class="concept-title">잠재 변인 모델</div>
-            <div class="concept-en">Latent Variable Model</div>
-          </div>
-          <span class="mml-ref">MML §8.4</span>
-        </div>
-        <div class="concept-body">
-          <p>관측 데이터 x 외에 <strong>숨겨진 변인(latent variable) z</strong>가 존재한다고 가정하여, 모델의 표현력을 높이는 방법. z는 직접 관측되지 않지만 데이터 생성 과정에 관여한다고 가정한다.</p>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 직관: 혼합 모델(Mixture Model)</div>
-            <div class="key-box-content">
-              전국 성인 키 데이터를 가지고 있다. 이 데이터는 사실 남성과 여성의 두 Gaussian이 섞여 있다.<br>
-              <strong>z</strong> = 각 데이터가 남성(z=0)인지 여성(z=1)인지 → 관측 불가능한 잠재 변인.<br>
-              z를 모르더라도, z의 prior p(z)와 조건부 분포 p(x|z)를 가정하면 전체 분포를 모델링 가능. 이것이 <strong>Gaussian Mixture Model(GMM)</strong>이다.
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">z를 Marginalize하여 관측 데이터 우도 계산</div>
-            <div class="formula-row"><span class="formula-eq">p(x | θ) = ∫ p(x | z, θ) p(z) dz</span><span class="formula-desc">z의 prior p(z)로 가중하여 평균 → z가 제거됨</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">z의 사후 확률 (Posterior of z)</div>
-            <div class="formula-row"><span class="formula-eq">p(z | x, θ) = p(x | z, θ) p(z) / p(x | θ)</span><span class="formula-desc">"이 데이터 x가 어떤 성분(z)에서 나왔을 확률"</span></div>
-          </div>
-          <div class="formula-box">
-            <div class="formula-label">Bayesian 관점 — θ의 Posterior</div>
-            <div class="formula-row"><span class="formula-eq">p(θ | X) = p(X | θ) p(θ) / p(X)</span></div>
-            <div class="formula-row"><span class="formula-eq">p(X | θ) = ∫ p(X | z, θ) p(z) dz</span><span class="formula-desc">z를 marginalize한 결과를 likelihood로 사용</span></div>
-          </div>
-
-          <div class="key-box">
-            <div class="key-box-label">켤레 사전 분포(Conjugate Prior)의 중요성</div>
-            <div class="key-box-content">
-              p(z)가 p(x|z, θ)의 <strong>켤레(conjugate)</strong>이면 → posterior p(z|x,θ)가 p(z)와 같은 분포 족 → closed-form 계산 가능.<br>
-              켤레가 아니면 → EM 알고리즘, MCMC, Variational Inference 등 수치 근사 방법 필요.<br>
-              <strong>주요 켤레 쌍</strong>: Gaussian likelihood ↔ Gaussian prior, Bernoulli likelihood ↔ Beta prior, Multinomial ↔ Dirichlet
-            </div>
-          </div>
-
-          <div class="key-box">
-            <div class="key-box-label">활용 예</div>
-            <div class="key-box-content">
-              MML 10장 — PCA (z: 저차원 표현), 11장 — GMM (z: 군집 소속), Hidden Markov Model (z: 숨겨진 상태), VAE (z: 잠재 공간 벡터)
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ─── 11. 모델 선택 ─── -->
-      <section class="concept-section" id="sec-model-sel">
-        <div class="concept-header">
-          <span class="concept-num">11</span>
-          <div>
-            <div class="concept-title">모델 선택 &amp; 베이즈 요인</div>
-            <div class="concept-en">Model Selection &amp; Bayes Factor</div>
-          </div>
-          <span class="mml-ref">MML §8.6</span>
-        </div>
-        <div class="concept-body">
-          <p><strong>오캄의 면도날(Occam's Razor)</strong>: "데이터를 설명하기에 충분한 가장 단순한 모델이 최선이다." 복잡한 모델은 overfitting 위험이 높고, 단순한 모델은 underfitting 위험이 있다. 최적의 복잡도를 어떻게 자동으로 선택하는가?</p>
-
-          <div class="formula-box">
-            <div class="formula-label">베이지안 모델 선택</div>
-            <div class="formula-row"><span class="formula-eq">p(Mₖ | D) ∝ p(Mₖ) · p(D | Mₖ)</span></div>
-            <div class="formula-row"><span class="formula-eq">p(D | Mₖ) = ∫ p(D | θₖ) p(θₖ | Mₖ) dθₖ</span><span class="formula-desc">← Marginal Likelihood (모델 증거, evidence)</span></div>
-            <div class="formula-row"><span class="formula-eq">M* = argmax_{Mₖ} p(Mₖ | D)</span><span class="formula-desc">← 가장 높은 posterior 확률의 모델 선택</span></div>
-          </div>
-
-          <div class="formula-box">
-            <div class="formula-label">Bayes Factor (모델 비교 지표)</div>
-            <div class="formula-row"><span class="formula-eq">Posterior Odds = Prior Odds × Bayes Factor</span></div>
-            <div class="formula-row"><span class="formula-eq">p(M₁|D)/p(M₂|D) = [p(M₁)/p(M₂)] × [p(D|M₁)/p(D|M₂)]</span></div>
-            <div class="formula-row"><span class="formula-desc">Bayes Factor = p(D|M₁)/p(D|M₂) — 데이터 관점에서의 두 모델 지지도 비율</span></div>
-          </div>
-
-          <ul class="concept-list">
-            <li><span class="cl-key">BF > 1</span><span class="cl-val">데이터가 M₁을 더 지지. BF > 3: moderate, BF > 10: strong evidence</span></li>
-            <li><span class="cl-key">Prior Odds = 1</span><span class="cl-val">p(M₁) = p(M₂) 이면 → Posterior Odds = Bayes Factor</span></li>
-            <li><span class="cl-key">Uniform prior</span><span class="cl-val">모든 모델이 동등하게 그럴듯 → Marginal Likelihood만으로 비교</span></li>
-          </ul>
-
-          <div class="intuition-box">
-            <div class="key-box-label">🔵 Marginal Likelihood가 오캄의 면도날을 자동 구현하는 이유</div>
-            <div class="key-box-content">
-              p(D | Mₖ) = ∫ p(D | θₖ) p(θₖ | Mₖ) dθₖ<br><br>
-              <strong>복잡한 모델</strong>: 파라미터 공간이 넓음 → prior p(θ|M)이 넓게 퍼짐 → 각 θ에서의 밀도가 낮음 → 확률이 "희석"됨 → marginal likelihood 작아짐.<br>
-              <strong>단순한 모델</strong>: 파라미터 공간이 좁음 → prior가 집중됨 → 데이터와 잘 맞는 θ 부근에서 밀도가 높음 → marginal likelihood 클 수 있음.<br><br>
-              결론: marginal likelihood는 데이터 설명력(likelihood)과 모델 복잡도(prior의 퍼짐도) 간의 <strong>자동 trade-off</strong>를 구현한다. 불필요하게 복잡한 모델은 자연스럽게 불이익을 받는다.
-            </div>
-          </div>
-
-          <div class="warn-box">
-            <div class="key-box-label">⚠️ 모델 선택에서 주의할 점</div>
-            <div class="key-box-content">
-              Marginal Likelihood 계산 자체도 어렵다 (적분 필요). 실제로는 BIC(Bayesian Information Criterion), AIC 등의 근사 지표를 사용하는 경우가 많다.<br>
-              또한 모델 선택 시 test set을 한 번도 사용하지 말아야 한다 — Nested CV에서 outer loop test set은 최종 성능 평가에만 쓰인다.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- QUIZ SECTION -->
-      <!-- ═══════════════════════════════════════════ -->
-      <section class="quiz-section" id="quiz-section">
-        <div class="quiz-header">
-          <h2 class="quiz-title">연습 문제</h2>
-          <span class="quiz-count" id="quizCount">0 / 16 풀이 완료</span>
-        </div>
-
-        <div class="tag-cloud" id="quizTags">
-          <span class="tag active" onclick="filterQuiz('all', this)">전체</span>
-          <span class="tag" onclick="filterQuiz('개념', this)">개념 이해</span>
-          <span class="tag" onclick="filterQuiz('계산', this)">계산</span>
-          <span class="tag" onclick="filterQuiz('유도', this)">유도·증명</span>
-          <span class="tag" onclick="filterQuiz('비교', this)">비교·분석</span>
-        </div>
-
-        <div class="quiz-progress">
-          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-          <span class="progress-label" id="progressLabel">0%</span>
-        </div>
-
-        <div id="quizList">
-
-          <!-- Q1 -->
-          <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q1</span>
-              <span class="quiz-text">i.i.d. 가정(Independent and Identically Distributed)의 수학적 의미를 서술하고, 이 가정이 기계학습에서 왜 필수적인지 설명하라. 또한 이 가정이 깨지는 현실적 예를 하나 들어라.</span>
-              <span class="quiz-tag">개념</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>i.i.d. 가정의 수학적 의미</strong>:<br>
-                훈련 데이터 (x₁,y₁), ..., (xₙ,yₙ) 각 쌍이<br>
-                ① <strong>독립(Independent)</strong>: 하나의 데이터를 아는 것이 다른 데이터에 대한 정보를 주지 않는다.<br>
-                ② <strong>동일 분포(Identically Distributed)</strong>: 모든 데이터가 같은 확률 분포 p(x, y)에서 추출된다.
-                <div class="answer-formula">p(y₁,...,yₙ | x₁,...,xₙ, θ) = ∏ₙ p(yₙ | xₙ, θ)</div>
-                <strong>왜 필수적인가</strong>: 독립 가정 덕분에 결합 우도가 <strong>곱의 형태</strong>로 분해되어 MLE의 log-likelihood가 합으로 변환 가능해진다. 동일 분포 가정 덕분에 훈련 데이터에서 학습한 패턴이 미래 데이터에도 적용 가능(일반화)하다.<br><br>
-                <strong>가정이 깨지는 예</strong>: 시계열 데이터(주가, 온도 등) — 연속된 시점의 값이 서로 강하게 상관되어 있어 독립 가정이 성립하지 않는다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q2 -->
-          <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q2</span>
-              <span class="quiz-text">경험적 위험(Empirical Risk)과 기대 위험(Expected Risk)를 수식으로 정의하고, 오버피팅의 정의를 이 두 값의 관계로 엄밀히 서술하라. 오버피팅을 방지하는 방법 두 가지를 제시하라.</span>
-              <span class="quiz-tag">개념</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <div class="answer-formula">R_emp(f, X, y) = (1/N) Σₙ ℓ(yₙ, f(xₙ))  ← 훈련 데이터에서의 평균 손실</div>
-                <div class="answer-formula">R_true(f) = E_{x,y}[ℓ(y, f(x))]  ← 전체 데이터 분포에 대한 기대 손실</div>
-                <strong>오버피팅의 엄밀한 정의</strong>:<br>
-                모델의 훈련 데이터 위험이 기대 위험을 크게 <strong>과소추정</strong>하는 상태:
-                <div class="answer-formula">R_emp(f, X_train, y_train) ≪ R_true(f)</div>
-                즉, 훈련 데이터에서의 성능이 매우 좋지만, 새로운 데이터에서의 실제 성능은 형편없는 상태.<br><br>
-                <strong>방지 방법</strong>:<br>
-                ① <strong>정규화(Regularization)</strong>: 손실 함수에 ‖θ‖² 페널티 항 추가 → 모델 복잡도 제어.<br>
-                ② <strong>교차검증(Cross-Validation)</strong>: 검증 데이터로 일반화 성능을 모니터링하여 하이퍼파라미터를 조정.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q3 -->
-          <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q3</span>
-              <span class="quiz-text">정규화 최소자승 문제 min_θ (1/N)‖y−Xθ‖² + λ‖θ‖² 의 closed-form 해 θ* = (XᵀX + NλI)⁻¹Xᵀy를 유도하라. λ > 0일 때 이 해가 항상 존재하는 이유도 설명하라.</span>
-              <span class="quiz-tag">유도</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                목적함수를 J(θ)로 정의:
-                <div class="answer-formula">J(θ) = (1/N)‖y − Xθ‖² + λ‖θ‖²</div>
-                θ에 대해 gradient 계산:
-                <div class="answer-formula">∇_θ J = (2/N)Xᵀ(Xθ − y) + 2λθ = 0</div>
-                정리:
-                <div class="answer-formula">(1/N)XᵀXθ + λθ = (1/N)Xᵀy</div>
-                <div class="answer-formula">(XᵀX/N + λI)θ = Xᵀy/N</div>
-                <div class="answer-formula">θ* = (XᵀX + NλI)⁻¹ Xᵀy</div>
-                <strong>항상 존재하는 이유</strong>:<br>
-                XᵀX는 positive semi-definite (PSD). 여기에 λ > 0이면 NλI가 positive definite를 더하므로:<br>
-                XᵀX + NλI는 <strong>positive definite</strong> → 항상 역행렬 존재.<br>
-                λ = 0이면 XᵀX가 singular(열 linearly dependent)일 때 역행렬이 없을 수 있지만, λ > 0이 이를 방지한다. 이것이 Ridge의 <strong>수치적 안정성</strong>이다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q4 -->
-          <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q4</span>
-              <span class="quiz-text">N=4 데이터 포인트에 대해 5-fold CV를 수행했을 때의 문제점을 지적하라. 대신 N=20, K=4로 설정 시: 각 fold의 크기, 학습 시 사용되는 데이터 수, 총 학습 횟수를 구하고, generalization error 추정 식을 작성하라.</span>
-              <span class="quiz-tag">계산</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>N=4, K=5 문제점</strong>: N < K이므로 불가능. 각 fold가 1개 미만의 데이터를 포함하게 된다. 일반적으로 K ≤ N이어야 하며, 각 fold가 최소 1개 이상의 데이터를 포함해야 한다.<br><br>
-                <strong>N=20, K=4 계산</strong>:
-                <div class="answer-formula">각 fold 크기 = N/K = 20/4 = 5개</div>
-                <div class="answer-formula">학습 시 데이터 수 = N − (N/K) = 20 − 5 = 15개</div>
-                <div class="answer-formula">총 학습 횟수 = K = 4회</div>
-                <div class="answer-formula">E_V[R] ≈ (1/4) Σₖ₌₁⁴ R(f⁽ᵏ⁾, V⁽ᵏ⁾)</div>
-                각 R(f⁽ᵏ⁾, V⁽ᵏ⁾)는 k번째 fold로 학습된 모델을 V⁽ᵏ⁾ = 5개 데이터로 평가한 결과.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q5 -->
-          <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q5</span>
-              <span class="quiz-text">MLE에서 i.i.d. 가정 하에 결합 우도를 Negative Log-Likelihood(NLL)로 변환하는 과정을 단계별로 유도하고, log를 취하는 두 가지 이유(수치적, 최적화적)를 설명하라.</span>
-              <span class="quiz-tag">유도</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>Step 1</strong> — i.i.d. 가정으로 결합 우도 분해:
-                <div class="answer-formula">p(Y | X, θ) = ∏ₙ₌₁ᴺ p(yₙ | xₙ, θ)</div>
-                <strong>Step 2</strong> — log 변환 (단조증가 → argmax 보존):
-                <div class="answer-formula">log p(Y | X, θ) = Σₙ₌₁ᴺ log p(yₙ | xₙ, θ)</div>
-                <strong>Step 3</strong> — 부호 반전하여 최소화 문제로 변환:
-                <div class="answer-formula">L(θ) = −log p(Y | X, θ) = −Σₙ log p(yₙ | xₙ, θ)</div>
-                <div class="answer-formula">θ_MLE = argmin_θ L(θ)</div>
-                <strong>log를 취하는 두 가지 이유</strong>:<br>
-                ① <strong>수치 안정성</strong>: p ∈ (0,1]을 N번 곱하면 float underflow 발생 (≈ 0). log를 취하면 합으로 변환되어 underflow 방지.<br>
-                ② <strong>최적화 편의</strong>: log는 순증가 함수 → argmax 동일. 또한 ∂log p/∂θ = (1/p)·∂p/∂θ로 연쇄 미분이 단순해짐.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q6 -->
-          <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q6</span>
-              <span class="quiz-text">Gaussian 우도 p(yₙ|xₙ,θ) = N(yₙ | xₙᵀθ, σ²) 하에서 MLE를 수행하면 최소자승 문제와 수학적으로 동일함을 완전히 유도하라. (MML 예제 8.5)</span>
-              <span class="quiz-tag">유도</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                Gaussian 분포의 정의를 NLL에 대입:
-                <div class="answer-formula">L(θ) = −Σₙ log N(yₙ | xₙᵀθ, σ²)</div>
-                Gaussian의 pdf: N(y|μ,σ²) = (2πσ²)^{−1/2} exp(−(y−μ)²/2σ²)
-                <div class="answer-formula">= −Σₙ [−(yₙ−xₙᵀθ)²/(2σ²) − (1/2)log(2πσ²)]</div>
-                <div class="answer-formula">= (1/2σ²) Σₙ(yₙ−xₙᵀθ)² + (N/2)log(2πσ²)</div>
-                σ²가 주어진 상수이므로, θ에 관한 최소화에서 두 번째 항은 상수:
-                <div class="answer-formula">argmin_θ L(θ) = argmin_θ (1/2σ²) Σₙ(yₙ−xₙᵀθ)²</div>
-                <div class="answer-formula">= argmin_θ Σₙ(yₙ−xₙᵀθ)²  ← 최소자승 문제</div>
-                ∴ Gaussian 우도 하의 MLE ≡ 최소자승 문제. 두 방법은 수학적으로 동일한 최적해를 갖는다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q7 -->
-          <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q7</span>
-              <span class="quiz-text">MAP 추정에서 파라미터 θ에 Gaussian prior p(θ) = N(θ | 0, b²I)를 부여하면, 왜 Ridge Regression(L2 정규화 최소자승)과 동일한 결과가 나오는지 유도하라. 정규화 파라미터 λ가 b²와 어떤 관계인지 도출하라.</span>
-              <span class="quiz-tag">유도</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                MAP: θ_MAP = argmax_θ [log p(Y|X,θ) + log p(θ)]<br><br>
-                <strong>Step 1</strong> — Gaussian prior의 log:
-                <div class="answer-formula">log p(θ) = log N(θ | 0, b²I) = −(1/2b²)θᵀθ − const = −‖θ‖²/(2b²) − const</div>
-                <strong>Step 2</strong> — Gaussian 우도(→ 최소자승)와 결합:
-                <div class="answer-formula">MAP = argmax_θ [−(1/2σ²)‖y−Xθ‖² − (1/2b²)‖θ‖²]</div>
-                <strong>Step 3</strong> — 부호 반전하여 최소화:
-                <div class="answer-formula">= argmin_θ [(1/2σ²)‖y−Xθ‖² + (1/2b²)‖θ‖²]</div>
-                (1/N) 정규화하면:
-                <div class="answer-formula">= argmin_θ [(1/N)‖y−Xθ‖² + (Nσ²/Nb²)‖θ‖²]  ≡  argmin_θ [(1/N)‖y−Xθ‖² + λ‖θ‖²]</div>
-                <div class="answer-formula">∴ λ = σ²/b²</div>
-                정규화 파라미터 λ는 노이즈 분산 σ²에 비례하고, prior 분산 b²에 반비례한다.<br>
-                b²가 작을수록(prior가 확신) λ가 커지고, prior의 영향이 강해진다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q8 -->
-          <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q8</span>
-              <span class="quiz-text">다음 조건에서 MLE와 MAP 추정값을 각각 구하라. 데이터: y₁=1, y₂=3, y₃=5 (xₙ=n, N=3), 모델: yₙ = θxₙ + εₙ, ε~N(0,1). MAP의 경우 prior: θ~N(0, 1) 사용. λ = σ²/b² = 1/1 = 1.</span>
-              <span class="quiz-tag">계산</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                데이터: x = [1,2,3]ᵀ, y = [1,3,5]ᵀ<br><br>
-                <strong>MLE</strong> (정규 방정식):
-                <div class="answer-formula">XᵀX = 1²+2²+3² = 1+4+9 = 14</div>
-                <div class="answer-formula">Xᵀy = 1·1+2·3+3·5 = 1+6+15 = 22</div>
-                <div class="answer-formula">θ_MLE = (XᵀX)⁻¹Xᵀy = 22/14 = 11/7 ≈ 1.571</div>
-                <strong>MAP</strong> (Ridge with λ=1, N=3):
-                <div class="answer-formula">θ_MAP = (XᵀX + NλI)⁻¹Xᵀy = (14 + 3×1)⁻¹ × 22 = 22/17 ≈ 1.294</div>
-                <strong>해석</strong>: MAP 값(1.294)이 MLE(1.571)보다 0 방향으로 수축(shrinkage)되었다. prior N(0,1)이 θ를 원점 쪽으로 당기는 정규화 효과를 발휘한 결과.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q9 -->
-          <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q9</span>
-              <span class="quiz-text">MLE, MAP, Bayesian Inference를 (1) 추정 결과 형태, (2) 사전 지식 활용, (3) 계산 방법, (4) 오버피팅 저항성, (5) 데이터 N이 매우 클 때의 수렴 방향의 다섯 가지 측면에서 비교하라.</span>
-              <span class="quiz-tag">비교</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <div class="answer-formula">
-항목             | MLE              | MAP                  | Bayesian
------------------|------------------|----------------------|------------------
-추정 결과        | 점 추정 θ*       | 점 추정 θ_MAP        | 분포 p(θ|X)
-사전 지식        | 없음 (uniform)   | prior p(θ) 반영      | prior p(θ) 반영
-계산 방법        | 최적화 (∇L=0)    | 최적화 (prior 포함)  | 적분 (전체 posterior)
-계산 비용        | 낮음             | 낮음~중간            | 매우 높음
-오버피팅 저항    | 약함             | 중간 (prior 강도 의존)| 강함 (분포 유지)
-N→∞ 수렴        | θ_true 수렴      | θ_MLE와 수렴         | 점 mass at θ_true
-                </div>
-                <strong>실용적 선택 기준</strong>:<br>
-                데이터 많음 → MLE / 사전 지식 있거나 데이터 적음 → MAP / 불확실성 정량화 필요 → Bayesian
-              </div>
-            </div>
-          </div>
-
-          <!-- Q10 -->
-          <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q10</span>
-              <span class="quiz-text">베이지안 추론에서 predictive distribution p(x_new | X)를 구하는 과정을 수식으로 서술하라. 이것이 MLE 방식의 p(x_new | θ*) 사용과 근본적으로 다른 점을 두 가지 이상 설명하라.</span>
-              <span class="quiz-tag">유도</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>Bayesian Predictive Distribution</strong>:
-                <div class="answer-formula">p(x_new | X) = ∫ p(x_new | θ) p(θ | X) dθ = E_{p(θ|X)}[p(x_new | θ)]</div>
-                과정: ① posterior p(θ|X) 계산 (학습 단계) ② x_new에 대해 가능한 모든 θ로 예측한 분포를 posterior로 가중 평균.<br><br>
-                <strong>MLE 방식과의 차이</strong>:<br>
-                ① <strong>파라미터 불확실성 반영</strong>: MLE는 θ* 하나로 예측. 베이지안은 posterior에 따라 모든 가능한 θ를 평균 → 파라미터 추정 오차가 예측 분포의 분산에 반영됨.<br>
-                ② <strong>예측 분포의 분산</strong>: 베이지안 예측 분포는 항상 MLE 예측 분포보다 <strong>넓거나 같은 분산</strong>을 가진다. 데이터가 적은 영역에서 불확실성이 자동으로 증가.<br>
-                ③ <strong>θ에 종속되지 않음</strong>: MLE 예측은 추정된 θ*에 전적으로 의존하지만, 베이지안 예측은 θ를 marginalize하여 파라미터 없이 데이터만의 함수로 표현됨.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q11 -->
-          <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q11</span>
-              <span class="quiz-text">두 모델 M₁, M₂에 대해 p(M₁)=0.3, p(M₂)=0.7, p(D|M₁)=0.5, p(D|M₂)=0.2가 주어졌다. (1) Bayes Factor를 계산하라. (2) Prior Odds를 계산하라. (3) Posterior Odds를 계산하여 최종적으로 어떤 모델을 선택해야 하는지 판단하라.</span>
-              <span class="quiz-tag">계산</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <div class="answer-formula">(1) Bayes Factor = p(D|M₁) / p(D|M₂) = 0.5 / 0.2 = 2.5</div>
-                <div class="answer-formula">(2) Prior Odds = p(M₁) / p(M₂) = 0.3 / 0.7 ≈ 0.4286</div>
-                <div class="answer-formula">(3) Posterior Odds = Prior Odds × Bayes Factor = 0.4286 × 2.5 ≈ 1.071</div>
-                Posterior Odds > 1이므로 <strong>M₁ 선택</strong>.<br><br>
-                해석: 사전 확률(Prior Odds = 0.43)은 M₂를 선호했지만, 데이터 설명력(Bayes Factor = 2.5)은 M₁을 강하게 지지한다. 두 효과를 결합한 결과(Posterior Odds ≈ 1.07)는 M₁이 약간 우세하다. 증거가 강하지 않으므로 추가 데이터 수집이 권장될 수 있다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q12 -->
-          <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q12</span>
-              <span class="quiz-text">오캄의 면도날(Occam's Razor) 원칙이 베이지안 모델 선택에서 marginal likelihood를 통해 자동으로 구현되는 이유를 설명하라. 복잡한 모델과 단순한 모델의 marginal likelihood 크기가 어떻게 차이 나는지 prior 분포의 관점에서 논하라.</span>
-              <span class="quiz-tag">비교</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                오캄의 면도날: "데이터를 설명하기에 충분한 가장 단순한 모델이 최선"
-                <div class="answer-formula">p(D | Mₖ) = ∫ p(D | θₖ) p(θₖ | Mₖ) dθₖ</div>
-                <strong>복잡한 모델</strong>:<br>
-                파라미터 공간이 넓음 → prior p(θ|M)이 넓게 퍼져 있음 → 각 θ 지점에서의 prior 밀도가 낮음 → 비록 likelihood p(D|θ)가 최적점에서 높더라도 prior 가중치가 낮아 적분 값이 작아짐 (확률 희석 효과).<br><br>
-                <strong>단순한 모델</strong>:<br>
-                파라미터 공간이 좁음 → prior가 집중됨 → 데이터를 잘 설명하는 θ 근방에서 prior 밀도가 높음 → 적분 결과 즉 marginal likelihood가 클 수 있음.<br><br>
-                결론: marginal likelihood는 데이터 설명력(likelihood)과 모델 복잡도(prior의 퍼짐도) 간의 <strong>자동 trade-off</strong>를 반영한다. 불필요하게 복잡한 모델은 확률 희석으로 인해 자연스럽게 불이익을 받는다. 이것이 오캄의 면도날의 베이지안 구현이다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q13 -->
-          <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q13</span>
-              <span class="quiz-text">켤레 사전 분포(Conjugate Prior)의 정의를 서술하고, Gaussian likelihood와 켤레를 이루는 prior는 무엇인지 밝혀라. 켤레 prior가 중요한 수학적 이유와 켤레가 아닐 때의 대안적 계산 방법을 설명하라.</span>
-              <span class="quiz-tag">개념</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>켤레 사전 분포의 정의</strong>:<br>
-                likelihood p(x|θ)와 prior p(θ)가 켤레(conjugate) 관계이면, posterior p(θ|x)가 prior와 <strong>같은 분포 족(family)</strong>에 속한다.
-                <div class="answer-formula">p(θ|x) ∝ p(x|θ)·p(θ)  → posterior ∈ 같은 분포 족</div>
-                <strong>Gaussian likelihood의 켤레 prior</strong>:<br>
-                p(x|θ) = N(x | θ, σ²) 에 대해 → prior p(θ) = N(θ | μ₀, σ₀²) → posterior p(θ|x) = N(θ | μ_n, σ_n²) (역시 Gaussian).<br><br>
-                <strong>중요한 수학적 이유</strong>:<br>
-                베이즈 정리의 분모 p(X) = ∫ p(X|θ)p(θ)dθ 적분이 closed-form으로 계산 가능해진다. 그렇지 않으면 이 적분은 대부분 해석적 해가 없다.<br><br>
-                <strong>켤레가 아닐 때의 대안</strong>:<br>
-                ① MCMC (Markov Chain Monte Carlo): 샘플링으로 posterior 근사.<br>
-                ② Variational Inference: posterior를 단순한 분포로 근사하여 최적화.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q14 -->
-          <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q14</span>
-              <span class="quiz-text">잠재 변인 모델(Latent Variable Model)에서 잠재 변인 z를 marginalize하여 관측 데이터 우도 p(x|θ)를 얻는 과정을 수식으로 서술하라. 왜 z를 직접 추정하지 않고 marginalize하는가? GMM을 예시로 들어 설명하라.</span>
-              <span class="quiz-tag">개념</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>z의 Marginalization</strong>:
-                <div class="answer-formula">p(x | θ) = ∫ p(x | z, θ) p(z) dz  (연속 z)</div>
-                <div class="answer-formula">p(x | θ) = Σ_z p(x | z, θ) p(z)  (이산 z)</div>
-                <strong>왜 직접 추정하지 않고 marginalize하는가</strong>:<br>
-                z는 관측 불가능한 변인이다. z를 고정하면 과제가 단순해지지만, z의 참값을 모르므로 불확실한 상태로 남겨야 한다. Marginalization은 z에 대한 불확실성(prior p(z))을 반영한 채로 우도를 계산하는 올바른 방법이다.<br><br>
-                <strong>GMM 예시</strong>:<br>
-                데이터 xₙ이 K개 Gaussian 성분 중 하나에서 나왔다고 가정. z_n ∈ {1,...,K} (관측 불가):
-                <div class="answer-formula">p(xₙ | θ) = Σₖ₌₁ᴷ p(xₙ | z_n=k, θ) p(z_n=k) = Σₖ πₖ N(xₙ | μₖ, Σₖ)</div>
-                πₖ = p(z=k): 혼합 계수(mixing coefficient). z를 marginalize함으로써 각 성분 귀속을 모르더라도 전체 분포를 학습할 수 있다.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q15 -->
-          <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q15</span>
-              <span class="quiz-text">Nested Cross-Validation(결합 교차검증)의 구조를 도식적으로 설명하고, inner loop와 outer loop의 각각의 역할과 사용하는 데이터 집합을 명확히 구분하라. 단순 CV와 Nested CV를 사용해야 하는 경우를 구분하라.</span>
-              <span class="quiz-tag">비교</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>Nested CV 구조</strong>:<br>
-                전체 데이터 D = Training pool + Test set (Outer split, 한 번만 나눔)
-                <div class="answer-formula">
-Training pool → [Inner loop: K-fold CV]
-               → 후보 모델 각각에 대해 CV 수행
-               → 가장 낮은 val error의 하이퍼파라미터 λ* 선택
-Training pool 전체로 λ*로 재학습
-Test set → 최종 generalization error 평가 (딱 한 번만 사용)
-                </div>
-                <strong>Inner loop 역할</strong>: 하이퍼파라미터 선택(모델 선택). 사용 데이터: Training pool의 K-fold.<br>
-                <strong>Outer loop 역할</strong>: 최종 성능 평가(일반화 오차 추정). 사용 데이터: 별도 Test set.<br><br>
-                <strong>단순 CV vs Nested CV 사용 구분</strong>:<br>
-                • 단순 CV: 고정된 하이퍼파라미터로 generalization error만 추정할 때.<br>
-                • Nested CV: 하이퍼파라미터 선택(모델 선택)과 최종 성능 평가를 동시에 수행할 때. Test set이 한 번만 쓰여야 공정한 평가 가능.
-              </div>
-            </div>
-          </div>
-
-          <!-- Q16 -->
-          <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
-            <div class="quiz-q">
-              <span class="quiz-num">Q16</span>
-              <span class="quiz-text">Bias-Variance Trade-off 관점에서 정규화 파라미터 λ가 모델에 미치는 영향을 설명하라. λ → 0 및 λ → ∞ 의 극한에서 각각 어떤 문제가 발생하는가? 최적 λ를 찾는 방법을 서술하라.</span>
-              <span class="quiz-tag">계산</span>
-              <span class="quiz-toggle">+</span>
-            </div>
-            <div class="quiz-answer">
-              <div class="answer-label">풀이</div>
-              <div class="answer-body">
-                <strong>Bias-Variance Trade-off with λ</strong>:
-                <div class="answer-formula">Expected Risk = Bias² + Variance + Noise</div>
-                <strong>λ 증가 시</strong>:<br>
-                • 파라미터 크기 ‖θ‖에 강한 페널티 → θ가 0 방향으로 수축(shrinkage)<br>
-                • 모델 복잡도 감소 → Variance ↓ (다른 훈련 데이터에 덜 민감)<br>
-                • 그러나 진짜 패턴도 제한 → Bias ↑<br><br>
-                <strong>λ → 0 극한</strong>: 정규화 없음. 모델이 훈련 데이터 노이즈까지 학습 → <strong>Overfitting</strong> (High Variance, Low Bias).<br><br>
-                <strong>λ → ∞ 극한</strong>: 페널티가 압도적 → θ* → 0 (모든 예측이 상수). 데이터를 무시 → <strong>Underfitting</strong> (Low Variance, High Bias).<br><br>
-                <strong>최적 λ 탐색 방법</strong>:<br>
-                ① K-fold Cross-Validation: 여러 λ 후보에 대해 CV를 수행하고, validation error가 최소인 λ 선택.<br>
-                ② Grid Search 또는 Bayesian Optimization으로 λ 후보 탐색 범위 설정.
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /quizList -->
-      </section>
-      </section>
-
-    </div><!-- /lec08 -->
-
-    <!-- 추가 강의 자료 placeholder -->
-    <div class="lecture-content" id="lec-placeholder">
-      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; gap:16px; text-align:center;">
-        <div style="font-size:48px; color:var(--border2);">+</div>
-        <div style="font-family:var(--serif); font-size:24px; font-weight:600; color:var(--text3);">강의자료를 추가하세요</div>
-        <div style="font-size:14px; color:var(--text3); max-width:400px; line-height:1.8;">
-          상단 탭의 + 버튼을 눌러 PDF를 업로드하거나,<br>새 강의 탭을 직접 추가할 수 있습니다.
-        </div>
-        <button style="margin-top:16px; padding:12px 28px; border:1.5px solid var(--text); background:none; font-family:var(--sans); font-size:14px; cursor:pointer; border-radius:4px;" onclick="showAddTab()">새 강의 추가</button>
       </div>
     </div>
 
-  </main>
+    <div class="fblock">
+      <div class="fblock-label">Empirical Risk — MML Eq. 8.6</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\mathbf{R}_{\text{emp}}(f,\,\mathbf{X},\,\mathbf{y}) \;=\; \frac{1}{N}\sum_{n=1}^{N} \ell\!\left(y_n,\;\hat{y}_n\right)\]</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Least-Squares Loss (예제 8.2) — MML Eq. 8.7–8.9</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\ell(y_n,\hat{y}_n) = (y_n - \hat{y}_n)^2\]</div>
+          <div class="feq-note">squared loss</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\min_{\boldsymbol{\theta}\in\mathbb{R}^D}\; \frac{1}{N}\sum_{n=1}^{N}\!\left(y_n - \boldsymbol{\theta}^\top\mathbf{x}_n\right)^{\!2}\]</div>
+          <div class="feq-note">선형 예측자 \(\hat{y}_n=\boldsymbol{\theta}^\top\mathbf{x}_n\) 사용</div>
+        </div>
+        <div class="feq-row">
+          <div>\[= \;\min_{\boldsymbol{\theta}}\; \frac{1}{N}\left\|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\right\|^2\]</div>
+          <div class="feq-note">행렬 형태 (Eq. 8.9)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Expected (True) Risk — 학습의 진짜 목표</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\mathbf{R}_{\text{true}}(f) \;=\; \mathbb{E}_{\mathbf{x},\,y}\!\left[\ell\!\left(y,\, f(\mathbf{x})\right)\right]\]</div>
+        <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:6px;">미래 데이터에도 잘 동작하는 함수를 원하므로, 실제 분포 전체에 대한 기댓값을 최소화하는 것이 목표</div>
+      </div>
+    </div>
+
+    <p>학습 데이터의 i.i.d. 가정: 훈련 데이터 \((\mathbf{x}_1,y_1),\ldots,(\mathbf{x}_N,y_N)\)는 <strong>독립이고 동일한 분포(i.i.d.)</strong>에서 추출되었다고 가정한다.</p>
+  </div>
+</section>
+
+<!-- 05 오버피팅 -->
+<section class="concept-section" id="sec-overfit">
+  <div class="concept-header">
+    <span class="concept-num">05</span>
+    <div><div class="concept-title">오버피팅 &amp; 정규화</div><div class="concept-en">Overfitting &amp; Regularization</div></div>
+    <span class="mml-ref">MML §8.2.3</span>
+  </div>
+  <div class="concept-body">
+    <p><strong>오버피팅(Overfitting)</strong>: 훈련 데이터에는 매우 낮은 loss를 보이지만, 새로운 데이터에서 expected risk가 크게 증가하는 현상.</p>
+    <div class="key-box">
+      <div class="key-box-label">세 가지 피팅 상태</div>
+      <div class="key-box-content"><strong>Underfitting</strong>: 모델이 너무 단순 → 훈련/테스트 모두 error 높음.<br><strong>Good Fitting</strong>: 적절한 복잡도 → 일반화 잘 됨.<br><strong>Overfitting</strong>: 모델이 너무 복잡 → 훈련 error↓, 테스트 error↑.</div>
+    </div>
+    <p style="margin-top:16px;"><strong>해결책: 정규화(Regularization)</strong> — 손실 함수에 페널티 항을 추가하여 파라미터가 너무 커지는 것을 억제한다.</p>
+    <div class="fblock">
+      <div class="fblock-label">Regularized Least-Squares (예제 8.3) — MML Eq. 8.11–8.12</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\text{기본:}\quad \min_{\boldsymbol{\theta}}\; \frac{1}{N}\left\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right\|^2\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\text{정규화:}\quad \min_{\boldsymbol{\theta}}\; \frac{1}{N}\left\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right\|^2 + \lambda\left\|\boldsymbol{\theta}\right\|^2\]</div>
+          <div class="feq-note">\(\lambda\): 정규화 파라미터 (하이퍼파라미터)<br>\(\lambda\)가 클수록 파라미터 크기에 더 큰 페널티</div>
+        </div>
+      </div>
+    </div>
+    <p>추가 항 \(\|\boldsymbol{\theta}\|^2\)를 <strong>regularizer</strong>라 한다. 손실 최소화와 파라미터 크기 최소화 간의 trade-off가 \(\lambda\)로 조절된다.</p>
+  </div>
+</section>
+
+<!-- 06 교차검증 -->
+<section class="concept-section" id="sec-cv">
+  <div class="concept-header">
+    <span class="concept-num">06</span>
+    <div><div class="concept-title">교차검증</div><div class="concept-en">K-fold Cross-Validation</div></div>
+    <span class="mml-ref">MML §8.2.4</span>
+  </div>
+  <div class="concept-body">
+    <p>미래 데이터의 성능을 추정하기 위해, 보유한 데이터를 <strong>K개의 chunk</strong>로 나눠 K−1개를 훈련에, 1개를 검증에 사용하는 방법. 이를 K번 반복하여 평균 위험을 계산한다.</p>
+    <div class="fblock">
+      <div class="fblock-label">K-fold Generalization Error 추정</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\mathbb{E}_{\mathcal{V}}\!\left[R(f,\mathcal{V})\right] \;\approx\; \frac{1}{K}\sum_{k=1}^{K} R\!\left(f^{(k)},\,\mathcal{V}^{(k)}\right)\]</div>
+      </div>
+    </div>
+    <ul class="concept-list">
+      <li><span class="cl-key">\(\mathcal{R}^{(k)}\) (Training)</span><span class="cl-val">\(k\)번째 fold를 제외한 나머지로 모델 \(f^{(k)}\) 학습</span></li>
+      <li><span class="cl-key">\(\mathcal{V}^{(k)}\) (Validation)</span><span class="cl-val">\(k\)번째 fold → 실제적 위험 \(R(f^{(k)}, \mathcal{V}^{(k)})\) 계산</span></li>
+      <li><span class="cl-key">\(\mathcal{R}\cup\mathcal{V}=\mathcal{D},\;\mathcal{R}\cap\mathcal{V}=\emptyset\)</span><span class="cl-val">모든 데이터를 다 활용, 겹치지 않음</span></li>
+    </ul>
+    <div class="key-box">
+      <div class="key-box-label">결합 교차검증 (Nested CV) — 모델 선택용</div>
+      <div class="key-box-content"><strong>Inner loop</strong>: training + validation으로 각 후보 모델의 empirical risk 기댓값 추정 → 최적 모델 선택.<br><strong>Outer loop</strong>: 별도 test data로 최종 모델의 generalization error 평가.<br><br>\(\mathbb{E}_{\mathcal{V}}\!\left[\mathbf{R}(\mathcal{V}\mid M)\right] \approx \dfrac{1}{K}\displaystyle\sum_{k=1}^{K} \mathbf{R}\!\left(\mathcal{V}^{(k)}\mid M\right)\)</div>
+    </div>
+    <p style="font-size:13.5px;color:var(--text3);">단점: K번 반복 학습이 필요하므로 계산 비용이 매우 크다. 최근에는 병렬 컴퓨팅으로 해결.</p>
+  </div>
+</section>
+
+<!-- 07 MLE -->
+<section class="concept-section" id="sec-mle">
+  <div class="concept-header">
+    <span class="concept-num">07</span>
+    <div><div class="concept-title">최대 우도 추정</div><div class="concept-en">Maximum Likelihood Estimation (MLE)</div></div>
+    <span class="mml-ref">MML §8.3</span>
+  </div>
+  <div class="concept-body">
+    <p>관측된 데이터를 가장 잘 설명하는 파라미터 \(\boldsymbol{\theta}\)를 찾는 방법. i.i.d. 가정 하에 결합 우도를 곱 형태로 분해한 뒤, 음의 로그 우도(negative log-likelihood)를 최소화한다.</p>
+
+    <div class="fblock">
+      <div class="fblock-label">Likelihood (i.i.d. 가정)</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[p(\mathcal{Y}\mid\mathcal{X},\boldsymbol{\theta}) \;=\; \prod_{n=1}^{N} p\!\left(y_n\mid\mathbf{x}_n,\boldsymbol{\theta}\right)\]</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Negative Log-Likelihood (NLL)</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\mathcal{L}(\boldsymbol{\theta}) = -\log p(\mathcal{Y}\mid\mathcal{X},\boldsymbol{\theta}) = -\sum_{n=1}^{N}\log p\!\left(y_n\mid\mathbf{x}_n,\boldsymbol{\theta}\right)\]</div>
+        <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:6px;">최대화 → 음수 취해 최소화 문제로 변환 · 곱 → 합 (수치 안정성)</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Gaussian Likelihood → Least Squares (예제 8.5) — MML Eq. 8.15, 8.18</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[p(y_n\mid\mathbf{x}_n,\boldsymbol{\theta}) = \mathcal{N}\!\left(y_n\;\middle|\;\mathbf{x}_n^\top\boldsymbol{\theta},\;\sigma^2\right)\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\mathcal{L}(\boldsymbol{\theta}) = \frac{1}{2\sigma^2}\sum_{n=1}^{N}\!\left(y_n - \mathbf{x}_n^\top\boldsymbol{\theta}\right)^{\!2} - N\log\frac{1}{\sqrt{2\pi\sigma^2}}\]</div>
+          <div class="feq-note">\(\sigma\) 상수이면<br>두 번째 항은 \(\boldsymbol{\theta}\)와 무관<br>→ NLL 최소화 = 최소자승</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <div class="key-box-label">MLE의 특성과 한계</div>
+      <div class="key-box-content"><strong>Asymptotic Consistency</strong>: \(N\to\infty\)일 때 오차 분산이 0에 수렴.<br><strong>Small data overfitting</strong>: 데이터가 적으면 overfitting 발생.<br><strong>사전 지식 반영 불가</strong>: \(\boldsymbol{\theta}\)에 대한 사전 정보를 활용하지 않는다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 MAP -->
+<section class="concept-section" id="sec-map">
+  <div class="concept-header">
+    <span class="concept-num">08</span>
+    <div><div class="concept-title">최대 사후 추정</div><div class="concept-en">Maximum A Posteriori (MAP)</div></div>
+    <span class="mml-ref">MML §8.3</span>
+  </div>
+  <div class="concept-body">
+    <p>MLE에 <strong>사전 분포(prior) \(p(\boldsymbol{\theta})\)</strong>를 추가하여 \(\boldsymbol{\theta}\)에 대한 사전 지식을 반영하는 방법. 베이즈 정리를 통해 후위 확률(posterior)을 최대화한다.</p>
+
+    <div class="fblock">
+      <div class="fblock-label">Bayes' Theorem</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[p(\boldsymbol{\theta}\mid\mathbf{x}) = \frac{p(\mathbf{x}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta})}{p(\mathbf{x})}\]</div>
+        <div class="feq-row">
+          <div>\[p(\boldsymbol{\theta}\mid\mathbf{x}) \;\propto\; p(\mathbf{x}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta})\]</div>
+          <div class="feq-note">\(p(\mathbf{x})\)는 \(\boldsymbol{\theta}\)와 무관 → 비례 관계로 단순화</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">MAP Estimate</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\boldsymbol{\theta}_{\text{MAP}} = \operatorname*{arg\,max}_{\boldsymbol{\theta}}\;\Bigl[\log p(\mathcal{Y}\mid\mathcal{X},\boldsymbol{\theta}) + \log p(\boldsymbol{\theta})\Bigr]\]</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Gaussian Prior → L2 Regularization (예제 8.6) — MML §8.3.2</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[p(\boldsymbol{\theta}) = \mathcal{N}(\mathbf{0},\,\boldsymbol{\Sigma})\]</div>
+          <div class="feq-note">등방성: \(\boldsymbol{\Sigma}=\frac{1}{\lambda}\mathbf{I}\)</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\Rightarrow\quad \boldsymbol{\theta}_{\text{MAP}} = \operatorname*{arg\,min}_{\boldsymbol{\theta}}\;\frac{1}{N}\left\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right\|^2 + \lambda\left\|\boldsymbol{\theta}\right\|^2\]</div>
+          <div class="feq-note">Gaussian prior MAP<br>≡ L2 정규화(Ridge)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <div class="key-box-label">MLE vs. MAP</div>
+      <div class="key-box-content"><strong>MLE</strong>: \(p(\mathcal{Y}\mid\mathcal{X},\boldsymbol{\theta})\) 최대화. 사전 지식 없음. 한 점 추정.<br><strong>MAP</strong>: \(p(\boldsymbol{\theta}\mid\mathcal{X},\mathcal{Y})\) 최대화. 사전 분포 \(p(\boldsymbol{\theta})\) 활용. 한 점 추정.<br>두 방법 모두 <strong>point estimate</strong>이다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 베이지안 추론 -->
+<section class="concept-section" id="sec-bayes">
+  <div class="concept-header">
+    <span class="concept-num">09</span>
+    <div><div class="concept-title">베이지안 추론</div><div class="concept-en">Bayesian Inference</div></div>
+    <span class="mml-ref">MML §8.4</span>
+  </div>
+  <div class="concept-body">
+    <p>MLE/MAP가 \(\boldsymbol{\theta}\)의 한 점을 추정하는 것과 달리, 베이지안 추론은 데이터 전체에 대해 <strong>파라미터 분포 \(p(\boldsymbol{\theta}\mid\mathcal{X})\) 전체를 추정</strong>한다.</p>
+
+    <div class="fblock">
+      <div class="fblock-label">Posterior Distribution</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[p(\boldsymbol{\theta}\mid\mathcal{X}) = \frac{p(\mathcal{X}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta})}{p(\mathcal{X})}\]</div>
+        <div class="feq-row">
+          <div>\[p(\mathcal{X}) = \int p(\mathcal{X}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta})\;d\boldsymbol{\theta}\]</div>
+          <div class="feq-note">marginal likelihood (evidence)<br>대부분 closed-form 불가</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Predictive Distribution</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[p(\mathbf{x}) = \int p(\mathbf{x}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta})\;d\boldsymbol{\theta} = \mathbb{E}_{\boldsymbol{\theta}}\!\left[p(\mathbf{x}\mid\boldsymbol{\theta})\right]\]</div>
+        <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:6px;">가능한 모든 \(\boldsymbol{\theta}\)에 대한 평균 → 파라미터에 종속되지 않음</div>
+      </div>
+    </div>
+
+    <div class="compare-grid" style="margin-top:20px;">
+      <div class="compare-cell header">방법</div><div class="compare-cell header">계산</div><div class="compare-cell header">결과</div>
+      <div class="compare-cell hl">MLE</div><div class="compare-cell">최적화 (미분=0)</div><div class="compare-cell">한 점 \(\boldsymbol{\theta}^*\)</div>
+      <div class="compare-cell hl">MAP</div><div class="compare-cell">최적화 (prior 포함)</div><div class="compare-cell">한 점 \(\boldsymbol{\theta}_{\text{MAP}}\)</div>
+      <div class="compare-cell hl">Bayesian</div><div class="compare-cell">적분 (posterior 전체)</div><div class="compare-cell">분포 \(p(\boldsymbol{\theta}\mid\mathcal{X})\)</div>
+    </div>
+
+    <div class="key-box" style="margin-top:20px;">
+      <div class="key-box-label">베이지안 추론의 특징</div>
+      <div class="key-box-content"><strong>장점</strong>: 파라미터 불확실성(uncertainty) 정량화 가능, 사전 지식 자연스럽게 반영.<br><strong>단점</strong>: \(p(\mathcal{X})\) 계산을 위한 적분이 대부분 closed-form으로 불가 → 켤레 분포(conjugate prior) 아니면 수치 근사(Monte Carlo 등) 필요.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 잠재 변인 모델 -->
+<section class="concept-section" id="sec-latent">
+  <div class="concept-header">
+    <span class="concept-num">10</span>
+    <div><div class="concept-title">잠재 변인 모델</div><div class="concept-en">Latent Variable Model</div></div>
+    <span class="mml-ref">MML §8.4</span>
+  </div>
+  <div class="concept-body">
+    <p>관측 데이터 \(\mathbf{x}\) 외에 <strong>숨겨진 변인(latent variable) \(\mathbf{z}\)</strong>가 존재한다고 가정하여, 모델의 표현력을 높이면서도 파라미터 추정을 가능하게 하는 방법.</p>
+
+    <div class="fblock">
+      <div class="fblock-label">z를 주변화(marginalize)하여 우도 계산</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[p(\mathbf{x}\mid\boldsymbol{\theta}) = \int p(\mathbf{x}\mid\mathbf{z},\boldsymbol{\theta})\;p(\mathbf{z})\;d\mathbf{z}\]</div>
+        <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:6px;">\(\mathbf{z}\)의 prior \(p(\mathbf{z})\)가 주어지면 적분으로 \(\mathbf{z}\) 제거 → 우도는 \(\boldsymbol{\theta}\)만의 함수</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">z에 대한 Posterior</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[p(\mathbf{z}\mid\mathbf{x},\boldsymbol{\theta}) = \frac{p(\mathbf{x}\mid\mathbf{z},\boldsymbol{\theta})\;p(\mathbf{z})}{p(\mathbf{x}\mid\boldsymbol{\theta})}\]</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">θ에 대한 Posterior (Bayesian)</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[p(\boldsymbol{\theta}\mid\mathcal{X}) = \frac{p(\mathcal{X}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta})}{p(\mathcal{X})}\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[p(\mathcal{X}\mid\boldsymbol{\theta}) = \int p(\mathcal{X}\mid\mathbf{z},\boldsymbol{\theta})\;p(\mathbf{z})\;d\mathbf{z}\]</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-box">
+      <div class="key-box-label">활용 및 계산 조건</div>
+      <div class="key-box-content">10장(PCA), 11장(Gaussian Mixture Model), Hidden Markov Model 등. \(\mathbf{z}\)가 <strong>켤레 prior(conjugate prior)</strong>여야 closed-form 계산 가능. 아닌 경우 MCMC, Variational Inference 등 수치해석 근사 필요.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 모델 선택 -->
+<section class="concept-section" id="sec-model-sel">
+  <div class="concept-header">
+    <span class="concept-num">11</span>
+    <div><div class="concept-title">모델 선택 &amp; 베이즈 요인</div><div class="concept-en">Model Selection &amp; Bayes Factor</div></div>
+    <span class="mml-ref">MML §8.6</span>
+  </div>
+  <div class="concept-body">
+    <p><strong>오캄의 면도날(Occam's Razor)</strong>: 데이터를 가장 간단하게 설명하는 모델이 overfitting 위험이 낮다. 모델 선택은 "획득한 데이터를 가장 쉽게 설명하는 가설을 찾는 과정"이다.</p>
+
+    <div class="fblock">
+      <div class="fblock-label">베이지안 모델 선택 — MML §8.6</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[p(\mathcal{M}_k\mid\mathcal{D}) \;\propto\; p(\mathcal{M}_k)\;p(\mathcal{D}\mid\mathcal{M}_k)\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[p(\mathcal{D}\mid\mathcal{M}_k) = \int p(\mathcal{D}\mid\boldsymbol{\theta}_k)\;p(\boldsymbol{\theta}_k\mid\mathcal{M}_k)\;d\boldsymbol{\theta}_k\]</div>
+          <div class="feq-note">주변 우도 (Marginal Likelihood)</div>
+        </div>
+        <div class="feq-d">\[M^* = \operatorname*{arg\,max}_{\mathcal{M}_k}\; p(\mathcal{M}_k\mid\mathcal{D})\]</div>
+      </div>
+    </div>
+
+    <div class="fblock">
+      <div class="fblock-label">Bayes Factor (모델 비교)</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\underbrace{\dfrac{p(\mathcal{M}_1\mid\mathcal{D})}{p(\mathcal{M}_2\mid\mathcal{D})}}_{\text{posterior odds}} \;=\; \underbrace{\dfrac{p(\mathcal{M}_1)}{p(\mathcal{M}_2)}}_{\text{prior odds}} \;\times\; \underbrace{\dfrac{p(\mathcal{D}\mid\mathcal{M}_1)}{p(\mathcal{D}\mid\mathcal{M}_2)}}_{\text{Bayes factor}}\]</div>
+      </div>
+    </div>
+
+    <ul class="concept-list">
+      <li><span class="cl-key">Prior Odds</span><span class="cl-val">사전 확률 비 — \(\mathcal{M}_1\)이 \(\mathcal{M}_2\)보다 사전에 얼마나 더 개연성 있는지</span></li>
+      <li><span class="cl-key">Bayes Factor</span><span class="cl-val">우도 비 — 데이터 \(\mathcal{D}\)가 어느 모델에서 더 잘 설명되는지</span></li>
+      <li><span class="cl-key">결론</span><span class="cl-val">BF &gt; 1이면 \(\mathcal{M}_1\) 선택. uniform prior이면 BF = 주변 우도 비</span></li>
+    </ul>
+
+    <div class="key-box">
+      <div class="key-box-label">주변 우도의 역할 (오캄의 면도날)</div>
+      <div class="key-box-content">주변 우도는 Model complexity와 Data fit 사이의 trade-off를 자동으로 반영한다. 복잡한 모델은 prior가 넓게 퍼져 희석되어 marginal likelihood가 작아진다 (Jeffreys-Lindley 역설).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ QUIZ ═══ -->
+<section class="quiz-section" id="quiz-section">
+  <div class="quiz-header">
+    <h2 class="quiz-title">연습 문제</h2>
+    <span class="quiz-count" id="quizCount">0 / 16 풀이 완료</span>
+  </div>
+  <div class="tag-cloud" id="quizTags">
+    <span class="tag active" onclick="filterQuiz('all',this)">전체</span>
+    <span class="tag" onclick="filterQuiz('개념',this)">개념 이해</span>
+    <span class="tag" onclick="filterQuiz('계산',this)">계산</span>
+    <span class="tag" onclick="filterQuiz('유도',this)">유도·증명</span>
+    <span class="tag" onclick="filterQuiz('비교',this)">비교·분석</span>
+  </div>
+  <div class="quiz-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0%</span>
+  </div>
+  <div id="quizList">
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q1</span><span class="quiz-text">현실의 데이터를 기계학습에 적용하기 위해 필요한 전처리 과정을 설명하고, 범주형 변수(categorical variable)를 수치화하는 방법 두 가지를 제시하라.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">현실 데이터는 문자, 범주 등 다양한 형태이므로, 기계학습 알고리즘 적용 전 반드시 실수 벡터로 변환해야 한다. 이를 feature engineering이라 한다.<br><br><strong>① Label Encoding</strong>: 각 범주에 정수를 부여 (예: M=−1, F=+1). 순서가 없는 명목형에는 잘못된 순서 관계를 부여할 수 있어 주의 필요.<br><strong>② One-hot Encoding</strong>: K개 범주를 K차원 이진 벡터로 표현. 순서 없는 범주형에 적합하지만 차원이 늘어남.</div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q2</span><span class="quiz-text">함수 모델과 확률 분포 모델의 차이를 설명하고, 각각이 어떤 학습 방법론에 대응하는지 서술하라.</span><span class="quiz-tag">비교</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body"><strong>함수 모델</strong> \(f:\mathbb{R}^D\to\mathbb{R}\): 입력 \(\mathbf{x}\)에 대해 하나의 결정론적 값 \(\hat{y}\)을 반환. 불확실성 표현 불가. → ERM으로 파라미터 추정.<br><br><strong>확률 분포 모델</strong>: 같은 입력에 대해 \(p(y\mid\mathbf{x},\boldsymbol{\theta})\)라는 확률 분포를 반환. 예측의 불확실성을 정량화할 수 있음. → MLE / MAP / Bayesian Inference로 파라미터 추정.</div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q3</span><span class="quiz-text">기계학습 알고리즘의 세 단계(예측/추론, 파라미터 추정, 모델 선택)를 각각 설명하고, 파라미터와 하이퍼파라미터의 차이를 예와 함께 서술하라.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">① <strong>예측/추론</strong>: 학습된 모델 \(f(\mathbf{x},\boldsymbol{\theta}^*)\)에 새 \(\mathbf{x}\)를 넣어 \(\hat{y}\)을 얻는 단계.<br>② <strong>파라미터 추정(Training)</strong>: 주어진 훈련 데이터로 손실 함수를 최소화하는 \(\boldsymbol{\theta}^*\)를 찾는 단계.<br>③ <strong>모델 선택</strong>: 함수의 형태와 하이퍼파라미터를 결정하는 단계. Nested Cross-Validation 사용.<br><br><strong>파라미터</strong>: 데이터로부터 학습. 예: 선형회귀 \(y=ax+b\)에서 \(a,b\).<br><strong>하이퍼파라미터</strong>: 사람이 사전에 설정. 예: 정규화 강도 \(\lambda\), 다항식 차수 \(d\).</div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q4</span><span class="quiz-text">N=3개의 데이터 포인트 (1,2), (2,4), (3,5)에 대해 선형 예측자 \(\hat{y}=\theta x\)를 사용할 때, 경험적 위험(least-squares loss)을 \(\theta\)의 함수로 표현하고 최적 \(\theta^*\)를 구하라.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[R_{\text{emp}}(\theta) = \frac{1}{3}\left[(2-\theta)^2 + (4-2\theta)^2 + (5-3\theta)^2\right] = \frac{1}{3}\left[14\theta^2 - 50\theta + 45\right]\]</div>
+        최소화 조건 \(\dfrac{dR}{d\theta}=0\):
+        <div class="amath">\[\frac{1}{3}(28\theta-50)=0 \quad\Rightarrow\quad \theta^* = \frac{50}{28} = \frac{25}{14} \approx 1.786\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q5</span><span class="quiz-text">경험적 위험(empirical risk)과 예측 위험(expected risk)의 차이를 설명하고, 오버피팅이 발생하면 두 값이 어떤 관계를 갖는지 서술하라.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>경험적 위험</strong>: 보유한 훈련 데이터에 대한 평균 손실.
+        <div class="amath">\[\mathbf{R}_{\text{emp}}(f,\mathbf{X},\mathbf{y}) = \frac{1}{N}\sum_{n=1}^N \ell(y_n,f(\mathbf{x}_n))\]</div>
+        <strong>예측 위험</strong>: 실제 데이터 분포 전체에 대한 기대 손실.
+        <div class="amath">\[\mathbf{R}_{\text{true}}(f) = \mathbb{E}_{\mathbf{x},y}\!\left[\ell(y,f(\mathbf{x}))\right]\]</div>
+        <strong>오버피팅 시</strong>:
+        <div class="amath">\[\mathbf{R}_{\text{emp}}(f,\mathbf{X}_{\text{train}},\mathbf{y}_{\text{train}}) \;\ll\; \mathbf{R}_{\text{true}}(f)\]</div>
+        즉, 훈련 데이터에서의 성능이 실제 성능을 크게 <strong>과소추정(underestimates)</strong>하게 된다.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q6</span><span class="quiz-text">최소자승 문제 \(\min_\theta \frac{1}{N}\|\mathbf{y}-\mathbf{X}\boldsymbol\theta\|^2\)에 L2 정규화 \(\lambda\|\boldsymbol\theta\|^2\)를 추가했을 때, 최적해 \(\boldsymbol\theta^*\)를 closed-form으로 구하라.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        목적함수: \(J(\boldsymbol{\theta}) = \frac{1}{N}\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2 + \lambda\|\boldsymbol{\theta}\|^2\). 미분하여 0으로 놓기:
+        <div class="amath">\[\nabla_{\boldsymbol{\theta}} J = \frac{2}{N}\mathbf{X}^\top(\mathbf{X}\boldsymbol{\theta}-\mathbf{y}) + 2\lambda\boldsymbol{\theta} = \mathbf{0}\]</div>
+        <div class="amath">\[\boxed{\boldsymbol{\theta}^* = \left(\mathbf{X}^\top\mathbf{X} + N\lambda\mathbf{I}\right)^{-1}\mathbf{X}^\top\mathbf{y}}\]</div>
+        \(\lambda>0\)이면 \(\mathbf{X}^\top\mathbf{X}\)가 singular여도 역행렬 존재 → 수치 안정성 확보.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q7</span><span class="quiz-text">K-fold 교차검증의 절차를 설명하고, 단순 train/test split보다 유리한 이유를 서술하라. K=5일 때 학습 횟수는?</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>절차</strong>: ① 데이터를 K개 fold로 균등 분할. ② \(k=1,\ldots,K\)에 대해 \(k\)번째 fold를 validation set, 나머지를 training set으로 학습·평가. ③ K번 반복 후 평균을 generalization error 추정치로 사용.
+        <div class="amath">\[\mathbb{E}_{\mathcal{V}}\!\left[R(f,\mathcal{V})\right] \approx \frac{1}{K}\sum_{k=1}^{K} R\!\left(f^{(k)},\mathcal{V}^{(k)}\right)\]</div>
+        <strong>장점</strong>: 모든 데이터가 한 번씩 validation에 쓰이므로 추정 분산이 낮음.<br><strong>K=5일 때</strong>: 학습 5회, 검증 5회.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q8</span><span class="quiz-text">MLE에서 i.i.d. 가정 하에 결합 우도를 negative log-likelihood로 변환하는 과정을 유도하고, 이 변환이 수치적으로 편리한 이유를 설명하라.</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        i.i.d. 가정 → 결합 우도:
+        <div class="amath">\[p(\mathcal{Y}\mid\mathcal{X},\boldsymbol{\theta}) = \prod_{n=1}^{N} p(y_n\mid\mathbf{x}_n,\boldsymbol{\theta})\]</div>
+        log 취하기 (단조증가 → argmax 동일):
+        <div class="amath">\[\log p(\mathcal{Y}\mid\mathcal{X},\boldsymbol{\theta}) = \sum_{n=1}^{N}\log p(y_n\mid\mathbf{x}_n,\boldsymbol{\theta})\]</div>
+        최대화 → 음수 취해 최소화:
+        <div class="amath">\[\mathcal{L}(\boldsymbol{\theta}) = -\sum_{n=1}^{N}\log p(y_n\mid\mathbf{x}_n,\boldsymbol{\theta})\]</div>
+        <strong>수치적 이유</strong>: 확률값 \(p\in(0,1]\)을 N번 곱하면 float underflow(수치 0) 발생 위험. log를 취하면 곱 → 합으로 변환되어 안정적 계산 가능.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q9</span><span class="quiz-text">Gaussian 우도 \(p(y_n\mid\mathbf{x}_n,\boldsymbol\theta)=\mathcal{N}(y_n\mid\mathbf{x}_n^\top\boldsymbol\theta,\,\sigma^2)\)에서 MLE를 수행하면 최소자승 문제와 동일함을 유도하라. (MML 예제 8.5)</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        Gaussian 분포 대입:
+        <div class="amath">\[\mathcal{L}(\boldsymbol{\theta}) = \frac{1}{2\sigma^2}\sum_{n=1}^{N}(y_n-\mathbf{x}_n^\top\boldsymbol{\theta})^2 \;+\; N\log\sqrt{2\pi\sigma^2}\]</div>
+        \(\sigma\)가 상수이면 두 번째 항은 \(\boldsymbol{\theta}\)와 무관한 상수. 따라서:
+        <div class="amath">\[\operatorname*{arg\,min}_{\boldsymbol{\theta}}\;\mathcal{L}(\boldsymbol{\theta}) \;=\; \operatorname*{arg\,min}_{\boldsymbol{\theta}}\;\sum_{n=1}^{N}(y_n-\mathbf{x}_n^\top\boldsymbol{\theta})^2\]</div>
+        결론: Gaussian 우도 하의 MLE = 최소자승 문제와 수학적으로 동일.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q10</span><span class="quiz-text">MLE, MAP, Bayesian Inference 세 방법론을 (1) 추정 결과의 형태, (2) 사전 지식 활용 여부, (3) 계산 복잡도 측면에서 비교하라.</span><span class="quiz-tag">비교</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="compare-grid" style="margin:12px 0 16px;">
+          <div class="compare-cell header">방법</div><div class="compare-cell header">추정 결과</div><div class="compare-cell header">계산</div>
+          <div class="compare-cell hl">MLE</div><div class="compare-cell">점 추정 \(\boldsymbol{\theta}^*\)</div><div class="compare-cell">최적화 (비교적 쉬움)</div>
+          <div class="compare-cell hl">MAP</div><div class="compare-cell">점 추정 \(\boldsymbol{\theta}_{\text{MAP}}\)</div><div class="compare-cell">최적화 + prior</div>
+          <div class="compare-cell hl">Bayesian</div><div class="compare-cell">분포 \(p(\boldsymbol{\theta}\mid\mathcal{X})\)</div><div class="compare-cell">적분 (매우 어려움)</div>
+        </div>
+        <strong>실용적 선택</strong>: 데이터가 많으면 MLE, 사전 지식이 있으면 MAP, 불확실성 정량화가 중요하면 Bayesian. MAP에서 Gaussian prior → L2 정규화와 동일 효과.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q11</span><span class="quiz-text">MAP 추정에서 파라미터에 Gaussian prior \(p(\boldsymbol\theta)=\mathcal{N}(\mathbf{0},\boldsymbol\Sigma)\)를 사용하면 왜 L2 정규화와 동일한 결과가 나오는지 유도하라.</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        Gaussian prior의 log (\(\boldsymbol{\Sigma}=\frac{1}{\lambda}\mathbf{I}\)):
+        <div class="amath">\[\log p(\boldsymbol{\theta}) = -\frac{\lambda}{2}\left\|\boldsymbol{\theta}\right\|^2 + \text{const}\]</div>
+        Gaussian 우도(→ 최소자승)와 결합:
+        <div class="amath">\[\boldsymbol{\theta}_{\text{MAP}} = \operatorname*{arg\,min}_{\boldsymbol{\theta}}\;\frac{1}{N}\left\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\right\|^2 + \lambda\left\|\boldsymbol{\theta}\right\|^2\]</div>
+        ∴ Gaussian prior MAP ≡ L2 정규화(Ridge Regression)
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q12</span><span class="quiz-text">잠재 변인 모델에서 잠재 변인 \(\mathbf{z}\)의 역할과, 우도 \(p(\mathbf{x}\mid\boldsymbol\theta)\)를 얻기 위해 \(\mathbf{z}\)를 어떻게 처리하는지 설명하라. 켤레 사전 분포가 왜 중요한가?</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>잠재 변인 \(\mathbf{z}\)의 역할</strong>: 관측되지 않는 숨겨진 변인. 모델의 표현력을 높이면서 파라미터 수는 줄임. 예: GMM에서 각 데이터가 어떤 성분에서 나왔는지(z)는 관측 불가.
+        <div class="amath">\[p(\mathbf{x}\mid\boldsymbol{\theta}) = \int p(\mathbf{x}\mid\mathbf{z},\boldsymbol{\theta})\;p(\mathbf{z})\;d\mathbf{z}\]</div>
+        <strong>켤레 사전 분포의 중요성</strong>: prior \(p(\mathbf{z})\)가 likelihood의 켤레(conjugate)이면, posterior \(p(\mathbf{z}\mid\mathbf{x},\boldsymbol{\theta})\)가 같은 분포족 → 적분을 closed-form으로 계산 가능. 켤레가 아니면 MCMC, Variational Inference 등 수치 근사가 필요.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q13</span><span class="quiz-text">Nested Cross-Validation(결합 교차검증)의 구조를 설명하고, inner loop와 outer loop의 역할을 명확히 구분하라.</span><span class="quiz-tag">비교</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>목적</strong>: 모델 선택(hyperparameter tuning)과 최종 성능 평가를 동시에 수행.<br><br>
+        <strong>Inner loop</strong>: 각 후보 모델에 대해 K-fold CV 수행.
+        <div class="amath">\[\mathbb{E}_{\mathcal{V}}\!\left[\mathbf{R}(\mathcal{V}\mid M)\right] \approx \frac{1}{K}\sum_{k=1}^{K} \mathbf{R}\!\left(\mathcal{V}^{(k)}\mid M\right)\]</div>
+        → 가장 낮은 error의 모델 선택.<br><br>
+        <strong>Outer loop</strong>: Inner에서 선정된 최적 모델을 전체 Training 데이터로 재학습 → 별도 Test 데이터로 최종 generalization error 평가.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q14</span><span class="quiz-text">두 모델 \(\mathcal{M}_1,\mathcal{M}_2\)에 대해 \(p(\mathcal{M}_1)=0.2\), \(p(\mathcal{M}_2)=0.4\), \(p(\mathcal{D}|\mathcal{M}_1)=0.3\), \(p(\mathcal{D}|\mathcal{M}_2)=0.15\)일 때, Bayes Factor와 Posterior Odds를 계산하고 결론을 내리라.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[\text{Bayes Factor} = \frac{p(\mathcal{D}\mid\mathcal{M}_1)}{p(\mathcal{D}\mid\mathcal{M}_2)} = \frac{0.3}{0.15} = 2.0\]</div>
+        <div class="amath">\[\text{Prior Odds} = \frac{p(\mathcal{M}_1)}{p(\mathcal{M}_2)} = \frac{0.2}{0.4} = 0.5\]</div>
+        <div class="amath">\[\text{Posterior Odds} = 0.5 \times 2.0 = 1.0\]</div>
+        BF=2>1이므로 데이터 설명 측면에서 \(\mathcal{M}_1\)이 유리하지만, Prior Odds를 반영하면 Posterior Odds=1.0으로 두 모델이 동등하다. 추가 데이터 수집이 권장된다.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q15</span><span class="quiz-text">베이지안 추론에서 predictive distribution \(p(\mathbf{x}_{\text{new}}\mid\mathcal{X})\)를 구하는 과정을 서술하고, MLE/MAP 방식과 근본적으로 다른 점을 설명하라.</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        Bayesian Predictive Distribution:
+        <div class="amath">\[p(\mathbf{x}_{\text{new}}\mid\mathcal{X}) = \int p(\mathbf{x}_{\text{new}}\mid\boldsymbol{\theta})\;p(\boldsymbol{\theta}\mid\mathcal{X})\;d\boldsymbol{\theta}\]</div>
+        posterior \(p(\boldsymbol{\theta}\mid\mathcal{X})\)를 가중치로 하여 가능한 모든 \(\boldsymbol{\theta}\)에 대해 예측 분포를 평균화.<br><br>
+        <strong>MLE/MAP와의 근본적 차이</strong>:<br>
+        MLE/MAP: \(\boldsymbol{\theta}^*\) 하나를 고정 → \(p(\mathbf{x}_{\text{new}}\mid\boldsymbol{\theta}^*)\) 사용. 파라미터 추정 불확실성 무시.<br>
+        Bayesian: 모든 가능한 \(\boldsymbol{\theta}\)를 확률적으로 가중평균 → 파라미터 불확실성을 예측에 반영.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="비교" onclick="toggleQuiz(this)">
+      <div class="quiz-q"><span class="quiz-num">Q16</span><span class="quiz-text">오캄의 면도날 원칙이 베이지안 모델 선택에서 어떻게 자동으로 구현되는지, 주변 우도(marginal likelihood)와 모델 복잡도의 관계를 통해 설명하라.</span><span class="quiz-tag">비교</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[p(\mathcal{D}\mid\mathcal{M}_k) = \int p(\mathcal{D}\mid\boldsymbol{\theta}_k)\;p(\boldsymbol{\theta}_k\mid\mathcal{M}_k)\;d\boldsymbol{\theta}_k\]</div>
+        <strong>복잡한 모델</strong>: 파라미터 공간이 매우 넓음 → \(p(\boldsymbol{\theta}\mid M)\)이 넓게 퍼짐 → 특정 \(\boldsymbol{\theta}\)에서 밀도 낮음 → marginal likelihood 작아짐 (확률의 희석).<br><br>
+        <strong>단순한 모델</strong>: 파라미터 공간이 좁음 → prior가 집중됨 → 해당 데이터를 설명하는 \(\boldsymbol{\theta}\)에서 밀도 높음 → marginal likelihood 클 수 있음.<br><br>
+        결론: 주변 우도는 데이터 적합도와 모델 복잡도 사이의 <strong>자동 trade-off</strong>를 반영 → 오캄의 면도날의 베이지안 구현체.
+      </div></div>
+    </div>
+
+  </div><!-- /quizList -->
+</section>
+
+</div><!-- /lec08 -->
+
+<div class="lecture-content" id="lec-placeholder">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;text-align:center;">
+    <div style="font-size:48px;color:var(--border2);">+</div>
+    <div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text3);">강의자료를 추가하세요</div>
+    <div style="font-size:14px;color:var(--text3);max-width:400px;line-height:1.8;">상단 탭의 + 버튼을 눌러 새 강의 탭을 추가할 수 있습니다.</div>
+    <button style="margin-top:16px;padding:12px 28px;border:1.5px solid var(--text);background:none;font-family:var(--sans);font-size:14px;cursor:pointer;border-radius:4px;" onclick="showAddTab()">새 강의 추가</button>
+  </div>
 </div>
 
-<!-- SCROLL TOP -->
+</main>
+</div>
+
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<!-- ADD TAB MODAL -->
-<div id="addTabModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-  <div style="background:var(--bg); border:1px solid var(--border2); border-radius:8px; padding:32px; width:400px; max-width:90vw;">
-    <div style="font-family:var(--serif); font-size:20px; font-weight:600; margin-bottom:20px;">새 강의 탭 추가</div>
-    <input id="newTabTitle" type="text" placeholder="예: Lec 09 · Linear Regression" style="width:100%; padding:10px 14px; border:1px solid var(--border2); border-radius:4px; font-size:14px; font-family:var(--sans); outline:none; color:var(--text); background:var(--bg); margin-bottom:16px;">
-    <div style="font-size:12px; color:var(--text3); margin-bottom:20px;">강의자료를 업로드하면 개념과 문제가 자동으로 구성됩니다.</div>
-    <div style="display:flex; gap:10px; justify-content:flex-end;">
-      <button onclick="closeAddTab()" style="padding:9px 20px; border:1px solid var(--border2); background:none; font-family:var(--sans); font-size:13px; cursor:pointer; border-radius:4px;">취소</button>
-      <button onclick="addNewTab()" style="padding:9px 20px; border:none; background:var(--text); color:var(--bg); font-family:var(--sans); font-size:13px; cursor:pointer; border-radius:4px;">추가</button>
+<div id="addTabModal">
+  <div style="background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:32px;width:400px;max-width:90vw;">
+    <div style="font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:20px;">새 강의 탭 추가</div>
+    <input id="newTabTitle" type="text" placeholder="예: Lec 09 · Linear Regression" style="width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:4px;font-size:14px;font-family:var(--sans);outline:none;color:var(--text);background:var(--bg);margin-bottom:16px;">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:20px;">강의자료를 업로드하면 개념과 문제가 자동으로 구성됩니다.</div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="closeAddTab()" style="padding:9px 20px;border:1px solid var(--border2);background:none;font-family:var(--sans);font-size:13px;cursor:pointer;border-radius:4px;">취소</button>
+      <button onclick="addNewTab()" style="padding:9px 20px;border:none;background:var(--text);color:var(--bg);font-family:var(--sans);font-size:13px;cursor:pointer;border-radius:4px;">추가</button>
     </div>
   </div>
 </div>
@@ -1835,111 +876,77 @@ Test set → 최종 generalization error 평가 (딱 한 번만 사용)
   <div class="footer-text">MML Book — Deisenroth, Faisal &amp; Ong (2024)</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <script>
-  // ── TAB SWITCHING ──
-  function switchLecture(id, btn) {
-    document.querySelectorAll('.lecture-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.lecture-tab').forEach(el => el.classList.remove('active'));
-    const target = document.getElementById(id);
-    if (target) target.classList.add('active');
+  document.addEventListener("DOMContentLoaded",function(){
+    renderMathInElement(document.body,{
+      delimiters:[
+        {left:"\\[",right:"\\]",display:true},
+        {left:"\\(",right:"\\)",display:false},
+        {left:"$$",right:"$$",display:true},
+        {left:"$",right:"$",display:false}
+      ],
+      throwOnError:false
+    });
+  });
+
+  function switchLecture(id,btn){
+    document.querySelectorAll('.lecture-content').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.lecture-tab').forEach(e=>e.classList.remove('active'));
+    const t=document.getElementById(id);if(t)t.classList.add('active');
     btn.classList.add('active');
   }
-
-  // ── SIDEBAR ACTIVE ──
-  function setSideActive(el) {
-    document.querySelectorAll('.sidebar-item').forEach(e => e.classList.remove('active'));
+  function setSideActive(el){
+    document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
     el.classList.add('active');
   }
-
-  // ── QUIZ TOGGLE ──
-  let openedQuizzes = new Set();
-  function toggleQuiz(card) {
-    card.classList.toggle('open');
-    const num = card.querySelector('.quiz-num').textContent;
-    if (card.classList.contains('open')) openedQuizzes.add(num);
-    updateProgress();
+  function toggleQuiz(card){card.classList.toggle('open');updateProgress();}
+  function updateProgress(){
+    const cards=document.querySelectorAll('#quizList .quiz-card:not([style*="none"])');
+    const open=document.querySelectorAll('#quizList .quiz-card.open:not([style*="none"])');
+    const total=cards.length,done=open.length;
+    document.getElementById('quizCount').textContent=`${done} / ${total} 풀이 완료`;
+    const pct=total>0?Math.round(done/total*100):0;
+    document.getElementById('progressFill').style.width=pct+'%';
+    document.getElementById('progressLabel').textContent=pct+'%';
   }
-  function updateProgress() {
-    const total = document.querySelectorAll('#quizList .quiz-card:not([style*="none"])').length;
-    const done = document.querySelectorAll('#quizList .quiz-card.open:not([style*="none"])').length;
-    document.getElementById('quizCount').textContent = `${done} / ${total} 풀이 완료`;
-    const pct = total > 0 ? Math.round(done / total * 100) : 0;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressLabel').textContent = pct + '%';
-  }
-
-  // ── QUIZ FILTER ──
-  function filterQuiz(tag, el) {
-    document.querySelectorAll('#quizTags .tag').forEach(t => t.classList.remove('active'));
+  function filterQuiz(tag,el){
+    document.querySelectorAll('#quizTags .tag').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
-    document.querySelectorAll('#quizList .quiz-card').forEach(card => {
-      if (tag === 'all' || card.dataset.tag === tag) {
-        card.style.display = '';
-      } else {
-        card.style.display = 'none';
-      }
+    document.querySelectorAll('#quizList .quiz-card').forEach(card=>{
+      card.style.display=(tag==='all'||card.dataset.tag===tag)?'':'none';
     });
     updateProgress();
   }
-
-  // ── SCROLL TOP ──
-  window.addEventListener('scroll', () => {
-    const btn = document.getElementById('scrollTop');
-    btn.classList.toggle('visible', window.scrollY > 400);
-  });
-
-  // ── SCROLL SIDEBAR HIGHLIGHT ──
-  const sections = document.querySelectorAll('.concept-section, .lecture-intro, .quiz-section');
-  const sideItems = document.querySelectorAll('.sidebar-item');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(sec => {
-      if (window.scrollY >= sec.offsetTop - 160) current = sec.id;
+  window.addEventListener('scroll',()=>{
+    document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400);
+    let cur='';
+    document.querySelectorAll('.concept-section,.lecture-intro,.quiz-section').forEach(sec=>{
+      if(window.scrollY>=sec.offsetTop-160)cur=sec.id;
     });
-    sideItems.forEach(item => {
-      const href = item.getAttribute('href')?.replace('#', '');
-      item.classList.toggle('active', href === current);
+    document.querySelectorAll('.sidebar-item').forEach(item=>{
+      const href=item.getAttribute('href')?.replace('#','');
+      item.classList.toggle('active',href===cur);
     });
   });
-
-  // ── ADD TAB ──
-  function showAddTab() {
-    const modal = document.getElementById('addTabModal');
-    modal.style.display = 'flex';
+  function showAddTab(){document.getElementById('addTabModal').style.display='flex';}
+  function closeAddTab(){document.getElementById('addTabModal').style.display='none';document.getElementById('newTabTitle').value='';}
+  function addNewTab(){
+    const title=document.getElementById('newTabTitle').value.trim();if(!title)return;
+    const tabs=document.getElementById('lectureTabs');
+    const addBtn=tabs.querySelector('.tab-add');
+    const btn=document.createElement('button');
+    btn.className='lecture-tab';btn.textContent=title;
+    btn.onclick=function(){switchLecture('lec-placeholder',this);};
+    tabs.insertBefore(btn,addBtn);closeAddTab();btn.click();
   }
-  function closeAddTab() {
-    document.getElementById('addTabModal').style.display = 'none';
-    document.getElementById('newTabTitle').value = '';
-  }
-  function addNewTab() {
-    const title = document.getElementById('newTabTitle').value.trim();
-    if (!title) return;
-    const tabs = document.getElementById('lectureTabs');
-    const addBtn = tabs.querySelector('.tab-add');
-    const newBtn = document.createElement('button');
-    const id = 'lec-' + Date.now();
-    newBtn.className = 'lecture-tab';
-    newBtn.textContent = title;
-    newBtn.onclick = function() { switchLecture('lec-placeholder', this); };
-    tabs.insertBefore(newBtn, addBtn);
-    closeAddTab();
-    newBtn.click();
-  }
-
-  // ── SEARCH ──
-  function handleSearch(q) {
-    if (!q) {
-      document.querySelectorAll('.concept-section').forEach(s => s.style.display = '');
-      return;
-    }
-    const lower = q.toLowerCase();
-    document.querySelectorAll('.concept-section').forEach(sec => {
-      const text = sec.textContent.toLowerCase();
-      sec.style.display = text.includes(lower) ? '' : 'none';
+  function handleSearch(q){
+    const lower=q.toLowerCase();
+    document.querySelectorAll('.concept-section').forEach(sec=>{
+      sec.style.display=(!q||sec.textContent.toLowerCase().includes(lower))?'':'none';
     });
   }
-
-  // ── INIT ──
   updateProgress();
 </script>
 </body>
