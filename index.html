@@ -207,13 +207,14 @@
 
 <div class="lecture-tabs" id="lectureTabs">
   <button class="lecture-tab active" onclick="switchLecture('lec08',this)">Lec 08 · Data &amp; Models</button>
-  <button class="lecture-tab" onclick="switchLecture('lec-quiz4',this)">📋 Quiz #4 족보</button>
+  <button class="lecture-tab" onclick="switchLecture('lec09',this)">Lec 09 · Linear Regression</button>
   <button class="tab-add" onclick="showAddTab()">+</button>
 </div>
 
 <div class="main-layout">
 <nav class="sidebar" id="sidebar">
-  <div id="sidebar-lec08">
+  <!-- Lec 08 sidebar -->
+  <div class="sidebar-group" data-lec="lec08">
   <div class="sidebar-section-label">강의 개요</div>
   <a class="sidebar-item active" href="#lec08-intro" onclick="setSideActive(this)">개요 · Overview</a>
   <div class="sidebar-section-label">핵심 개념</div>
@@ -231,16 +232,20 @@
   <div class="sidebar-section-label">연습 문제</div>
   <a class="sidebar-item" href="#quiz-section" onclick="setSideActive(this)">연습 문제 풀기</a>
   </div>
-  <div id="sidebar-quiz4" style="display:none">
-  <div class="sidebar-section-label">Quiz #4 족보</div>
-  <a class="sidebar-item" href="#quiz4-intro"      onclick="setSideActive(this)">개요</a>
-  <div class="sidebar-section-label">기출 문제</div>
-  <a class="sidebar-item" href="#q4-dsep-theory"  onclick="setSideActive(this)">개념 · d-분리 규칙</a>
-  <a class="sidebar-item" href="#q4-dsep"         onclick="setSideActive(this)">Q1 · 조건부 독립 T/F</a>
-  <a class="sidebar-item" href="#q4-bayes"        onclick="setSideActive(this)">Q2 · 베이즈 요인</a>
-  <a class="sidebar-item" href="#q4-mle"          onclick="setSideActive(this)">Q3 · 선형 회귀 MLE</a>
-  <div class="sidebar-section-label">추가 연습</div>
-  <a class="sidebar-item" href="#q4-extra"        onclick="setSideActive(this)">E1–E6 · 연습 문제</a>
+  <!-- Lec 09 sidebar -->
+  <div class="sidebar-group" data-lec="lec09" style="display:none;">
+  <div class="sidebar-section-label">강의 개요</div>
+  <a class="sidebar-item" href="#lec09-intro" onclick="setSideActive(this)">개요 · Overview</a>
+  <div class="sidebar-section-label">핵심 개념</div>
+  <a class="sidebar-item" href="#sec-lr-setup"   onclick="setSideActive(this)">1 · 문제 설정</a>
+  <a class="sidebar-item" href="#sec-lr-mle"     onclick="setSideActive(this)">2 · MLE &amp; 최소제곱법</a>
+  <a class="sidebar-item" href="#sec-lr-normal"  onclick="setSideActive(this)">3 · 정규방정식</a>
+  <a class="sidebar-item" href="#sec-lr-geometry" onclick="setSideActive(this)">4 · 기하학적 관점</a>
+  <a class="sidebar-item" href="#sec-lr-map"     onclick="setSideActive(this)">5 · MAP &amp; Ridge 회귀</a>
+  <a class="sidebar-item" href="#sec-lr-bayes"   onclick="setSideActive(this)">6 · 베이지안 선형회귀</a>
+  <a class="sidebar-item" href="#sec-lr-pred"    onclick="setSideActive(this)">7 · 예측 분포</a>
+  <div class="sidebar-section-label">연습 문제</div>
+  <a class="sidebar-item" href="#quiz09-section" onclick="setSideActive(this)">연습 문제 풀기</a>
   </div>
 </nav>
 
@@ -859,392 +864,415 @@
 
 </div><!-- /lec08 -->
 
-<div class="lecture-content" id="lec-quiz4">
+<div class="lecture-content" id="lec09">
 
 <!-- INTRO -->
-<section class="lecture-intro" id="quiz4-intro">
-  <div class="lecture-no">Quiz #4 족보</div>
-  <h1 class="lecture-title">DAI2002 인공지능수학<br>Quiz #4 Solution</h1>
-  <p class="lecture-desc">확률 그래프 모델의 조건부 독립(d-분리), 베이즈 요인을 이용한 모델 선택, 선형 회귀의 최대 우도 추정(MLE)을 다룬다. 기출 3문제 + 추가 연습 문제 6문제로 구성.</p>
+<section class="lecture-intro" id="lec09-intro">
+  <div class="lecture-no">Lecture 09</div>
+  <h1 class="lecture-title">Linear Regression</h1>
+  <p class="lecture-desc">선형 회귀는 기계학습의 핵심 모델이다. 입력 \(\mathbf{x}\)와 출력 \(y\)의 선형 관계를 가우시안 노이즈 가정 하에 확률적으로 정의하고, MLE(최소제곱법), MAP(Ridge 회귀), 베이지안 추론의 세 관점에서 파라미터를 추정하는 방법을 다룬다.</p>
   <div class="lecture-meta">
-    <div class="meta-item">과목 <span>DAI2002 인공지능수학</span></div>
-    <div class="meta-item">기출 문제 <span>3문항 (31점)</span></div>
-    <div class="meta-item">추가 연습 <span>6문항</span></div>
+    <div class="meta-item">강의자 <span>Sukmin Yun</span></div>
+    <div class="meta-item">MML 참고 <span>Ch. 9</span></div>
+    <div class="meta-item">핵심 개념 <span>7가지</span></div>
   </div>
   <div class="overview-grid" style="margin-top:28px;">
-    <a class="overview-card" href="#q4-dsep"><div class="ov-num">Q1</div><div class="ov-title">조건부 독립 T/F</div><div class="ov-en">d-Separation · 8점</div></a>
-    <a class="overview-card" href="#q4-bayes"><div class="ov-num">Q2</div><div class="ov-title">베이즈 요인</div><div class="ov-en">Bayes' Factor · 8점</div></a>
-    <a class="overview-card" href="#q4-mle"><div class="ov-num">Q3</div><div class="ov-title">선형 회귀 MLE</div><div class="ov-en">MLE · 15점</div></a>
-    <a class="overview-card" href="#q4-extra"><div class="ov-num">+6</div><div class="ov-title">추가 연습</div><div class="ov-en">Extra Practice</div></a>
+    <a class="overview-card" href="#sec-lr-setup"><div class="ov-num">01</div><div class="ov-title">문제 설정</div><div class="ov-en">Problem Setup</div></a>
+    <a class="overview-card" href="#sec-lr-mle"><div class="ov-num">02</div><div class="ov-title">MLE &amp; 최소제곱법</div><div class="ov-en">MLE &amp; Least Squares</div></a>
+    <a class="overview-card" href="#sec-lr-normal"><div class="ov-num">03</div><div class="ov-title">정규방정식</div><div class="ov-en">Normal Equation</div></a>
+    <a class="overview-card" href="#sec-lr-geometry"><div class="ov-num">04</div><div class="ov-title">기하학적 관점</div><div class="ov-en">Geometric View</div></a>
+    <a class="overview-card" href="#sec-lr-map"><div class="ov-num">05</div><div class="ov-title">MAP &amp; Ridge</div><div class="ov-en">MAP &amp; Regularization</div></a>
+    <a class="overview-card" href="#sec-lr-bayes"><div class="ov-num">06</div><div class="ov-title">베이지안 선형회귀</div><div class="ov-en">Bayesian LR</div></a>
+    <a class="overview-card" href="#sec-lr-pred"><div class="ov-num">07</div><div class="ov-title">예측 분포</div><div class="ov-en">Predictive Distribution</div></a>
   </div>
 </section>
 
-<!-- d-분리 핵심 개념 -->
-<section class="concept-section" id="q4-dsep-theory">
+<!-- 01 문제 설정 -->
+<section class="concept-section" id="sec-lr-setup">
   <div class="concept-header">
-    <span class="concept-num">개념</span>
-    <div><div class="concept-title">d-분리 (d-Separation) 핵심 규칙</div><div class="concept-en">Blocked Paths in Bayesian Networks</div></div>
+    <span class="concept-num">01</span>
+    <div><div class="concept-title">문제 설정</div><div class="concept-en">Problem Setup</div></div>
+    <span class="mml-ref">MML §9.1</span>
   </div>
   <div class="concept-body">
-    <p>방향 그래프에서 두 노드 집합이 조건부 독립인지 판별하려면 <strong>모든 경로가 차단(blocked)</strong>되는지 확인한다.</p>
-    <div class="compare-grid">
-      <div class="compare-cell header">패턴</div><div class="compare-cell header">구조</div><div class="compare-cell header">중간 노드 관측 시</div>
-      <div class="compare-cell hl">Chain</div><div class="compare-cell">\(A \to C \to B\)</div><div class="compare-cell">경로 <strong>차단</strong> → A⊥B|C ✓</div>
-      <div class="compare-cell hl">Fork</div><div class="compare-cell">\(A \leftarrow C \rightarrow B\)</div><div class="compare-cell">경로 <strong>차단</strong> → A⊥B|C ✓</div>
-      <div class="compare-cell hl">Collider ⚡</div><div class="compare-cell">\(A \to C \leftarrow B\)</div><div class="compare-cell">경로 <strong>활성화!</strong> → 독립 깨짐</div>
+    <p>선형 회귀는 입력 \(\mathbf{x} \in \mathbb{R}^D\)와 스칼라 출력 \(y \in \mathbb{R}\)의 관계를 선형 함수로 모델링한다. 노이즈 \(\epsilon\)을 포함한 확률 모델로 표현하면:</p>
+    <div class="fblock">
+      <div class="fblock-label">선형 회귀 모델 — MML Eq. 9.1</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[y = \boldsymbol{\theta}^\top \mathbf{x} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)\]</div>
+          <div class="feq-note">\(\boldsymbol{\theta} \in \mathbb{R}^D\): 파라미터 벡터, \(\sigma^2\): 노이즈 분산</div>
+        </div>
+        <div class="feq-row">
+          <div>\[p(y \mid \mathbf{x}, \boldsymbol{\theta}) = \mathcal{N}(y \mid \boldsymbol{\theta}^\top \mathbf{x},\, \sigma^2)\]</div>
+          <div class="feq-note">가우시안 우도 (Gaussian likelihood)</div>
+        </div>
+      </div>
     </div>
     <div class="key-box">
-      <div class="key-box-label">⚡ Collider 주의</div>
-      <div class="key-box-content">일반 패턴(Chain, Fork)과 <strong>반대로 동작</strong>. 관측하지 않으면 자동 차단(독립), 관측하면 오히려 경로가 열려 독립성이 깨진다. 후손(descendant)을 관측해도 마찬가지.</div>
-    </div>
-  </div>
-</section>
-
-<!-- Q1 -->
-<section class="concept-section" id="q4-dsep">
-  <div class="concept-header">
-    <span class="concept-num">Q1</span>
-    <div><div class="concept-title">조건부 독립 판별 — T/F</div><div class="concept-en">d-Separation · 8점 (정답 +2, 오답 −1)</div></div>
-  </div>
-  <div class="concept-body">
-    <p>아래 확률분포의 방향그래프 모델을 보고, 변수들 간의 조건부 독립에 대한 서술의 참/거짓(T/F) 여부를 답하시오.</p>
-
-    <div style="display:flex;justify-content:center;padding:24px 0;">
-      <svg width="380" height="210" viewBox="0 0 380 210" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="qarr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="#444"/>
-          </marker>
-        </defs>
-        <line x1="88" y1="68" x2="164" y2="68" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <line x1="68" y1="86" x2="148" y2="145" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <line x1="200" y1="78" x2="222" y2="132" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <line x1="300" y1="78" x2="258" y2="132" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <line x1="180" y1="152" x2="216" y2="152" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <line x1="256" y1="152" x2="318" y2="152" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <line x1="160" y1="170" x2="176" y2="192" stroke="#444" stroke-width="1.5" marker-end="url(#qarr)"/>
-        <circle cx="68" cy="68" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="68" y="74" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">x</text>
-        <circle cx="185" cy="68" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="185" y="74" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">a</text>
-        <circle cx="310" cy="68" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="310" y="74" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">b</text>
-        <circle cx="158" cy="152" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="158" y="158" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">y</text>
-        <circle cx="237" cy="152" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="237" y="158" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">d</text>
-        <circle cx="336" cy="152" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="336" y="158" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">c</text>
-        <circle cx="188" cy="200" r="22" fill="#f9f9f9" stroke="#888" stroke-width="1.5"/>
-        <text x="188" y="206" text-anchor="middle" fill="#0a0a0a" font-size="15" font-style="italic" font-family="Georgia,serif">z</text>
-      </svg>
-    </div>
-
-    <div class="quiz-section" id="q4-quiz">
-      <div class="quiz-header">
-        <span class="quiz-title">Q1 세부 문항</span>
-      </div>
-
-      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-        <div class="quiz-q">
-          <span class="quiz-num">Q1-1</span>
-          <span class="quiz-text">\(x \perp\!\!\!\perp y \mid a, d\) — 참(T)인가, 거짓(F)인가?</span>
-          <span class="quiz-tag">기출</span>
-          <span class="quiz-toggle">+</span>
-        </div>
-        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-          <strong>답: F (독립 아님)</strong><br><br>
-          경로 \(x \to y\)가 직접 존재하며, <em>a</em>를 관측해도 이 직접 경로는 차단되지 않는다.<br>
-          또한 <em>d</em>는 \(a \to d\) 와 \(y \to d\)의 <strong>collider</strong>인데, 이를 관측하면 오히려 \(a\)–\(y\) 경로가 활성화된다. 따라서 \(x \to a \to d \leftarrow y\) 경로도 열려 독립이 깨진다.
-        </div></div>
-      </div>
-
-      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-        <div class="quiz-q">
-          <span class="quiz-num">Q1-2</span>
-          <span class="quiz-text">\(d \perp\!\!\!\perp z \mid x\) — 참(T)인가, 거짓(F)인가?</span>
-          <span class="quiz-tag">기출</span>
-          <span class="quiz-toggle">+</span>
-        </div>
-        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-          <strong>답: F (독립 아님)</strong><br><br>
-          경로 \(d \leftarrow y \to z\): 여기서 <em>y</em>는 <strong>fork(tail-to-tail)</strong>이다.<br>
-          <em>x</em>를 관측해도 <em>y</em>는 관측되지 않으므로, \(y\) 를 통한 경로는 열린 상태 (active).<br>
-          → <em>d</em>와 <em>z</em>는 <em>x</em>가 주어졌을 때도 독립이 아니다.
-        </div></div>
-      </div>
-
-      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-        <div class="quiz-q">
-          <span class="quiz-num">Q1-3</span>
-          <span class="quiz-text">\(a \perp\!\!\!\perp b \mid c, d\) — 참(T)인가, 거짓(F)인가?</span>
-          <span class="quiz-tag">기출</span>
-          <span class="quiz-toggle">+</span>
-        </div>
-        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-          <strong>답: T (독립 ✓)</strong><br><br>
-          <em>a</em>와 <em>b</em> 사이 경로: \(a \to d \leftarrow b\). 여기서 <em>d</em>는 collider.<br>
-          <em>d</em>를 관측하면 경로가 열리지만, 이어지는 경로 \(d \to c\)에서 <em>c</em>도 관측되므로 chain이 차단된다.<br>
-          다른 경로는 존재하지 않으므로 → \(a \perp\!\!\!\perp b \mid c, d\) 성립.
-        </div></div>
-      </div>
-
-      <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-        <div class="quiz-q">
-          <span class="quiz-num">Q1-4</span>
-          <span class="quiz-text">\(y \perp\!\!\!\perp c \mid x, b\) — 참(T)인가, 거짓(F)인가?</span>
-          <span class="quiz-tag">기출</span>
-          <span class="quiz-toggle">+</span>
-        </div>
-        <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-          <strong>답: F (독립 아님)</strong><br><br>
-          경로 \(y \to d \to c\): <em>d</em>는 chain(tail-to-head)이며 관측되지 않았다.<br>
-          <em>x</em>와 <em>b</em>를 관측해도 <em>d</em>가 관측되지 않으므로 이 경로는 열려 있다.<br>
-          → <em>y</em>와 <em>c</em>는 <em>x, b</em>가 주어졌을 때도 독립이 아니다.
-        </div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Q2 -->
-<section class="concept-section" id="q4-bayes">
-  <div class="concept-header">
-    <span class="concept-num">Q2</span>
-    <div><div class="concept-title">베이즈 요인 계산 및 해석</div><div class="concept-en">Bayes' Factor · 8점</div></div>
-  </div>
-  <div class="concept-body">
-    <div class="key-box" style="margin-bottom:20px;">
-      <div class="key-box-label">문제</div>
+      <div class="key-box-label">핵심 가정</div>
       <div class="key-box-content">
-        데이터 셋 \(\mathcal{D}\)에 대해 \(p(M_1)=0.25\), \(p(M_2)=0.75\)이고, 후위 이상치(Posteriori Odd)를 계산한 결과 \(\dfrac{p(\mathcal{D}|M_1)}{p(\mathcal{D}|M_2)} = 0.4\)를 얻었다.<br><br>
-        <strong>(1)</strong> 베이즈 요인 \(B\)를 구하시오. (4점)<br>
-        <strong>(2)</strong> 어느 모델이 데이터를 더 잘 설명하는가? (3점, 오답 −1점)
+        <strong>① 선형성</strong>: \(y\)의 기댓값이 \(\mathbf{x}\)의 선형 함수이다.<br>
+        <strong>② 가우시안 노이즈</strong>: 오차 \(\epsilon\)이 i.i.d. \(\mathcal{N}(0, \sigma^2)\)를 따른다.<br>
+        <strong>③ i.i.d.</strong>: 학습 데이터 \(\{(\mathbf{x}_n, y_n)\}_{n=1}^N\)는 독립동일분포에서 추출된다.
       </div>
     </div>
-
-    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">Q2-1</span>
-        <span class="quiz-text">베이즈 요인(Bayes' Factor) \(B\)를 구하시오.</span>
-        <span class="quiz-tag">기출</span>
-        <span class="quiz-toggle">+</span>
+    <p><strong>피처 맵 (Feature Map)</strong>: 입력 \(\mathbf{x}\)에 비선형 변환 \(\boldsymbol{\phi}(\mathbf{x})\)를 적용하면 파라미터에 대해서는 선형이지만 입력에 대해서는 비선형인 모델을 만들 수 있다.</p>
+    <div class="fblock">
+      <div class="fblock-label">비선형 피처 맵을 이용한 확장</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[y = \boldsymbol{\theta}^\top \boldsymbol{\phi}(\mathbf{x}) + \epsilon\]</div>
+          <div class="feq-note">예: \(\boldsymbol{\phi}(x) = [1, x, x^2, \ldots, x^K]^\top\) (다항 회귀)</div>
+        </div>
       </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        핵심 공식:
-        <div class="amath">\[\underbrace{\frac{p(\mathcal{D}|M_1)}{p(\mathcal{D}|M_2)}}_{\text{Posterior Odds}} = \underbrace{\frac{p(M_1)}{p(M_2)}}_{\text{Prior Odds}} \times \underbrace{B}_{\text{Bayes' Factor}}\]</div>
-        대입:
-        <div class="amath">\[0.4 = \frac{0.25}{0.75} \times B = \frac{1}{3} \times B \quad \therefore B = 1.2\]</div>
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">Q2-2</span>
-        <span class="quiz-text">베이즈 요인 \(B=1.2\)에 근거하여, 어느 모델이 데이터를 더 잘 설명하는가?</span>
-        <span class="quiz-tag">기출</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        \(B = 1.2 > 1\)이므로 <strong>\(M_1\)이 데이터를 더 잘 설명한다.</strong><br><br>
-        베이즈 요인 해석 기준 (Jeffreys scale):
-        <ul style="margin-top:10px;padding-left:20px;font-size:13.5px;line-height:2;">
-          <li>\(B < 1\): \(M_2\) 지지</li>
-          <li>\(1 \le B < 3\): \(M_1\) 약하게 지지 (근거 불충분)</li>
-          <li>\(3 \le B < 10\): \(M_1\) 어느 정도 지지</li>
-          <li>\(B \ge 10\): \(M_1\) 강하게 지지</li>
-        </ul>
-      </div></div>
     </div>
   </div>
 </section>
 
-<!-- Q3 -->
-<section class="concept-section" id="q4-mle">
+<!-- 02 MLE -->
+<section class="concept-section" id="sec-lr-mle">
   <div class="concept-header">
-    <span class="concept-num">Q3</span>
-    <div><div class="concept-title">선형 회귀 MLE — 최대 우도 추정</div><div class="concept-en">Linear Regression · MLE · 15점</div></div>
+    <span class="concept-num">02</span>
+    <div><div class="concept-title">MLE와 최소제곱법</div><div class="concept-en">Maximum Likelihood Estimation &amp; Least Squares</div></div>
+    <span class="mml-ref">MML §9.2</span>
   </div>
   <div class="concept-body">
-    <div class="key-box" style="margin-bottom:20px;">
-      <div class="key-box-label">문제</div>
+    <p>N개의 학습 데이터 \(\mathcal{D} = \{(\mathbf{x}_n, y_n)\}_{n=1}^N\)가 주어졌을 때, <strong>로그 우도</strong>를 최대화하는 \(\boldsymbol{\theta}\)를 구한다.</p>
+    <div class="fblock">
+      <div class="fblock-label">로그 우도 — MML Eq. 9.6</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\log p(\mathbf{y} \mid \mathbf{X}, \boldsymbol{\theta}) = -\frac{N}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2\]</div>
+          <div class="feq-note">\(\mathbf{X} \in \mathbb{R}^{N \times D}\): 설계 행렬, \(\mathbf{y} \in \mathbb{R}^N\)</div>
+        </div>
+      </div>
+    </div>
+    <p>로그 우도를 최대화하는 것은 <strong>제곱 오차(Squared Error)를 최소화</strong>하는 것과 동치이다:</p>
+    <div class="fblock">
+      <div class="fblock-label">MLE ↔ 최소제곱법의 동치</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\boldsymbol{\theta}_{\text{MLE}} = \arg\max_{\boldsymbol{\theta}} \log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}) = \arg\min_{\boldsymbol{\theta}} \|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2\]</div>
+          <div class="feq-note">가우시안 노이즈 가정 하에 MLE = Least Squares</div>
+        </div>
+      </div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">직관</div>
+      <div class="key-box-content">가우시안 우도에서 \(\log\) 를 취하면 \(-\frac{1}{2\sigma^2}\sum_n(y_n - \boldsymbol{\theta}^\top\mathbf{x}_n)^2\)이 남는다. \(\sigma^2 > 0\)이므로 이를 최대화하는 것 = 제곱합을 최소화하는 것.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 정규방정식 -->
+<section class="concept-section" id="sec-lr-normal">
+  <div class="concept-header">
+    <span class="concept-num">03</span>
+    <div><div class="concept-title">정규방정식</div><div class="concept-en">Normal Equation (Closed-Form Solution)</div></div>
+    <span class="mml-ref">MML §9.2.1</span>
+  </div>
+  <div class="concept-body">
+    <p>제곱 오차 \(\|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2\)를 \(\boldsymbol{\theta}\)에 대해 미분하여 0으로 놓으면 closed-form 해를 얻는다.</p>
+    <div class="fblock">
+      <div class="fblock-label">유도 과정 — MML Eq. 9.10–9.12</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\frac{\partial}{\partial \boldsymbol{\theta}}\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2 = -2\mathbf{X}^\top(\mathbf{y}-\mathbf{X}\boldsymbol{\theta}) = \mathbf{0}\]</div>
+          <div class="feq-note">gradient를 0으로 설정</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\mathbf{X}^\top\mathbf{X}\,\boldsymbol{\theta} = \mathbf{X}^\top\mathbf{y}\]</div>
+          <div class="feq-note">정규방정식 (Normal Equation)</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\boldsymbol{\theta}_{\text{MLE}} = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y}\]</div>
+          <div class="feq-note">\(\mathbf{X}^\top\mathbf{X}\)가 가역일 때 고유한 해 존재</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-cell header">조건</div><div class="compare-cell header">결과</div><div class="compare-cell header">비고</div>
+      <div class="compare-cell hl">\(N > D\), 풀 랭크</div><div class="compare-cell">유일한 해 존재</div><div class="compare-cell">over-determined</div>
+      <div class="compare-cell hl">\(N = D\), 가역</div><div class="compare-cell">유일한 해 존재</div><div class="compare-cell">정사각 행렬</div>
+      <div class="compare-cell hl">\(N &lt; D\)</div><div class="compare-cell">무한히 많은 해</div><div class="compare-cell">under-determined, 정규화 필요</div>
+    </div>
+    <p style="margin-top:12px;"><strong>계산 복잡도</strong>: \(\mathbf{X}^\top\mathbf{X}\) 계산에 \(O(ND^2)\), 역행렬에 \(O(D^3)\). D가 클 때는 경사하강법이 효율적.</p>
+  </div>
+</section>
+
+<!-- 04 기하학적 관점 -->
+<section class="concept-section" id="sec-lr-geometry">
+  <div class="concept-header">
+    <span class="concept-num">04</span>
+    <div><div class="concept-title">기하학적 관점</div><div class="concept-en">Geometric Interpretation</div></div>
+    <span class="mml-ref">MML §9.2.2</span>
+  </div>
+  <div class="concept-body">
+    <p>\(\mathbf{X}\boldsymbol{\theta}\)는 \(\mathbf{X}\)의 열공간(column space)에 속하는 벡터이다. 최소제곱해는 \(\mathbf{y}\)를 \(\mathbf{X}\)의 열공간으로 <strong>직교 투영(orthogonal projection)</strong>한 벡터를 찾는 것이다.</p>
+    <div class="fblock">
+      <div class="fblock-label">투영 행렬 (Projection Matrix)</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\hat{\mathbf{y}} = \mathbf{X}\boldsymbol{\theta}_{\text{MLE}} = \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top \mathbf{y} =: \mathbf{P}\mathbf{y}\]</div>
+          <div class="feq-note">\(\mathbf{P} = \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\): hat matrix (투영 행렬)</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\mathbf{P}^2 = \mathbf{P}, \quad \mathbf{P}^\top = \mathbf{P}\]</div>
+          <div class="feq-note">투영 행렬의 특성: 멱등(idempotent), 대칭</div>
+        </div>
+      </div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">직관</div>
+      <div class="key-box-content">잔차 \(\mathbf{y} - \hat{\mathbf{y}}\)는 \(\mathbf{X}\)의 열공간에 <strong>수직</strong>이다 (\(\mathbf{X}^\top(\mathbf{y}-\hat{\mathbf{y}})=\mathbf{0}\)). 이것이 바로 정규방정식의 기하학적 의미이다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 MAP & Ridge -->
+<section class="concept-section" id="sec-lr-map">
+  <div class="concept-header">
+    <span class="concept-num">05</span>
+    <div><div class="concept-title">MAP와 Ridge 회귀</div><div class="concept-en">MAP Estimation &amp; Ridge Regression</div></div>
+    <span class="mml-ref">MML §9.3</span>
+  </div>
+  <div class="concept-body">
+    <p>파라미터에 가우시안 사전 분포 \(p(\boldsymbol{\theta}) = \mathcal{N}(\mathbf{0}, b^2\mathbf{I})\)를 부여하면 MAP 추정은 <strong>L2 정규화(Ridge Regression)</strong>와 동치가 된다.</p>
+    <div class="fblock">
+      <div class="fblock-label">MAP 목적함수 — MML Eq. 9.19</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\boldsymbol{\theta}_{\text{MAP}} = \arg\max_{\boldsymbol{\theta}} \left[\log p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}) + \log p(\boldsymbol{\theta})\right]\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[= \arg\min_{\boldsymbol{\theta}} \left[\|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2 + \frac{\sigma^2}{b^2}\|\boldsymbol{\theta}\|^2\right]\]</div>
+          <div class="feq-note">\(\lambda = \sigma^2/b^2\): 정규화 강도</div>
+        </div>
+      </div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">Ridge 회귀의 Closed-Form 해 — MML Eq. 9.20</div>
+      <div class="fblock-body">
+        <div class="feq-d">\[\boldsymbol{\theta}_{\text{MAP}} = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}\]</div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-cell header">구분</div><div class="compare-cell header">MLE (OLS)</div><div class="compare-cell header">MAP (Ridge)</div>
+      <div class="compare-cell hl">목적함수</div><div class="compare-cell">\(\min\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2\)</div><div class="compare-cell">\(\min\|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2 + \lambda\|\boldsymbol{\theta}\|^2\)</div>
+      <div class="compare-cell hl">사전분포</div><div class="compare-cell">없음 (Flat prior)</div><div class="compare-cell">\(\mathcal{N}(\mathbf{0}, b^2\mathbf{I})\)</div>
+      <div class="compare-cell hl">역행렬 존재</div><div class="compare-cell">항상 보장 안 됨</div><div class="compare-cell">\(\lambda>0\)이면 항상 가역</div>
+      <div class="compare-cell hl">편향-분산</div><div class="compare-cell">편향 없음, 분산 클 수 있음</div><div class="compare-cell">편향 생김, 분산 감소</div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">사전분포 해석</div>
       <div class="key-box-content">
-        로봇 청소기 동작 시간 \(x\)(분)와 청소 면적 \(y\)(m²) 데이터. 관계를 \(y=ax\)로 회귀분석하고자 한다.
-        <table style="border-collapse:collapse;margin:12px 0;font-family:var(--mono);font-size:13px;">
-          <tr>
-            <th style="border:1px solid var(--border2);padding:6px 18px;background:var(--bg3);">x</th>
-            <td style="border:1px solid var(--border);padding:6px 18px;">3</td>
-            <td style="border:1px solid var(--border);padding:6px 18px;">7</td>
-            <td style="border:1px solid var(--border);padding:6px 18px;">15</td>
-          </tr>
-          <tr>
-            <th style="border:1px solid var(--border2);padding:6px 18px;background:var(--bg3);">y</th>
-            <td style="border:1px solid var(--border);padding:6px 18px;">5</td>
-            <td style="border:1px solid var(--border);padding:6px 18px;">14</td>
-            <td style="border:1px solid var(--border);padding:6px 18px;">31</td>
-          </tr>
-        </table>
-        <strong>(1)</strong> \(\mathcal{X}, \mathcal{Y}, \mathcal{D}\)를 집합 꼴로 작성하시오. (각 1점)<br>
-        <strong>(2)</strong> 우도 함수 \(p(\mathcal{Y}|\mathcal{X},\boldsymbol{\theta})\) 유도 과정의 빈 칸을 채우시오. (각 1점)<br>
-        <strong>(3)</strong> Design matrix \(\mathbf{X}\)를 구하고 \(\boldsymbol{\theta}_{ML} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\)로 \(a\)를 구하시오. (7점)
+        \(b^2\) (사전 분산)이 클수록 → 사전 신뢰도 낮음 → \(\lambda = \sigma^2/b^2\) 작음 → MLE에 가까워짐<br>
+        \(b^2\)이 작을수록 → 파라미터가 0에 가까울 것이라는 강한 믿음 → 정규화 강해짐
       </div>
-    </div>
-
-    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">Q3-1</span>
-        <span class="quiz-text">입력 값 벡터 \(\mathcal{X}\), 결과 값 벡터 \(\mathcal{Y}\), Training set \(\mathcal{D}\)를 집합 꼴로 쓰시오.</span>
-        <span class="quiz-tag">기출</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        <div class="amath">\[\mathcal{X} = \{3,\,7,\,15\}, \quad \mathcal{Y} = \{5,\,14,\,31\}\]</div>
-        <div class="amath">\[\mathcal{D} = \bigl\{\{3,5\},\;\{7,14\},\;\{15,31\}\bigr\}\]</div>
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">Q3-2</span>
-        <span class="quiz-text">Noise를 분산 \(\sigma^2\)인 정규 분포로 가정할 때, 우도 함수 \(p(\mathcal{Y}|\mathcal{X},\boldsymbol{\theta})\)를 유도하시오.</span>
-        <span class="quiz-tag">기출</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        i.i.d. 가정으로 분해:
-        <div class="amath">\[p(\mathcal{Y}|\mathcal{X},\boldsymbol{\theta}) = p(y_1,y_2,y_3|x_1,x_2,x_3,\boldsymbol{\theta}) = \prod_{n=1}^{3} p(y_n\mid[\,x_n\,],[\,a\,])\]</div>
-        모델 \(y = ax + \epsilon\), \(\epsilon \sim \mathcal{N}(0,\sigma^2)\) → \(y_n \sim \mathcal{N}(ax_n, \sigma^2)\):
-        <div class="amath">\[= \prod_{n=1}^{3} \mathcal{N}\!\left(y_n\mid[\,ax_n\,],\,\sigma^2\right)\]</div>
-        빈칸 정답: ① \(x_n\) (또는 \(\boldsymbol{\theta}\)) &nbsp;② \(ax_n\)
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="기출" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">Q3-3</span>
-        <span class="quiz-text">Design matrix \(\mathbf{X}\)를 구하고, \(\boldsymbol{\theta}_{ML} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\)로 \(a\)를 계산하시오.</span>
-        <span class="quiz-tag">기출</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        \(y = ax\) 모델 (절편 없음) → Design matrix는 \(x\) 열벡터 하나:
-        <div class="amath">\[\mathbf{X} = \begin{bmatrix}3\\7\\15\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}5\\14\\31\end{bmatrix}\]</div>
-        <div class="amath">\[\boldsymbol{\theta}_{ML} = a = \left(\mathbf{X}^T\mathbf{X}\right)^{-1}\mathbf{X}^T\mathbf{y} = \left([3\ 7\ 15]\begin{bmatrix}3\\7\\15\end{bmatrix}\right)^{-1}[3\ 7\ 15]\begin{bmatrix}5\\14\\31\end{bmatrix}\]</div>
-        <div class="amath">\[= \frac{1}{9+49+225}\times(15+98+465) = \frac{578}{283} \approx \boxed{2.042}\]</div>
-      </div></div>
     </div>
   </div>
 </section>
 
-<!-- 추가 연습 -->
-<section class="concept-section" id="q4-extra">
+<!-- 06 베이지안 선형회귀 -->
+<section class="concept-section" id="sec-lr-bayes">
   <div class="concept-header">
-    <span class="concept-num">+</span>
-    <div><div class="concept-title">추가 연습 문제</div><div class="concept-en">Extra Practice · 관련 주제 심화</div></div>
+    <span class="concept-num">06</span>
+    <div><div class="concept-title">베이지안 선형회귀</div><div class="concept-en">Bayesian Linear Regression</div></div>
+    <span class="mml-ref">MML §9.3.2</span>
   </div>
   <div class="concept-body">
-
-    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">E1</span>
-        <span class="quiz-text">Chain / Fork / Collider 패턴 판별: \(A \to C \to B\) (C 관측), \(A \leftarrow C \rightarrow B\) (C 미관측), \(A \to C \leftarrow B\) (C 미관측), \(A \to C \leftarrow B\) (C 관측) 각각 \(A \perp\!\!\!\perp B\) 성립 여부를 답하시오.</span>
-        <span class="quiz-tag">연습</span>
-        <span class="quiz-toggle">+</span>
+    <p>베이지안 관점에서는 단일 점 추정치 대신 <strong>파라미터의 사후 분포</strong> 전체를 계산한다. 가우시안 사전분포 + 가우시안 우도 → <strong>가우시안 사후분포</strong> (conjugate 관계).</p>
+    <div class="fblock">
+      <div class="fblock-label">사후 분포 (Posterior) — MML §9.3.2</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[p(\boldsymbol{\theta} \mid \mathbf{X}, \mathbf{y}) = \mathcal{N}(\boldsymbol{\theta} \mid \boldsymbol{\mu}_N, \boldsymbol{\Sigma}_N)\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\boldsymbol{\Sigma}_N^{-1} = \boldsymbol{\Sigma}_0^{-1} + \frac{1}{\sigma^2}\mathbf{X}^\top\mathbf{X}\]</div>
+          <div class="feq-note">사후 정밀도 = 사전 정밀도 + 데이터 정밀도</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\boldsymbol{\mu}_N = \boldsymbol{\Sigma}_N\!\left(\boldsymbol{\Sigma}_0^{-1}\boldsymbol{\mu}_0 + \frac{1}{\sigma^2}\mathbf{X}^\top\mathbf{y}\right)\]</div>
+          <div class="feq-note">사후 평균: 사전 정보 + 데이터 정보의 가중 결합</div>
+        </div>
       </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        <ul style="padding-left:20px;line-height:2.2;font-size:13.5px;">
-          <li><strong>(1) Chain, C 관측</strong>: 경로 차단 → \(A \perp\!\!\!\perp B \mid C\) <strong>✓ (T)</strong></li>
-          <li><strong>(2) Fork, C 미관측</strong>: 경로 열림 → \(A \not\perp\!\!\!\perp B\) <strong>✗ (F)</strong></li>
-          <li><strong>(3) Collider, C 미관측</strong>: 자동 차단 → \(A \perp\!\!\!\perp B\) <strong>✓ (T)</strong> ← collider의 핵심!</li>
-          <li><strong>(4) Collider, C 관측</strong>: 경로 활성화 → \(A \not\perp\!\!\!\perp B \mid C\) <strong>✗ (F)</strong></li>
-        </ul>
-      </div></div>
     </div>
-
-    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">E2</span>
-        <span class="quiz-text">어떤 DAG에서 \(p(A,B,C,D) = p(A)\,p(B)\,p(C|A,B)\,p(D|C)\)가 주어질 때, (1) \(A \perp\!\!\!\perp D \mid C\), (2) \(A \perp\!\!\!\perp B\), (3) \(A \perp\!\!\!\perp B \mid C\) 각각 성립 여부를 판별하시오.</span>
-        <span class="quiz-tag">연습</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        그래프: \(A \to C \leftarrow B\), \(C \to D\)
-        <div class="amath">\[\text{(1) } A \perp\!\!\!\perp D \mid C \;\text{: T} \quad \text{(chain } A \to C \to D \text{에서 } C \text{ 관측 → 차단)}\]</div>
-        <div class="amath">\[\text{(2) } A \perp\!\!\!\perp B \;\text{: T} \quad (p(A,B)=p(A)\,p(B) \text{ 이므로 주변 독립})\]</div>
-        <div class="amath">\[\text{(3) } A \perp\!\!\!\perp B \mid C \;\text{: F} \quad \text{(}C\text{는 collider, 관측 시 경로 활성화!)}\]</div>
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">E3</span>
-        <span class="quiz-text">\(p(M_1)=0.6\), \(p(M_2)=0.4\), \(p(M_1|\mathcal{D})=0.7\), \(p(M_2|\mathcal{D})=0.3\)일 때, Posterior Odds, Prior Odds, Bayes' Factor를 각각 구하시오.</span>
-        <span class="quiz-tag">연습</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        <div class="amath">\[\text{Posterior Odds} = \frac{0.7}{0.3} = \frac{7}{3}\]</div>
-        <div class="amath">\[\text{Prior Odds} = \frac{0.6}{0.4} = \frac{3}{2}\]</div>
-        <div class="amath">\[B = \frac{\text{Posterior Odds}}{\text{Prior Odds}} = \frac{7/3}{3/2} = \frac{14}{9} \approx 1.56\]</div>
-        \(B > 1\)이므로 \(M_1\)이 데이터를 더 잘 설명한다.
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">E4</span>
-        <span class="quiz-text">\(y = ax + b\) 모델로 데이터 \(\{(1,2),(2,4),(3,5)\}\)를 MLE로 추정하시오. Design matrix \(\mathbf{X}\)를 작성하고 Normal equation으로 \(a, b\)를 구하시오.</span>
-        <span class="quiz-tag">연습</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        절편 포함 모델 → Design matrix에 1 열 추가:
-        <div class="amath">\[\mathbf{X} = \begin{bmatrix}1&1\\2&1\\3&1\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}2\\4\\5\end{bmatrix}, \quad \boldsymbol{\theta}=\begin{bmatrix}a\\b\end{bmatrix}\]</div>
-        <div class="amath">\[\mathbf{X}^T\mathbf{X} = \begin{bmatrix}14&6\\6&3\end{bmatrix}, \quad \mathbf{X}^T\mathbf{y} = \begin{bmatrix}25\\11\end{bmatrix}\]</div>
-        <div class="amath">\[(\mathbf{X}^T\mathbf{X})^{-1} = \frac{1}{6}\begin{bmatrix}3&-6\\-6&14\end{bmatrix}\]</div>
-        <div class="amath">\[\boldsymbol{\theta}_{ML} = \frac{1}{6}\begin{bmatrix}3&-6\\-6&14\end{bmatrix}\begin{bmatrix}25\\11\end{bmatrix} = \frac{1}{6}\begin{bmatrix}9\\4\end{bmatrix} \;\Rightarrow\; a=1.5,\; b=\tfrac{2}{3}\]</div>
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">E5</span>
-        <span class="quiz-text">가우시안 노이즈 가정 하 선형 회귀의 Log-likelihood를 구하고, 이를 최대화하는 것이 최소제곱법(Least Squares)과 동치임을 보이시오.</span>
-        <span class="quiz-tag">연습</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        단일 관측의 우도: \(p(y_n|x_n,\mathbf{w}) = \mathcal{N}(y_n \mid \mathbf{w}^T\boldsymbol{\phi}(x_n), \sigma^2)\)
-        <div class="amath">\[\ln p(\mathbf{y}|\mathbf{X},\mathbf{w}) = -\frac{N}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{n=1}^{N}\!\left(y_n - \mathbf{w}^T\boldsymbol{\phi}(x_n)\right)^2\]</div>
-        Log-likelihood 최대화 ≡ \(\displaystyle\sum_{n=1}^N (y_n - \mathbf{w}^T\boldsymbol{\phi}(x_n))^2\) <strong>최소화</strong> = 최소제곱법(OLS).<br>
-        즉, 가우시안 노이즈 가정 하에서 MLE = OLS는 수학적으로 완전히 동일하다.
-      </div></div>
-    </div>
-
-    <div class="quiz-card" data-tag="연습" onclick="toggleQuiz(this)">
-      <div class="quiz-q">
-        <span class="quiz-num">E6</span>
-        <span class="quiz-text">MLE의 단점과 이를 극복하기 위한 MAP, 베이지안 추론의 차이점을 비교하여 설명하시오.</span>
-        <span class="quiz-tag">연습</span>
-        <span class="quiz-toggle">+</span>
-      </div>
-      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
-        <strong>MLE의 단점</strong>: 파라미터를 하나의 점 추정값으로 고정 → 파라미터 불확실성 무시, 소량 데이터에서 overfitting 위험.
-        <div class="amath">\[\boldsymbol{\theta}_{ML} = \underset{\boldsymbol{\theta}}{\arg\max}\; p(\mathcal{D}|\boldsymbol{\theta})\]</div>
-        <strong>MAP</strong>: prior \(p(\boldsymbol{\theta})\) 추가 → 정규화 효과, 여전히 점 추정.
-        <div class="amath">\[\boldsymbol{\theta}_{MAP} = \underset{\boldsymbol{\theta}}{\arg\max}\; p(\boldsymbol{\theta}|\mathcal{D}) = \underset{\boldsymbol{\theta}}{\arg\max}\; p(\mathcal{D}|\boldsymbol{\theta})\,p(\boldsymbol{\theta})\]</div>
-        <strong>Bayesian</strong>: posterior 전체를 유지 → 파라미터 불확실성 정량화, 계산 비용 큼.
-        <div class="amath">\[p(\mathbf{x}_{\text{new}}|\mathcal{D}) = \int p(\mathbf{x}_{\text{new}}|\boldsymbol{\theta})\,p(\boldsymbol{\theta}|\mathcal{D})\,d\boldsymbol{\theta}\]</div>
-      </div></div>
-    </div>
-
+    <p>사전분포 \(p(\boldsymbol{\theta}) = \mathcal{N}(\boldsymbol{\mu}_0, \boldsymbol{\Sigma}_0)\)에서 \(\boldsymbol{\mu}_0 = \mathbf{0}\), \(\boldsymbol{\Sigma}_0 = b^2\mathbf{I}\)로 설정하면 사후 평균 \(\boldsymbol{\mu}_N = \boldsymbol{\theta}_{\text{MAP}}\)임을 확인할 수 있다.</p>
   </div>
 </section>
 
-</div><!-- /lec-quiz4 -->
+<!-- 07 예측 분포 -->
+<section class="concept-section" id="sec-lr-pred">
+  <div class="concept-header">
+    <span class="concept-num">07</span>
+    <div><div class="concept-title">예측 분포</div><div class="concept-en">Predictive Distribution</div></div>
+    <span class="mml-ref">MML §9.3.3</span>
+  </div>
+  <div class="concept-body">
+    <p>새 입력 \(\mathbf{x}_*\)에 대한 베이지안 예측은 가능한 모든 \(\boldsymbol{\theta}\)에 대해 평균을 낸다 (파라미터 불확실성 반영).</p>
+    <div class="fblock">
+      <div class="fblock-label">Bayesian Predictive Distribution — MML Eq. 9.34</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[p(y_* \mid \mathbf{x}_*, \mathbf{X}, \mathbf{y}) = \int p(y_* \mid \mathbf{x}_*, \boldsymbol{\theta})\,p(\boldsymbol{\theta}\mid\mathbf{X},\mathbf{y})\,d\boldsymbol{\theta}\]</div>
+        </div>
+        <div class="feq-row">
+          <div>\[= \mathcal{N}\!\left(y_* \;\Big|\; \boldsymbol{\mu}_N^\top\mathbf{x}_*,\; \sigma^2 + \mathbf{x}_*^\top\boldsymbol{\Sigma}_N\mathbf{x}_*\right)\]</div>
+          <div class="feq-note">가우시안-가우시안 marginalization의 결과</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-cell header">방법</div><div class="compare-cell header">예측 평균</div><div class="compare-cell header">예측 분산</div>
+      <div class="compare-cell hl">MLE</div><div class="compare-cell">\(\boldsymbol{\theta}_{\text{MLE}}^\top\mathbf{x}_*\)</div><div class="compare-cell">\(\sigma^2\) (노이즈만)</div>
+      <div class="compare-cell hl">MAP</div><div class="compare-cell">\(\boldsymbol{\theta}_{\text{MAP}}^\top\mathbf{x}_*\)</div><div class="compare-cell">\(\sigma^2\) (노이즈만)</div>
+      <div class="compare-cell hl">Bayesian</div><div class="compare-cell">\(\boldsymbol{\mu}_N^\top\mathbf{x}_*\)</div><div class="compare-cell">\(\sigma^2 + \mathbf{x}_*^\top\boldsymbol{\Sigma}_N\mathbf{x}_*\) (노이즈 + 파라미터 불확실성)</div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">베이지안의 핵심 장점</div>
+      <div class="key-box-content">예측 분산에 \(\mathbf{x}_*^\top\boldsymbol{\Sigma}_N\mathbf{x}_*\) 항이 추가된다. 이는 <strong>파라미터 추정의 불확실성</strong>을 반영하며, 학습 데이터가 없는 영역에서 분산이 커진다 (extrapolation uncertainty).</div>
+    </div>
+  </div>
+</section>
 
+<!-- QUIZ 09 -->
+<section class="quiz-section" id="quiz09-section">
+  <div class="quiz-header">
+    <div class="quiz-title">연습 문제</div>
+    <div class="quiz-count" id="quizCount09">0 / 0 풀이 완료</div>
+  </div>
+  <div class="quiz-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill09" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel09">0%</div>
+  </div>
+  <div class="tag-cloud" id="quizTags09">
+    <span class="tag active" onclick="filterQuiz09('all',this)">전체</span>
+    <span class="tag" onclick="filterQuiz09('계산',this)">계산</span>
+    <span class="tag" onclick="filterQuiz09('유도',this)">유도</span>
+    <span class="tag" onclick="filterQuiz09('개념',this)">개념</span>
+    <span class="tag" onclick="filterQuiz09('시험유형',this)">★ 시험유형</span>
+  </div>
+  <div id="quizList09">
 
+    <!-- Q1 : 시험유형 - Linear Regression MLE 제한없음 -->
+    <div class="quiz-card" data-tag="시험유형" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q1</span><span class="quiz-text">데이터 \(\{(x_n, y_n)\} = \{(1,1),\,(2,2),\,(3,4)\}\)가 모델 \(y = \theta x\)를 따른다고 할 때, 파라미터 제한 없이 \(\theta_{\text{MLE}}\)를 구하시오.</span><span class="quiz-tag">★ 시험유형</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>① 목적함수 설정</strong><br>
+        가우시안 노이즈 가정 → MLE = 제곱 오차 최소화
+        <div class="amath">\[\text{SSE}(\theta) = \sum_{n=1}^3 (y_n - \theta x_n)^2 = (1-\theta)^2 + (2-2\theta)^2 + (4-3\theta)^2\]</div>
+        <strong>② 미분하여 0으로 설정</strong>
+        <div class="amath">\[\frac{d\,\text{SSE}}{d\theta} = -2\sum_n x_n(y_n - \theta x_n) = 0\]</div>
+        <div class="amath">\[\theta \sum_n x_n^2 = \sum_n x_n y_n\]</div>
+        <strong>③ 값 대입</strong>
+        <div class="amath">\[\sum x_n^2 = 1+4+9 = 14, \quad \sum x_n y_n = 1\cdot1 + 2\cdot2 + 3\cdot4 = 17\]</div>
+        <div class="amath">\[\boxed{\theta_{\text{MLE}} = \frac{17}{14} \approx 1.21}\]</div>
+        <strong>일반화</strong>: 절편 없는 단순 선형회귀에서 \(\theta_{\text{MLE}} = \frac{\sum x_n y_n}{\sum x_n^2}\)
+      </div></div>
+    </div>
+
+    <!-- Q2 : 시험유형 - Linear Regression MLE 제한된 파라미터 -->
+    <div class="quiz-card" data-tag="시험유형" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q2</span><span class="quiz-text">동일한 데이터 \(\{(1,1),(2,2),(3,4)\}\)에서 \(\theta \in \{1.0,\, 1.2,\, 1.5\}\)로 제한될 때, \(\theta_{\text{MLE}}\)를 구하시오.</span><span class="quiz-tag">★ 시험유형</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        각 후보에 대해 SSE를 직접 계산한다 (SSE가 작을수록 우도가 높다).
+        <div class="amath">\[\text{SSE}(1.0) = (1-1)^2 + (2-2)^2 + (4-3)^2 = 0 + 0 + 1 = \mathbf{1.00}\]</div>
+        <div class="amath">\[\text{SSE}(1.2) = (1-1.2)^2 + (2-2.4)^2 + (4-3.6)^2 = 0.04+0.16+0.16 = \mathbf{0.36}\]</div>
+        <div class="amath">\[\text{SSE}(1.5) = (1-1.5)^2 + (2-3.0)^2 + (4-4.5)^2 = 0.25+1.00+0.25 = \mathbf{1.50}\]</div>
+        \(\text{SSE}(1.2) < \text{SSE}(1.0) < \text{SSE}(1.5)\)이므로:
+        <div class="amath">\[\boxed{\theta_{\text{MLE}} = 1.2}\]</div>
+        <strong>참고</strong>: 제한 없는 MLE = 17/14 ≈ 1.21이므로, 후보 중 가장 가까운 1.2가 선택된다.
+      </div></div>
+    </div>
+
+    <!-- Q3 : 시험유형 - Linear Regression MAP -->
+    <div class="quiz-card" data-tag="시험유형" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q3</span><span class="quiz-text">동일한 데이터에서 사전분포 \(p(\theta) = \mathcal{N}(0, 1)\), 노이즈 분산 \(\sigma^2 = 1\)일 때 \(\theta_{\text{MAP}}\)를 구하시오.</span><span class="quiz-tag">★ 시험유형</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>① 정규화 강도 계산</strong>
+        <div class="amath">\[\lambda = \frac{\sigma^2}{b^2} = \frac{1}{1} = 1\]</div>
+        <strong>② Ridge 공식 적용</strong> (스칼라 \(\theta\)이므로):
+        <div class="amath">\[\theta_{\text{MAP}} = \frac{\sum x_n y_n}{\sum x_n^2 + \lambda} = \frac{17}{14 + 1} = \frac{17}{15} \approx 1.13\]</div>
+        <div class="amath">\[\boxed{\theta_{\text{MAP}} = \frac{17}{15} \approx 1.13}\]</div>
+        <strong>비교 및 해석</strong>:
+        <div class="amath">\[\theta_{\text{MLE}} = \frac{17}{14} \approx 1.21 \;\;\xrightarrow{\text{사전분포}}\;\; \theta_{\text{MAP}} = \frac{17}{15} \approx 1.13\]</div>
+        MAP 추정값이 사전 평균 0 방향으로 수축(shrinkage)되는 것을 확인할 수 있다. 분모에 \(\lambda=1\)이 더해져 파라미터 크기가 억제된다.
+      </div></div>
+    </div>
+
+    <!-- Q4 : 계산 - 정규방정식 -->
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q4</span><span class="quiz-text">데이터 \(\{(1, 2), (2, 3), (3, 5)\}\) (\(x_n, y_n\))이 주어질 때, \(y = \theta_0 + \theta_1 x\) 모델의 \(\boldsymbol{\theta}_{\text{MLE}}\)를 정규방정식으로 구하시오.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>① 설계 행렬 구성</strong>
+        <div class="amath">\[\mathbf{X} = \begin{bmatrix}1&1\\1&2\\1&3\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}2\\3\\5\end{bmatrix}\]</div>
+        <strong>② \(\mathbf{X}^\top\mathbf{X}\) 와 \(\mathbf{X}^\top\mathbf{y}\) 계산</strong>
+        <div class="amath">\[\mathbf{X}^\top\mathbf{X} = \begin{bmatrix}3&6\\6&14\end{bmatrix}, \quad \mathbf{X}^\top\mathbf{y} = \begin{bmatrix}10\\23\end{bmatrix}\]</div>
+        <strong>③ 정규방정식 풀기</strong>: \(\det = 3 \times 14 - 6 \times 6 = 42 - 36 = 6\)
+        <div class="amath">\[(\mathbf{X}^\top\mathbf{X})^{-1} = \frac{1}{6}\begin{bmatrix}14&-6\\-6&3\end{bmatrix}\]</div>
+        <div class="amath">\[\boldsymbol{\theta}_{\text{MLE}} = \frac{1}{6}\begin{bmatrix}14&-6\\-6&3\end{bmatrix}\begin{bmatrix}10\\23\end{bmatrix} = \frac{1}{6}\begin{bmatrix}2\\9\end{bmatrix} = \begin{bmatrix}1/3\\3/2\end{bmatrix}\]</div>
+        따라서 \(\hat{y} = 1/3 + 1.5x\)
+      </div></div>
+    </div>
+
+    <!-- Q5 : 유도 - MLE=OLS 동치 -->
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q5</span><span class="quiz-text">가우시안 노이즈 가정 하에서 MLE와 최소제곱법(OLS)이 동치임을 수식으로 유도하시오.</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>① 우도 함수</strong>: i.i.d. 가정 하에
+        <div class="amath">\[p(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}) = \prod_{n=1}^N \mathcal{N}(y_n \mid \boldsymbol{\theta}^\top\mathbf{x}_n, \sigma^2)\]</div>
+        <strong>② 로그 우도 전개</strong>
+        <div class="amath">\[\ell(\boldsymbol{\theta}) = -\frac{N}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{n=1}^N(y_n - \boldsymbol{\theta}^\top\mathbf{x}_n)^2\]</div>
+        <strong>③ 최대화</strong>: 첫 번째 항은 \(\boldsymbol{\theta}\)에 무관하고, \(\sigma^2 > 0\)이므로
+        <div class="amath">\[\arg\max_{\boldsymbol{\theta}} \ell(\boldsymbol{\theta}) = \arg\min_{\boldsymbol{\theta}} \sum_{n=1}^N (y_n - \boldsymbol{\theta}^\top\mathbf{x}_n)^2 = \arg\min_{\boldsymbol{\theta}} \|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2\]</div>
+        결론: 가우시안 노이즈 가정 하에서 <strong>MLE ↔ 제곱 오차 최소화</strong>가 동치이다. ∎
+      </div></div>
+    </div>
+
+    <!-- Q6 : 개념 - Ridge vs OLS -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q6</span><span class="quiz-text">Ridge 회귀와 OLS의 차이를 베이지안 관점에서 설명하고, 정규화 강도 \(\lambda\)가 커질수록 추정값이 어떻게 변하는지 서술하시오.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>베이지안 관점</strong>: OLS = 사전분포 없는 MLE. Ridge = 가우시안 사전분포 \(p(\boldsymbol{\theta})=\mathcal{N}(\mathbf{0}, b^2\mathbf{I})\)를 가진 MAP 추정.<br><br>
+        정규화 강도 \(\lambda = \sigma^2/b^2\)의 의미:
+        <div class="amath">\[\boldsymbol{\theta}_{\text{MAP}} = (\mathbf{X}^\top\mathbf{X}+\lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}\]</div>
+        <strong>\(\lambda \to 0\)</strong>: Ridge → OLS. 사전분포가 weak해짐 (b² → ∞).<br>
+        <strong>\(\lambda \to \infty\)</strong>: \(\boldsymbol{\theta}_{\text{MAP}} \to \mathbf{0}\). 파라미터가 사전 평균 0으로 수축.<br><br>
+        <strong>편향-분산 트레이드오프</strong>: \(\lambda\)가 클수록 파라미터 크기가 억제되어 분산(variance)은 줄지만 편향(bias)은 증가한다. 적절한 \(\lambda\)는 교차검증으로 선택한다.
+      </div></div>
+    </div>
+
+    <!-- Q7 : 계산 - MAP 수치 계산 -->
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q7</span><span class="quiz-text">\(\mathbf{X}^\top\mathbf{X} = \begin{bmatrix}4&0\\0&9\end{bmatrix}\), \(\mathbf{X}^\top\mathbf{y} = \begin{bmatrix}8\\18\end{bmatrix}\)일 때, \(\lambda=1\)로 설정한 Ridge 회귀의 \(\boldsymbol{\theta}_{\text{MAP}}\)를 구하시오.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I} = \begin{bmatrix}4+1&0\\0&9+1\end{bmatrix} = \begin{bmatrix}5&0\\0&10\end{bmatrix}\]</div>
+        대각 행렬이므로 역행렬이 간단하다:
+        <div class="amath">\[(\mathbf{X}^\top\mathbf{X}+\mathbf{I})^{-1} = \begin{bmatrix}1/5&0\\0&1/10\end{bmatrix}\]</div>
+        <div class="amath">\[\boldsymbol{\theta}_{\text{MAP}} = \begin{bmatrix}1/5&0\\0&1/10\end{bmatrix}\begin{bmatrix}8\\18\end{bmatrix} = \begin{bmatrix}8/5\\18/10\end{bmatrix} = \begin{bmatrix}1.6\\1.8\end{bmatrix}\]</div>
+        비교: OLS는 \(\boldsymbol{\theta}_{\text{MLE}} = \begin{bmatrix}2\\2\end{bmatrix}\). 정규화로 인해 두 파라미터 모두 0 방향으로 수축됨을 확인할 수 있다.
+      </div></div>
+    </div>
+
+    <!-- Q8 : 개념 - Bayesian predictive -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q8</span><span class="quiz-text">베이지안 선형회귀의 예측 분산이 MAP보다 항상 크거나 같은 이유를 수식으로 설명하시오.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        MAP/MLE 예측 분산: \(\text{Var}[y_*] = \sigma^2\) (관측 노이즈만)<br><br>
+        베이지안 예측 분산:
+        <div class="amath">\[\text{Var}[y_*] = \sigma^2 + \mathbf{x}_*^\top\boldsymbol{\Sigma}_N\mathbf{x}_*\]</div>
+        \(\boldsymbol{\Sigma}_N\)은 양의 정치(positive definite) 행렬이므로 임의의 벡터 \(\mathbf{x}_*\)에 대해:
+        <div class="amath">\[\mathbf{x}_*^\top\boldsymbol{\Sigma}_N\mathbf{x}_* \geq 0\]</div>
+        따라서 베이지안 예측 분산 ≥ MAP/MLE 예측 분산. 등호는 \(\boldsymbol{\Sigma}_N \to \mathbf{0}\), 즉 데이터가 무한히 많아질 때 달성된다. 이 추가 항이 파라미터 추정의 불확실성을 반영한다.
+      </div></div>
+    </div>
+
+  </div><!-- /quizList09 -->
+</section>
+
+</div><!-- /lec09 -->
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;text-align:center;">
     <div style="font-size:48px;color:var(--border2);">+</div>
     <div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text3);">강의자료를 추가하세요</div>
@@ -1295,19 +1323,18 @@
     document.querySelectorAll('.lecture-tab').forEach(e=>e.classList.remove('active'));
     const t=document.getElementById(id);if(t)t.classList.add('active');
     btn.classList.add('active');
-    // sidebar 전환
-    const lec08Side=document.getElementById('sidebar-lec08');
-    const quiz4Side=document.getElementById('sidebar-quiz4');
-    if(lec08Side&&quiz4Side){
-      lec08Side.style.display=(id==='lec08')?'':'none';
-      quiz4Side.style.display=(id==='lec-quiz4')?'':'none';
-    }
+    // Switch sidebar groups
+    document.querySelectorAll('.sidebar-group').forEach(g=>{
+      g.style.display=(g.dataset.lec===id)?'':'none';
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
   }
   function setSideActive(el){
     document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
     el.classList.add('active');
   }
   function toggleQuiz(card){card.classList.toggle('open');updateProgress();}
+  function toggleQuiz09(card){card.classList.toggle('open');updateProgress09();}
   function updateProgress(){
     const cards=document.querySelectorAll('#quizList .quiz-card:not([style*="none"])');
     const open=document.querySelectorAll('#quizList .quiz-card.open:not([style*="none"])');
@@ -1317,6 +1344,15 @@
     document.getElementById('progressFill').style.width=pct+'%';
     document.getElementById('progressLabel').textContent=pct+'%';
   }
+  function updateProgress09(){
+    const cards=document.querySelectorAll('#quizList09 .quiz-card:not([style*="none"])');
+    const open=document.querySelectorAll('#quizList09 .quiz-card.open:not([style*="none"])');
+    const total=cards.length,done=open.length;
+    document.getElementById('quizCount09').textContent=`${done} / ${total} 풀이 완료`;
+    const pct=total>0?Math.round(done/total*100):0;
+    document.getElementById('progressFill09').style.width=pct+'%';
+    document.getElementById('progressLabel09').textContent=pct+'%';
+  }
   function filterQuiz(tag,el){
     document.querySelectorAll('#quizTags .tag').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
@@ -1324,6 +1360,14 @@
       card.style.display=(tag==='all'||card.dataset.tag===tag)?'':'none';
     });
     updateProgress();
+  }
+  function filterQuiz09(tag,el){
+    document.querySelectorAll('#quizTags09 .tag').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('#quizList09 .quiz-card').forEach(card=>{
+      card.style.display=(tag==='all'||card.dataset.tag===tag)?'':'none';
+    });
+    updateProgress09();
   }
   window.addEventListener('scroll',()=>{
     document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400);
@@ -1354,6 +1398,7 @@
     });
   }
   updateProgress();
+  updateProgress09();
 </script>
 </body>
 </html>
