@@ -1269,6 +1269,108 @@
       </div></div>
     </div>
 
+    <!-- Q9 : 개념Easy - MLE=OLS 한줄 -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q9</span><span class="quiz-text">가우시안 노이즈 가정 하에서 MLE는 어떤 손실함수를 최소화하는 것과 동치인가?</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>제곱 오차 (Squared Error / SSE)</strong>를 최소화하는 것과 동치이다.
+        <div class="amath">\[\boldsymbol{\theta}_{\text{MLE}} = \arg\min_{\boldsymbol{\theta}} \|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2 = \arg\min_{\boldsymbol{\theta}} \sum_{n=1}^N (y_n - \boldsymbol{\theta}^\top \mathbf{x}_n)^2\]</div>
+        <strong>이유</strong>: 가우시안 우도의 로그를 취하면 상수 항을 제외하고 \(-\frac{1}{2\sigma^2}\sum(y_n - \boldsymbol{\theta}^\top\mathbf{x}_n)^2\)만 남는다. 이를 최대화 = 제곱합 최소화.
+      </div></div>
+    </div>
+
+    <!-- Q10 : 개념Easy - 사전분포 역할 -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q10</span><span class="quiz-text">MAP 추정에서 가우시안 사전분포 \(p(\boldsymbol{\theta}) = \mathcal{N}(\mathbf{0}, b^2\mathbf{I})\)를 사용하면 손실함수에 어떤 항이 추가되는가?</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>L2 정규화 항</strong> \(\lambda\|\boldsymbol{\theta}\|^2\)이 추가된다.
+        <div class="amath">\[\text{MAP 목적함수} = \|\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\|^2 + \underbrace{\frac{\sigma^2}{b^2}}_{\lambda}\|\boldsymbol{\theta}\|^2\]</div>
+        이것이 곧 <strong>Ridge 회귀(L2 Regularization)</strong>이다.<br><br>
+        <strong>정리</strong>: 가우시안 사전분포 → L2 (Ridge) / 라플라스 사전분포 → L1 (Lasso)
+      </div></div>
+    </div>
+
+    <!-- Q11 : 계산Easy - SSE 직접 계산 -->
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q11</span><span class="quiz-text">모델 \(y = 2x\)와 데이터 \(\{(1, 3),\,(2, 5),\,(3, 6)\}\)에 대해 SSE를 구하시오.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        각 데이터 포인트의 예측값과 잔차를 구한다.
+        <div class="amath">
+        \begin{array}{c|c|c|c}
+        x & y & \hat{y}=2x & (y-\hat{y})^2 \\\hline
+        1 & 3 & 2 & 1 \\
+        2 & 5 & 4 & 1 \\
+        3 & 6 & 6 & 0
+        \end{array}
+        </div>
+        <div class="amath">\[\text{SSE} = 1 + 1 + 0 = \boxed{2}\]</div>
+      </div></div>
+    </div>
+
+    <!-- Q12 : 계산Easy - MLE 단순 계산 -->
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q12</span><span class="quiz-text">데이터 \(\{(1, 2),\,(2, 4),\,(3, 6)\}\)에 대해 \(y = \theta x\) 모델의 \(\theta_{\text{MLE}}\)를 구하시오.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">\[\theta_{\text{MLE}} = \frac{\sum x_n y_n}{\sum x_n^2} = \frac{1\cdot2 + 2\cdot4 + 3\cdot6}{1^2 + 2^2 + 3^2} = \frac{2+8+18}{1+4+9} = \frac{28}{14} = \boxed{2}\]</div>
+        데이터가 정확히 \(y=2x\) 위에 놓여 있으므로 SSE=0, 완벽한 적합.
+      </div></div>
+    </div>
+
+    <!-- Q13 : 개념Easy - λ 커지면? -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q13</span><span class="quiz-text">Ridge 회귀에서 정규화 강도 \(\lambda\)를 크게 할수록 \(\boldsymbol{\theta}_{\text{MAP}}\)는 어떻게 변하는가? 그리고 그 이유는?</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        \(\lambda\)가 커질수록 \(\boldsymbol{\theta}_{\text{MAP}}\)는 <strong>0에 가까워진다 (수축, shrinkage)</strong>.
+        <div class="amath">\[\boldsymbol{\theta}_{\text{MAP}} = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}\]</div>
+        <strong>이유</strong>: 분모에 해당하는 \(\mathbf{X}^\top\mathbf{X}+\lambda\mathbf{I}\)의 대각 성분이 커져 전체 크기가 줄어든다.<br><br>
+        <strong>극단적인 경우</strong>:<br>
+        \(\lambda = 0\) → MLE와 동일<br>
+        \(\lambda \to \infty\) → \(\boldsymbol{\theta}_{\text{MAP}} \to \mathbf{0}\) (사전분포에 완전히 수렴)
+      </div></div>
+    </div>
+
+    <!-- Q14 : 계산Easy - Ridge vs OLS 비교 -->
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q14</span><span class="quiz-text">\(\sum x_n^2 = 10\), \(\sum x_n y_n = 20\), \(\sigma^2=1\), \(b^2=1\)일 때 \(\theta_{\text{MLE}}\)와 \(\theta_{\text{MAP}}\)를 각각 구하고 비교하시오.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>MLE (제한 없음)</strong>:
+        <div class="amath">\[\theta_{\text{MLE}} = \frac{\sum x_n y_n}{\sum x_n^2} = \frac{20}{10} = \boxed{2.0}\]</div>
+        <strong>MAP</strong>: \(\lambda = \sigma^2/b^2 = 1/1 = 1\)
+        <div class="amath">\[\theta_{\text{MAP}} = \frac{\sum x_n y_n}{\sum x_n^2 + \lambda} = \frac{20}{10+1} = \frac{20}{11} \approx \boxed{1.82}\]</div>
+        <strong>결론</strong>: MAP(1.82) &lt; MLE(2.0). 사전분포의 평균 0 방향으로 수축. 데이터가 많아질수록 (\(\sum x_n^2 \gg \lambda\)) 둘의 차이는 줄어든다.
+      </div></div>
+    </div>
+
+    <!-- Q15 : 개념Easy - 설계 행렬 -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q15</span><span class="quiz-text">모델 \(y = \theta_0 + \theta_1 x\)에서 데이터 \(\{(2,5),(4,9)\}\)의 설계 행렬 \(\mathbf{X}\)와 출력 벡터 \(\mathbf{y}\)를 쓰시오.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        절편 \(\theta_0\)을 위해 첫 번째 열을 전부 1로 채운다.
+        <div class="amath">\[\mathbf{X} = \begin{bmatrix}1 & 2 \\ 1 & 4\end{bmatrix}, \quad \mathbf{y} = \begin{bmatrix}5 \\ 9\end{bmatrix}\]</div>
+        그러면 모델은 행렬 형태로:
+        <div class="amath">\[\mathbf{y} = \mathbf{X}\boldsymbol{\theta} + \boldsymbol{\epsilon}, \quad \boldsymbol{\theta} = \begin{bmatrix}\theta_0 \\ \theta_1\end{bmatrix}\]</div>
+        <strong>핵심</strong>: 절편 항을 포함하려면 항상 1로 채운 열을 추가해야 한다.
+      </div></div>
+    </div>
+
+    <!-- Q16 : 개념Easy - MLE vs MAP vs Bayesian 한눈에 -->
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz09(this)">
+      <div class="quiz-q"><span class="quiz-num">Q16</span><span class="quiz-text">MLE, MAP, 베이지안 추론의 차이를 사전분포 사용 여부와 출력 형태를 기준으로 비교하시오.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">
+        \begin{array}{l|c|l}
+        \textbf{방법} & \textbf{사전분포} & \textbf{출력 형태} \\\hline
+        \text{MLE} & \text{없음} & \text{점 추정치 } \boldsymbol{\theta}_{\text{MLE}} \\
+        \text{MAP} & \text{있음} & \text{점 추정치 } \boldsymbol{\theta}_{\text{MAP}} \\
+        \text{Bayesian} & \text{있음} & \text{분포 } p(\boldsymbol{\theta}\mid\mathcal{D})
+        \end{array}
+        </div>
+        <strong>예측 불확실성</strong>:<br>
+        MLE/MAP → 예측 분산 = \(\sigma^2\) (노이즈만 반영)<br>
+        Bayesian → 예측 분산 = \(\sigma^2 + \mathbf{x}_*^\top\boldsymbol{\Sigma}_N\mathbf{x}_*\) (파라미터 불확실성까지 반영)
+      </div></div>
+    </div>
+
   </div><!-- /quizList09 -->
 </section>
 
