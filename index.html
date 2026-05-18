@@ -208,6 +208,7 @@
 <div class="lecture-tabs" id="lectureTabs">
   <button class="lecture-tab active" onclick="switchLecture('lec08',this)">Lec 08 · Data &amp; Models</button>
   <button class="lecture-tab" onclick="switchLecture('lec09',this)">Lec 09 · Linear Regression</button>
+  <button class="lecture-tab" onclick="switchLecture('lec10',this)">Lec 10 · PCA</button>
   <button class="tab-add" onclick="showAddTab()">+</button>
 </div>
 
@@ -246,6 +247,23 @@
   <a class="sidebar-item" href="#sec-lr-pred"    onclick="setSideActive(this)">7 · 예측 분포</a>
   <div class="sidebar-section-label">연습 문제</div>
   <a class="sidebar-item" href="#quiz09-section" onclick="setSideActive(this)">연습 문제 풀기</a>
+  </div>
+  <!-- Lec 10 sidebar -->
+  <div class="sidebar-group" data-lec="lec10" style="display:none;">
+  <div class="sidebar-section-label">강의 개요</div>
+  <a class="sidebar-item" href="#lec10-intro"        onclick="setSideActive(this)">개요 · Overview</a>
+  <div class="sidebar-section-label">핵심 개념</div>
+  <a class="sidebar-item" href="#sec-pca-setting"   onclick="setSideActive(this)">1 · 문제 정의</a>
+  <a class="sidebar-item" href="#sec-pca-maxvar1"   onclick="setSideActive(this)">2 · 분산 최대화: 1변수</a>
+  <a class="sidebar-item" href="#sec-pca-maxvarM"   onclick="setSideActive(this)">3 · 분산 최대화: M차원</a>
+  <a class="sidebar-item" href="#sec-pca-summary"   onclick="setSideActive(this)">4 · 주성분 분석 정리</a>
+  <a class="sidebar-item" href="#sec-pca-proj"      onclick="setSideActive(this)">5 · 사상 관점의 PCA</a>
+  <a class="sidebar-item" href="#sec-pca-autoenc"   onclick="setSideActive(this)">6 · Auto-encoder 관점</a>
+  <a class="sidebar-item" href="#sec-pca-steps"     onclick="setSideActive(this)">7 · 실제 적용 Key Steps</a>
+  <a class="sidebar-item" href="#sec-pca-highd"     onclick="setSideActive(this)">8 · 고차원 PCA</a>
+  <a class="sidebar-item" href="#sec-pca-ppca"      onclick="setSideActive(this)">9 · 확률적 PCA (PPCA)</a>
+  <div class="sidebar-section-label">연습 문제</div>
+  <a class="sidebar-item" href="#quiz10-section" onclick="setSideActive(this)">연습 문제 풀기</a>
   </div>
 </nav>
 
@@ -1375,6 +1393,445 @@
 </section>
 
 </div><!-- /lec09 -->
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  Lec 10 · Dimensionality Reduction with PCA            -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="lecture-content" id="lec10">
+
+<!-- INTRO -->
+<section class="lecture-intro" id="lec10-intro">
+  <div class="lecture-no">Lecture 10</div>
+  <h1 class="lecture-title">Dimensionality Reduction with PCA</h1>
+  <p class="lecture-desc">주성분 분석(PCA)을 통해 고차원 데이터를 저차원으로 압축하는 원리를 배운다. 분산 최대화 관점과 재구성 오차 최소화 관점이 동일한 해를 도출함을 확인하고, 실전 적용 절차와 확률적 확장(PPCA)까지 학습한다.</p>
+  <div class="lecture-meta">
+    <div class="meta-item">강의자 <span>Sukmin Yun</span></div>
+    <div class="meta-item">MML 참고 <span>Ch. 10</span></div>
+    <div class="meta-item">핵심 개념 <span>9가지</span></div>
+  </div>
+  <div class="overview-grid" style="margin-top:28px;">
+    <a class="overview-card" href="#sec-pca-setting"><div class="ov-num">01</div><div class="ov-title">문제 정의</div><div class="ov-en">Problem Setting</div></a>
+    <a class="overview-card" href="#sec-pca-maxvar1"><div class="ov-num">02</div><div class="ov-title">분산 최대화: 1변수</div><div class="ov-en">Max Variance 1D</div></a>
+    <a class="overview-card" href="#sec-pca-maxvarM"><div class="ov-num">03</div><div class="ov-title">분산 최대화: M차원</div><div class="ov-en">Max Variance M-D</div></a>
+    <a class="overview-card" href="#sec-pca-summary"><div class="ov-num">04</div><div class="ov-title">주성분 분석 정리</div><div class="ov-en">PCA Summary</div></a>
+    <a class="overview-card" href="#sec-pca-proj"><div class="ov-num">05</div><div class="ov-title">사상 관점의 PCA</div><div class="ov-en">Projection Perspective</div></a>
+    <a class="overview-card" href="#sec-pca-autoenc"><div class="ov-num">06</div><div class="ov-title">Auto-encoder 관점</div><div class="ov-en">Auto-encoder View</div></a>
+    <a class="overview-card" href="#sec-pca-steps"><div class="ov-num">07</div><div class="ov-title">실제 적용 Key Steps</div><div class="ov-en">PCA in Practice</div></a>
+    <a class="overview-card" href="#sec-pca-highd"><div class="ov-num">08</div><div class="ov-title">고차원 PCA</div><div class="ov-en">High-dim PCA (N≪D)</div></a>
+    <a class="overview-card" href="#sec-pca-ppca"><div class="ov-num">09</div><div class="ov-title">확률적 PCA</div><div class="ov-en">Probabilistic PCA</div></a>
+  </div>
+</section>
+
+<!-- 01 문제 정의 -->
+<section class="concept-section" id="sec-pca-setting">
+  <div class="concept-header">
+    <span class="concept-num">01</span>
+    <div><div class="concept-title">문제 정의</div><div class="concept-en">Problem Setting</div></div>
+    <span class="mml-ref">MML §10.1</span>
+  </div>
+  <div class="concept-body">
+    <p><strong>차원 축소(Dimensionality Reduction)</strong>는 고차원 데이터 \(\mathbf{x}_n \in \mathbb{R}^D\)를 정보 손실을 최소화하며 저차원 \(\tilde{\mathbf{x}}_n \in \mathbb{R}^M\, (M \ll D)\)으로 압축하는 기법이다. JPEG·MP3 압축과 유사한 개념으로, 데이터가 실제로는 낮은 차원의 부분공간 위에 분포한다는 성질을 활용한다.</p>
+    <div class="key-box">
+      <div class="key-box-label">PCA의 목표</div>
+      <div class="key-box-content">원본 \(\mathbf{x}_n\)과 최대한 유사한 저차원 사상(projection) \(\tilde{\mathbf{x}}_n\)을 찾는 것. 원본 공간으로의 재구성이 가능한 저차원 표현을 구한다.</div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">Data Covariance Matrix — MML Eq. 10.11</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\mathbf{S} = \frac{1}{N}\mathbf{X}\mathbf{X}^\top \in \mathbb{R}^{D \times D}\]</div>
+          <div class="feq-note">Centered data \(\mathbf{X}\) (각 열이 데이터 포인트, 평균 0) 가정 시 데이터 공분산 행렬</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 분산 최대화: 1변수 -->
+<section class="concept-section" id="sec-pca-maxvar1">
+  <div class="concept-header">
+    <span class="concept-num">02</span>
+    <div><div class="concept-title">분산 최대화: 1변수</div><div class="concept-en">Maximum Variance Perspective — 1D</div></div>
+    <span class="mml-ref">MML §10.2</span>
+  </div>
+  <div class="concept-body">
+    <p>1차원으로 사상하는 단위 기저 벡터 \(\mathbf{b}_1\) (\(\|\mathbf{b}_1\|=1\))을 구하는 문제이다. 데이터를 \(\mathbf{b}_1\) 방향으로 사상하면 스칼라 좌표 \(z_{1n} = \mathbf{b}_1^\top \mathbf{x}_n\)을 얻는다.</p>
+    <div class="fblock">
+      <div class="fblock-label">사상된 데이터의 분산 — MML Eq. 10.14</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\mathbb{V}[z_1] = \frac{1}{N}\sum_{n=1}^{N} z_{1n}^2 = \mathbf{b}_1^\top \mathbf{S}\, \mathbf{b}_1\]</div>
+          <div class="feq-note">Centered data 가정 시 사상된 분산은 \(\mathbf{b}_1^\top \mathbf{S} \mathbf{b}_1\)으로 표현됨</div>
+        </div>
+      </div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">Lagrangian 최적화 — MML Eq. 10.17</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\max_{\mathbf{b}_1}\; \mathbf{b}_1^\top \mathbf{S}\,\mathbf{b}_1 \quad \text{s.t.} \quad \|\mathbf{b}_1\|^2 = 1\]</div>
+          <div class="feq-note">\(\mathcal{L} = \mathbf{b}_1^\top \mathbf{S}\mathbf{b}_1 - \lambda(\mathbf{b}_1^\top \mathbf{b}_1 - 1)\)</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\frac{\partial \mathcal{L}}{\partial \mathbf{b}_1} = 2\mathbf{S}\mathbf{b}_1 - 2\lambda\mathbf{b}_1 = \mathbf{0} \;\Rightarrow\; \mathbf{S}\mathbf{b}_1 = \lambda\mathbf{b}_1\]</div>
+          <div class="feq-note">\(\mathbf{b}_1\)은 공분산 행렬 \(\mathbf{S}\)의 고유벡터, \(\lambda\)는 고유값</div>
+        </div>
+      </div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">핵심 결론</div>
+      <div class="key-box-content">분산 = \(\mathbf{b}_1^\top \mathbf{S}\mathbf{b}_1 = \lambda_1\). 분산을 최대화하려면 <strong>가장 큰 고유값 \(\lambda_1\)에 대응하는 고유벡터 \(\mathbf{b}_1\)</strong>을 선택. 이를 <strong>제1 주성분(1st Principal Component)</strong>이라 한다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 분산 최대화: M차원 -->
+<section class="concept-section" id="sec-pca-maxvarM">
+  <div class="concept-header">
+    <span class="concept-num">03</span>
+    <div><div class="concept-title">분산 최대화: M차원</div><div class="concept-en">Maximum Variance — M Dimensions</div></div>
+    <span class="mml-ref">MML §10.2</span>
+  </div>
+  <div class="concept-body">
+    <p>1차원의 논리를 반복 적용하면 M개의 주성분을 순차적으로 구할 수 있다. \(m\)번째 주성분을 구할 때는, 앞서 구한 \(m-1\)개 주성분의 기여도를 제거하고 남은 분산을 최대화한다.</p>
+    <div class="fblock">
+      <div class="fblock-label">잔여 공분산 행렬 (Deflation)</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\hat{\mathbf{S}} = \mathbf{S} - \sum_{i=1}^{m-1} \lambda_i \mathbf{b}_i \mathbf{b}_i^\top\]</div>
+          <div class="feq-note">앞선 \(m-1\)개 주성분의 기여를 뺀 공분산 행렬. \(\mathbf{b}_m\)은 \(\hat{\mathbf{S}}\)의 고유벡터이자 \(\mathbf{S}\)의 고유벡터이다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">Spectral Theorem에 의한 일반화</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\hat{\mathbf{S}}\,\mathbf{b}_m = \left(\mathbf{S} - \mathbf{B}_{m-1}\mathbf{S}\right)\mathbf{b}_m = \mathbf{S}\mathbf{b}_m = \lambda_m \mathbf{b}_m\]</div>
+          <div class="feq-note">\(m\)번째 주성분의 분산 = \(m\)번째로 큰 고유값 \(\lambda_m\). 공분산 행렬 \(\mathbf{S}\)는 대칭이므로 Orthonormal한 고유벡터 기저 존재.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 주성분 분석 정리 -->
+<section class="concept-section" id="sec-pca-summary">
+  <div class="concept-header">
+    <span class="concept-num">04</span>
+    <div><div class="concept-title">주성분 분석 정리</div><div class="concept-en">PCA Summary — Max Variance View</div></div>
+    <span class="mml-ref">MML §10.2</span>
+  </div>
+  <div class="concept-body">
+    <div class="key-box">
+      <div class="key-box-label">PCA 알고리즘 요약</div>
+      <div class="key-box-content">
+        ① 공분산 행렬 \(\mathbf{S} = \tfrac{1}{N}\mathbf{X}\mathbf{X}^\top\) 계산<br>
+        ② 고유값 분해: 고유값 \(\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_D \geq 0\)<br>
+        ③ 상위 \(M\)개 고유값에 대응하는 고유벡터 \(\mathbf{b}_1,\ldots,\mathbf{b}_M\) 선택 (= 주성분)<br>
+        ④ 사상행렬 \(\mathbf{B}_M = [\mathbf{b}_1, \ldots, \mathbf{b}_M] \in \mathbb{R}^{D \times M}\) 구성<br>
+        ⑤ 좌표 \(\tilde{\mathbf{z}}_n = \mathbf{B}_M^\top \mathbf{x}_n \in \mathbb{R}^M\) 로 차원 축소
+      </div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">포착된 분산과 손실된 분산 — MML Eq. 10.24–10.25</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[V_M = \sum_{m=1}^{M} \lambda_m \qquad J_M = \sum_{j=M+1}^{D} \lambda_j = V_D - V_M\]</div>
+          <div class="feq-note">상대 분산: \(\dfrac{V_M}{V_D}\) (포착), \(1 - \dfrac{V_M}{V_D}\) (손실). 몇 개의 PC가 적절한지 판단할 때 사용.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 사상 관점의 PCA -->
+<section class="concept-section" id="sec-pca-proj">
+  <div class="concept-header">
+    <span class="concept-num">05</span>
+    <div><div class="concept-title">사상 관점의 PCA</div><div class="concept-en">Projection Perspective — Reconstruction Error</div></div>
+    <span class="mml-ref">MML §10.3</span>
+  </div>
+  <div class="concept-body">
+    <p>분산 최대화와 반대되는 접근: 원본 \(\mathbf{x}_n\)과 재구성된 \(\tilde{\mathbf{x}}_n\) 사이의 거리(재구성 오차)를 최소화하는 부분공간을 찾는다.</p>
+    <div class="fblock">
+      <div class="fblock-label">평균 제곱 재구성 오차 — MML Eq. 10.40</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[J = \frac{1}{N}\sum_{n=1}^{N} \|\mathbf{x}_n - \tilde{\mathbf{x}}_n\|^2\]</div>
+          <div class="feq-note">재구성: \(\tilde{\mathbf{x}}_n = \mathbf{B}_M \mathbf{B}_M^\top \mathbf{x}_n\) (M차원 주성분 공간으로의 직교사상)</div>
+        </div>
+      </div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">최솟값 — MML Eq. 10.44</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[J_M = \sum_{j=M+1}^{D} \lambda_j\]</div>
+          <div class="feq-note">재구성 오차 최소화 ≡ 버려진 고유값의 합 최소화 ≡ 가장 큰 M개의 고유벡터 선택 → <strong>분산 최대화와 동일한 해</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">두 관점의 동치성</div>
+      <div class="key-box-content">재구성 오차 최소화 ⟺ 사상된 데이터의 분산 최대화. 두 접근은 수학적으로 동일한 최적 주성분을 도출한다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 Auto-encoder 관점 -->
+<section class="concept-section" id="sec-pca-autoenc">
+  <div class="concept-header">
+    <span class="concept-num">06</span>
+    <div><div class="concept-title">Auto-encoder 관점</div><div class="concept-en">PCA as a Linear Auto-encoder</div></div>
+    <span class="mml-ref">MML §10.3</span>
+  </div>
+  <div class="concept-body">
+    <p>PCA는 선형 Auto-encoder로 해석할 수 있다. 인코더가 고차원 원본을 저차원 잠재 표현으로 압축하고, 디코더가 이를 복원한다.</p>
+    <div class="compare-grid">
+      <div class="compare-cell header">단계</div><div class="compare-cell header">연산</div><div class="compare-cell header">의미</div>
+      <div class="compare-cell hl">Encoder</div><div class="compare-cell">\(\mathbf{z}_n = \mathbf{B}_M^\top \mathbf{x}_n\)</div><div class="compare-cell">\(\mathbb{R}^D \to \mathbb{R}^M\) 차원 압축 (잠재 표현)</div>
+      <div class="compare-cell hl">Decoder</div><div class="compare-cell">\(\tilde{\mathbf{x}}_n = \mathbf{B}_M \mathbf{z}_n\)</div><div class="compare-cell">\(\mathbb{R}^M \to \mathbb{R}^D\) 복원 (재구성)</div>
+      <div class="compare-cell hl">Loss</div><div class="compare-cell">\(\tfrac{1}{N}\sum\|\mathbf{x}_n - \tilde{\mathbf{x}}_n\|^2\)</div><div class="compare-cell">Encoding 오차(재구성 오차) 최소화</div>
+    </div>
+    <div class="key-box">
+      <div class="key-box-label">Deep Auto-encoder로의 확장</div>
+      <div class="key-box-content">인코더·디코더를 비선형 신경망(MLP)으로 대체하면 PCA를 일반화한 심층 Auto-encoder가 된다. 활성함수를 항등 함수로 쓰면 PCA와 동일. MNIST 실험에서 주성분 1개→500개로 늘릴수록 복원 품질이 향상됨.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 실제 적용 Key Steps -->
+<section class="concept-section" id="sec-pca-steps">
+  <div class="concept-header">
+    <span class="concept-num">07</span>
+    <div><div class="concept-title">실제 적용 Key Steps</div><div class="concept-en">PCA in Practice</div></div>
+    <span class="mml-ref">MML §10.6</span>
+  </div>
+  <div class="concept-body">
+    <p>실제 데이터에 PCA를 적용할 때는 다음 5단계를 따른다.</p>
+    <ul class="concept-list">
+      <li><span class="cl-key">Step 1: 평균 이동</span><span class="cl-val">전체 평균 \(\boldsymbol{\mu}\)를 모든 데이터에서 빼서 <strong>Centered data</strong>로 만든다. \(\mathbf{x}_n \leftarrow \mathbf{x}_n - \boldsymbol{\mu}\). 수치 안정성을 위한 전처리.</span></li>
+      <li><span class="cl-key">Step 2: 표준화</span><span class="cl-val">각 차원 \(d\)의 표준편차 \(\sigma_d\)로 나누어 단위(unit-free) 데이터를 만든다. \(x_n^{(d)} \leftarrow x_n^{(d)}/\sigma_d\). 스케일 차이로 인한 왜곡 방지.</span></li>
+      <li><span class="cl-key">Step 3: 고유값 분해</span><span class="cl-val">데이터 공분산 행렬 \(\mathbf{S}\)를 계산하고 고유값·고유벡터를 구한다. 큰 고유값의 고유벡터가 주성분 공간 \(\mathbf{U}\)가 된다.</span></li>
+      <li><span class="cl-key">Step 4: 직교사상</span><span class="cl-val">새 데이터 \(\mathbf{x}_*\)에 대해 표준화 후 \(\mathbf{z}_* = \mathbf{B}^\top \mathbf{x}_*\)로 좌표 획득. PCA는 사상 벡터가 아닌 <strong>좌표 \(\mathbf{z}_*\)</strong>를 반환함에 주의.</span></li>
+      <li><span class="cl-key">Step 5: 역표준화</span><span class="cl-val">원래 좌표계로 복귀: \(\tilde{x}_*^{(d)} \leftarrow \tilde{x}_*^{(d)} \cdot \sigma_d + \mu_d\). 원본 데이터 공간의 재구성 결과를 얻는다.</span></li>
+    </ul>
+    <div class="fblock">
+      <div class="fblock-label">표준화 및 역표준화 — MML Eq. 10.58, 10.61</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[x_*^{(d)} \leftarrow \frac{x_*^{(d)} - \mu_d}{\sigma_d}, \quad \mathbf{z}_* = \mathbf{B}^\top \mathbf{x}_*, \quad \tilde{x}_*^{(d)} \leftarrow \tilde{x}_*^{(d)}\cdot\sigma_d + \mu_d\]</div>
+          <div class="feq-note">훈련 데이터의 \(\mu_d, \sigma_d\)를 사용해야 함. 테스트 데이터에 대해 별도 통계 계산 금지.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 고차원 PCA -->
+<section class="concept-section" id="sec-pca-highd">
+  <div class="concept-header">
+    <span class="concept-num">08</span>
+    <div><div class="concept-title">고차원 PCA</div><div class="concept-en">PCA in High Dimensions (N ≪ D)</div></div>
+    <span class="mml-ref">MML §10.5</span>
+  </div>
+  <div class="concept-body">
+    <p>데이터 차원 \(D\)가 데이터 포인트 수 \(N\)보다 훨씬 클 때(\(N \ll D\)), \(D \times D\) 공분산 행렬의 고유값 분해는 계산 비용이 매우 크다. Gram matrix를 이용하면 \(N \times N\) 문제로 줄일 수 있다.</p>
+    <div class="fblock">
+      <div class="fblock-label">고유벡터 방정식 변환 — MML §10.5</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\mathbf{S}\mathbf{b}_m = \frac{1}{N}\mathbf{X}\mathbf{X}^\top \mathbf{b}_m = \lambda_m \mathbf{b}_m\]</div>
+          <div class="feq-note">양변 왼쪽에 \(\mathbf{X}^\top\)를 곱하면:</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\frac{1}{N}\underbrace{\mathbf{X}^\top\mathbf{X}}_{N \times N}\underbrace{\mathbf{X}^\top \mathbf{b}_m}_{=:\mathbf{c}_m} = \lambda_m \mathbf{c}_m \;\;\Longrightarrow\;\; \mathbf{b}_m = \frac{\mathbf{X}\mathbf{c}_m}{\|\mathbf{X}\mathbf{c}_m\|}\]</div>
+          <div class="feq-note">\(N\times N\) 고유값 문제 풀어 \(\mathbf{c}_m\) 획득 후 역변환으로 \(\mathbf{b}_m\) 복원. 정규화 필수.</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-cell header">상황</div><div class="compare-cell header">행렬 크기</div><div class="compare-cell header">비용</div>
+      <div class="compare-cell hl">\(N \gg D\)</div><div class="compare-cell">\(\mathbf{X}\mathbf{X}^\top \in \mathbb{R}^{D \times D}\)</div><div class="compare-cell">\(\mathcal{O}(D^3)\)</div>
+      <div class="compare-cell hl">\(N \ll D\)</div><div class="compare-cell">\(\mathbf{X}^\top\mathbf{X} \in \mathbb{R}^{N \times N}\)</div><div class="compare-cell">\(\mathcal{O}(N^3)\) — 이미지·텍스트 등 고차원 실전 데이터에 필수</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 확률적 PCA -->
+<section class="concept-section" id="sec-pca-ppca">
+  <div class="concept-header">
+    <span class="concept-num">09</span>
+    <div><div class="concept-title">확률적 PCA (PPCA)</div><div class="concept-en">Probabilistic PCA</div></div>
+    <span class="mml-ref">MML §10.7</span>
+  </div>
+  <div class="concept-body">
+    <p>기존 PCA에 잠재변수 \(\mathbf{z}\)와 prior \(p(\mathbf{z}) = \mathcal{N}(\mathbf{0}, \mathbf{I})\)를 도입하여 생성 모델로 확장한다. 관측 데이터는 잠재변수의 선형 변환 + 관측 잡음으로 생성된다고 가정한다.</p>
+    <div class="fblock">
+      <div class="fblock-label">PPCA 생성 모델 — MML §10.7</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\mathbf{x} = \mathbf{B}\mathbf{z} + \boldsymbol{\mu} + \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2 \mathbf{I}), \quad \mathbf{z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})\]</div>
+          <div class="feq-note">\(\mathbf{B} \in \mathbb{R}^{D \times M}\): 사상 행렬, \(\boldsymbol{\mu}\): 평균, \(\boldsymbol{\epsilon}\): 관측 잡음</div>
+        </div>
+      </div>
+    </div>
+    <div class="fblock">
+      <div class="fblock-label">MLE 추정 (Tipping &amp; Bishop, 1999)</div>
+      <div class="fblock-body">
+        <div class="feq-row">
+          <div>\[\mathbf{B}_{\text{ML}} = \mathbf{U}_M \left(\boldsymbol{\Lambda}_M - \sigma^2 \mathbf{I}\right)^{1/2} \mathbf{R}\]</div>
+          <div class="feq-note">\(\mathbf{U}_M\): 상위 M개 고유벡터, \(\boldsymbol{\Lambda}_M\): 대응 고유값 대각행렬, \(\mathbf{R}\): 임의의 직교 행렬</div>
+        </div>
+        <div class="feq-row">
+          <div>\[\sigma^2_{\text{ML}} = \frac{1}{D-M}\sum_{j=M+1}^{D}\lambda_j\]</div>
+          <div class="feq-note">버려진 고유값들의 평균 → 잡음 분산의 MLE. \(\sigma^2 \to 0\)이면 PPCA → 결정론적 PCA</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-cell header">구분</div><div class="compare-cell header">PCA</div><div class="compare-cell header">PPCA</div>
+      <div class="compare-cell hl">모델 유형</div><div class="compare-cell">결정론적</div><div class="compare-cell">확률적 생성 모델</div>
+      <div class="compare-cell hl">잡음 추정</div><div class="compare-cell">없음</div><div class="compare-cell">\(\sigma^2_{\text{ML}}\) 추정 가능</div>
+      <div class="compare-cell hl">학습 방법</div><div class="compare-cell">고유값 분해</div><div class="compare-cell">MLE / EM 알고리즘</div>
+      <div class="compare-cell hl">관계</div><div class="compare-cell" colspan="2">\(\sigma^2=0\)이면 PPCA = PCA</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quiz 10 ── -->
+<section class="quiz-section" id="quiz10-section">
+  <div class="quiz-header">
+    <div class="quiz-title">연습 문제 — Lec 10</div>
+    <div class="quiz-count" id="quizCount10">0 / 10 풀이 완료</div>
+  </div>
+  <div class="quiz-progress">
+    <div class="progress-track"><div class="progress-fill" id="progressFill10" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel10">0%</div>
+  </div>
+  <div class="tag-cloud" id="quizTags10">
+    <span class="tag active" onclick="filterQuiz10('all',this)">전체</span>
+    <span class="tag" onclick="filterQuiz10('개념',this)">개념</span>
+    <span class="tag" onclick="filterQuiz10('계산',this)">계산</span>
+    <span class="tag" onclick="filterQuiz10('유도',this)">유도</span>
+    <span class="tag" onclick="filterQuiz10('시험유형',this)">★ 시험유형</span>
+  </div>
+  <div id="quizList10">
+
+    <div class="quiz-card" data-tag="시험유형" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q1</span><span class="quiz-text">공분산 행렬 \(\mathbf{S}=\begin{pmatrix}3&1\\1&2\end{pmatrix}\)에 대해 PCA를 수행하라. 고유값, 제1 주성분, 그리고 1차원으로 축소 시 포착하는 분산 비율을 구하시오.</span><span class="quiz-tag">★ 시험유형</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>① 고유값</strong>: 특성방정식 \(\det(\mathbf{S}-\lambda\mathbf{I}) = \lambda^2-5\lambda+5=0\)
+        <div class="amath">\[\lambda_1 = \frac{5+\sqrt{5}}{2} \approx 3.618, \quad \lambda_2 = \frac{5-\sqrt{5}}{2} \approx 1.382\]</div>
+        <strong>② 제1 주성분</strong> (\(\lambda_1\)에 대한 고유벡터): \((\mathbf{S}-\lambda_1\mathbf{I})\mathbf{v}=\mathbf{0}\) 풀면
+        <div class="amath">\[\mathbf{b}_1 \propto \begin{pmatrix}1\\ \lambda_1-3\end{pmatrix} = \begin{pmatrix}1\\ \frac{-1+\sqrt{5}}{2}\end{pmatrix}, \quad \text{정규화 후 단위 벡터}\]</div>
+        <strong>③ 포착 분산 비율</strong>:
+        <div class="amath">\[\frac{\lambda_1}{\lambda_1+\lambda_2} = \frac{\lambda_1}{5} \approx \frac{3.618}{5} = 72.4\%\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="시험유형" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q2</span><span class="quiz-text">5차원 데이터의 공분산 행렬 고유값이 \(\boldsymbol{\lambda} = [5, 3, 1, 0.5, 0.5]\)일 때, 2차원 PCA의 (a) 포착 분산 비율, (b) 재구성 오차 \(J_2\), (c) PPCA 잡음 분산 MLE를 구하시오.</span><span class="quiz-tag">★ 시험유형</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        \(V_D = 5+3+1+0.5+0.5 = 10,\quad V_2 = 5+3 = 8\)
+        <div class="amath">(a)\quad \frac{V_2}{V_D} = \frac{8}{10} = 80\%</div>
+        <div class="amath">(b)\quad J_2 = \sum_{j=3}^{5}\lambda_j = 1+0.5+0.5 = 2</div>
+        <div class="amath">(c)\quad \sigma^2_{\text{ML}} = \frac{J_2}{D-M} = \frac{2}{5-2} = \frac{2}{3} \approx 0.667</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q3</span><span class="quiz-text">1차원 PCA에서 기저 벡터 \(\mathbf{b}_1\)을 구하는 Lagrangian 최적화 문제를 세우고, 해가 공분산 행렬 \(\mathbf{S}\)의 고유벡터임을 유도하라.</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        목적함수: \(\max_{\mathbf{b}_1} \mathbf{b}_1^\top\mathbf{S}\mathbf{b}_1 \;\text{s.t.}\; \|\mathbf{b}_1\|^2=1\).<br>
+        Lagrangian: \(\mathcal{L} = \mathbf{b}_1^\top\mathbf{S}\mathbf{b}_1 - \lambda(\mathbf{b}_1^\top\mathbf{b}_1-1)\)
+        <div class="amath">\[\frac{\partial\mathcal{L}}{\partial\mathbf{b}_1} = 2\mathbf{S}\mathbf{b}_1 - 2\lambda\mathbf{b}_1 = \mathbf{0} \implies \mathbf{S}\mathbf{b}_1 = \lambda\mathbf{b}_1\]</div>
+        목적함수 값 = \(\mathbf{b}_1^\top\mathbf{S}\mathbf{b}_1 = \lambda\). 이를 최대화하려면 <strong>최대 고유값 \(\lambda_1\)</strong>에 대응하는 고유벡터를 선택. ∎
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q4</span><span class="quiz-text">PCA에서 '분산 최대화'와 '재구성 오차 최소화' 두 관점이 동일한 해를 도출함을 설명하라.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>분산 최대화</strong>: \(\mathbf{b}_1^\top\mathbf{S}\mathbf{b}_1\) 최대화 → 최대 고유값 \(\lambda_1\)의 고유벡터 선택.<br><br>
+        <strong>재구성 오차 최소화</strong>: \(J_M = \sum_{j=M+1}^D\lambda_j\) 최소화 → 작은 고유값 \(\lambda_{M+1}, \ldots, \lambda_D\)를 버림 → 큰 M개의 고유벡터 선택.<br><br>
+        두 조건 모두 <strong>가장 큰 M개의 고유값에 대응하는 고유벡터</strong>를 주성분으로 선택 → 동일한 해.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q5</span><span class="quiz-text">PCA 적용 전 데이터를 반드시 Centering해야 하는 이유를 수식과 함께 설명하라.</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        평균을 빼지 않으면:
+        <div class="amath">\[\frac{1}{N}\sum_n \mathbf{x}_n\mathbf{x}_n^\top \neq \mathbf{S} = \frac{1}{N}\sum_n(\mathbf{x}_n-\boldsymbol{\mu})(\mathbf{x}_n-\boldsymbol{\mu})^\top\]</div>
+        좌변은 공분산이 아닌 <strong>2차 모멘트 행렬</strong>이 계산되며, 주성분이 원점 방향으로 편향된다.<br>
+        Centering 후에만 \(\frac{1}{N}\mathbf{X}\mathbf{X}^\top = \mathbf{S}\)가 성립하고, 분산 \(\mathbf{b}^\top\mathbf{S}\mathbf{b}\)가 사상된 데이터의 진짜 분산이 된다.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q6</span><span class="quiz-text">\(N \ll D\)인 고차원 PCA에서 \(N \times N\) Gram matrix를 사용할 수 있음을 보여라. 변환 후 고유벡터 \(\mathbf{b}_m\)을 어떻게 복원하는가?</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        고유벡터 방정식에 왼쪽에 \(\mathbf{X}^\top\) 곱:
+        <div class="amath">\[\frac{1}{N}\mathbf{X}\mathbf{X}^\top\mathbf{b}_m=\lambda_m\mathbf{b}_m \;\xrightarrow{\times\mathbf{X}^\top}\; \frac{1}{N}\underbrace{\mathbf{X}^\top\mathbf{X}}_{N\times N}(\underbrace{\mathbf{X}^\top\mathbf{b}_m}_{\mathbf{c}_m})=\lambda_m\mathbf{c}_m\]</div>
+        \(N\times N\) 고유값 문제로 \(\mathbf{c}_m\) 풀기. 복원:
+        <div class="amath">\[\mathbf{b}_m = \frac{\mathbf{X}\mathbf{c}_m}{\|\mathbf{X}\mathbf{c}_m\|}\]</div>
+        \(\mathbf{X}\mathbf{X}^\top\)와 \(\mathbf{X}^\top\mathbf{X}\)의 non-zero 고유값은 동일하므로 성립.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="개념" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q7</span><span class="quiz-text">PCA를 선형 Auto-encoder로 설명하라. Encoder와 Decoder의 수식을 쓰고, 비선형으로 확장하면 어떤 모델이 되는가?</span><span class="quiz-tag">개념</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>Encoder</strong>: \(\mathbf{z}_n = \mathbf{B}_M^\top\mathbf{x}_n \in \mathbb{R}^M\) (차원 압축)<br>
+        <strong>Decoder</strong>: \(\tilde{\mathbf{x}}_n = \mathbf{B}_M\mathbf{z}_n \in \mathbb{R}^D\) (재구성)<br>
+        <strong>Loss</strong>: \(\frac{1}{N}\sum_{n=1}^N\|\mathbf{x}_n-\tilde{\mathbf{x}}_n\|^2 = J_M\)<br><br>
+        비선형 확장 → <strong>Deep Auto-encoder</strong>: 인코더·디코더를 다층 신경망으로 대체. 활성함수를 identity로 쓰면 PCA와 동일.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="유도" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q8</span><span class="quiz-text">PPCA 생성 모델을 쓰고, MLE로 추정된 잡음 분산 \(\sigma^2_{\text{ML}}\)의 의미를 해석하라. \(\sigma^2 \to 0\)이면 어떻게 되는가?</span><span class="quiz-tag">유도</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        생성 모델: \(\mathbf{x}=\mathbf{B}\mathbf{z}+\boldsymbol{\mu}+\boldsymbol{\epsilon},\; \boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}),\; \mathbf{z}\sim\mathcal{N}(\mathbf{0},\mathbf{I})\)<br><br>
+        MLE 잡음 분산:
+        <div class="amath">\[\sigma^2_{\text{ML}} = \frac{1}{D-M}\sum_{j=M+1}^{D}\lambda_j\]</div>
+        <strong>해석</strong>: 주성분 공간에서 설명되지 않는 \(D-M\)개 방향 분산의 평균. 등방(isotropic) 잡음 가정이므로 나머지 고유값을 평균낸다.<br><br>
+        <strong>\(\sigma^2\to 0\)</strong>: 잡음이 없는 극한 → PPCA = 결정론적 PCA.
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="계산" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q9</span><span class="quiz-text">"PCA는 사상 벡터가 아닌 좌표를 반환한다"는 의미를 수식으로 설명하고, 재구성이 필요할 때의 절차를 서술하라.</span><span class="quiz-tag">계산</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <strong>사상 벡터</strong>: \(\tilde{\mathbf{x}}_* = \mathbf{B}\mathbf{B}^\top\mathbf{x}_* \in \mathbb{R}^D\) (원본과 같은 공간의 벡터)<br>
+        <strong>좌표</strong>: \(\mathbf{z}_* = \mathbf{B}^\top\mathbf{x}_* \in \mathbb{R}^M\) (주성분 기저 기준의 저차원 표현)<br><br>
+        PCA는 \(\mathbf{z}_*\)를 반환한다. 재구성이 필요하면:
+        <div class="amath">\[\mathbf{z}_* = \mathbf{B}^\top\mathbf{x}_* \;\xrightarrow{\text{Decoder}}\; \tilde{\mathbf{x}}_* = \mathbf{B}\mathbf{z}_* \;\xrightarrow{\text{역표준화}}\; \tilde{x}_*^{(d)}\cdot\sigma_d+\mu_d\]</div>
+      </div></div>
+    </div>
+
+    <div class="quiz-card" data-tag="시험유형" onclick="toggleQuiz10(this)">
+      <div class="quiz-q"><span class="quiz-num">Q10</span><span class="quiz-text">선형 회귀(Lec 09)와 PCA(Lec 10)를 비교하라. 두 방법의 목적, 지도학습 여부, 최적화 대상, 해를 구하는 방법을 각각 서술하시오.</span><span class="quiz-tag">★ 시험유형</span><span class="quiz-toggle">+</span></div>
+      <div class="quiz-answer"><div class="answer-label">풀이</div><div class="answer-body">
+        <div class="amath">
+        \begin{array}{l|l|l}
+        \textbf{구분} & \textbf{선형 회귀 (Lec 09)} & \textbf{PCA (Lec 10)} \\\hline
+        \text{목적} & y\text{를 } \mathbf{x}\text{로 예측} & \text{차원 압축/구조 발견} \\
+        \text{학습 유형} & \text{지도 학습} & \text{비지도 학습} \\
+        \text{최적화 대상} & \|\mathbf{y}-\mathbf{X}\boldsymbol{\theta}\|^2 & \text{분산 최대화 / 재구성 오차 최소화} \\
+        \text{해} & (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y} & \mathbf{S}\text{의 상위 }M\text{개 고유벡터}
+        \end{array}
+        </div>
+        두 방법 모두 \(\mathbf{X}^\top\mathbf{X}\) 행렬이 등장하며, 정규방정식(회귀)과 고유값 분해(PCA)라는 closed-form 해를 갖는다는 공통점이 있다.
+      </div></div>
+    </div>
+
+  </div><!-- /quizList10 -->
+</section>
+
+</div><!-- /lec10 -->
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:16px;text-align:center;">
     <div style="font-size:48px;color:var(--border2);">+</div>
     <div style="font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text3);">강의자료를 추가하세요</div>
@@ -1437,6 +1894,7 @@
   }
   function toggleQuiz(card){card.classList.toggle('open');updateProgress();}
   function toggleQuiz09(card){card.classList.toggle('open');updateProgress09();}
+  function toggleQuiz10(card){card.classList.toggle('open');updateProgress10();}
   function updateProgress(){
     const cards=document.querySelectorAll('#quizList .quiz-card:not([style*="none"])');
     const open=document.querySelectorAll('#quizList .quiz-card.open:not([style*="none"])');
@@ -1455,6 +1913,15 @@
     document.getElementById('progressFill09').style.width=pct+'%';
     document.getElementById('progressLabel09').textContent=pct+'%';
   }
+  function updateProgress10(){
+    const cards=document.querySelectorAll('#quizList10 .quiz-card:not([style*="none"])');
+    const open=document.querySelectorAll('#quizList10 .quiz-card.open:not([style*="none"])');
+    const total=cards.length,done=open.length;
+    document.getElementById('quizCount10').textContent=`${done} / ${total} 풀이 완료`;
+    const pct=total>0?Math.round(done/total*100):0;
+    document.getElementById('progressFill10').style.width=pct+'%';
+    document.getElementById('progressLabel10').textContent=pct+'%';
+  }
   function filterQuiz(tag,el){
     document.querySelectorAll('#quizTags .tag').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
@@ -1470,6 +1937,14 @@
       card.style.display=(tag==='all'||card.dataset.tag===tag)?'':'none';
     });
     updateProgress09();
+  }
+  function filterQuiz10(tag,el){
+    document.querySelectorAll('#quizTags10 .tag').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('#quizList10 .quiz-card').forEach(card=>{
+      card.style.display=(tag==='all'||card.dataset.tag===tag)?'':'none';
+    });
+    updateProgress10();
   }
   window.addEventListener('scroll',()=>{
     document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400);
@@ -1501,6 +1976,7 @@
   }
   updateProgress();
   updateProgress09();
+  updateProgress10();
 </script>
 </body>
 </html>
