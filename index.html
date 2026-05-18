@@ -1889,7 +1889,9 @@
     window.scrollTo({top:0,behavior:'smooth'});
   }
   function setSideActive(el){
-    document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
+    const group=el.closest('.sidebar-group');
+    if(group) group.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
+    else document.querySelectorAll('.sidebar-item').forEach(e=>e.classList.remove('active'));
     el.classList.add('active');
   }
   function toggleQuiz(card){card.classList.toggle('open');updateProgress();}
@@ -1949,13 +1951,19 @@
   window.addEventListener('scroll',()=>{
     document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400);
     let cur='';
-    document.querySelectorAll('.concept-section,.lecture-intro,.quiz-section').forEach(sec=>{
-      if(window.scrollY>=sec.offsetTop-160)cur=sec.id;
-    });
-    document.querySelectorAll('.sidebar-item').forEach(item=>{
-      const href=item.getAttribute('href')?.replace('#','');
-      item.classList.toggle('active',href===cur);
-    });
+    const activeLec=document.querySelector('.lecture-content.active');
+    if(activeLec){
+      activeLec.querySelectorAll('.concept-section,.lecture-intro,.quiz-section').forEach(sec=>{
+        if(window.scrollY>=sec.offsetTop-160)cur=sec.id;
+      });
+    }
+    const activeGroup=document.querySelector('.sidebar-group:not([style*='none'])');
+    if(activeGroup){
+      activeGroup.querySelectorAll('.sidebar-item').forEach(item=>{
+        const href=item.getAttribute('href')?.replace('#','');
+        item.classList.toggle('active',href===cur);
+      });
+    }
   });
   function showAddTab(){document.getElementById('addTabModal').style.display='flex';}
   function closeAddTab(){document.getElementById('addTabModal').style.display='none';document.getElementById('newTabTitle').value='';}
